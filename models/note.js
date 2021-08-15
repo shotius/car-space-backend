@@ -1,28 +1,16 @@
 const mongoose = require("mongoose");
 
-const url = process.env.MONGODB_URI;
-console.log("connecting to db", url);
-
-mongoose
-  .connect(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false,
-    useCreateIndex: true,
-  })
-  .then(() => {
-    console.log("connected to MongoDb");
-  })
-  .catch((error) => {
-    console.log("error connecting to DB", error.message);
-  });
-
 const noteSchema = new mongoose.Schema({
-  content: String,
-  date: Date,
+  content: { type: String, minLength: 5, required: true },
+  date: {type: Date, required: true},
   important: Boolean,
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User"
+  }
 });
 
+// modify bilt in method "toJSON"
 noteSchema.set("toJSON", {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString();
@@ -31,4 +19,5 @@ noteSchema.set("toJSON", {
   },
 });
 
-module.exports = mongoose.model("Note", noteSchema); 
+// we export model for create documents
+module.exports = mongoose.model("Note", noteSchema);
