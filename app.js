@@ -1,5 +1,4 @@
 const express = require("express");
-const app = express();
 const mongoose = require("mongoose");
 const cors = require("cors");
 
@@ -8,7 +7,10 @@ const config = require("./utils/config");
 const middleware = require("./utils/midlewares");
 
 const notesRouter = require("./controlers/notes");
-const usersRouter = require("./controlers/users")
+const usersRouter = require("./controlers/users");
+const loginRouter = require("./controlers/login");
+
+const app = express();
 
 logger.info("connecting to db");
 
@@ -31,9 +33,10 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/notes", notesRouter);
-app.use("/api/users", usersRouter)
+app.use("/api/users", usersRouter);
+app.use("/api/login", loginRouter);
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
 
-module.exports = app
+module.exports = app;

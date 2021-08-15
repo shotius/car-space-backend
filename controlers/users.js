@@ -7,7 +7,7 @@ usersRouter.post("/", async (req, res) => {
 
   let passwordHash;
   try {
-    passwordHash = await argon2.hash("password");
+    passwordHash = await argon2.hash(body.password);
   } catch (err) {
     return res.status(500).json({ error: "uneble to hash the password" });
   }
