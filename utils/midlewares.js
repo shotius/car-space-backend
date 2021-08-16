@@ -15,5 +15,5 @@ const unknownEndpoint = (request, response) => {
 
 module.exports = {
     errorHandler,
-    unknownEndpoint
+    unknownEndpoint,
 }
