@@ -87,7 +87,7 @@ app.use(
   })
 );
 
-app.use(express.static('build'))
+app.use(express.static(path.join(__dirname, 'build')));
 
 app.use("/api/notes", notesRouter);
 app.use("/api/users", usersRouter);
