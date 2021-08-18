@@ -14,7 +14,7 @@ const usersRouter = require("./controlers/users");
 const loginRouter = require("./controlers/login");
 const logoutRouter = require("./controlers/logout");
 const meRouter = require("./controlers/me");
-const { URL } = require("url");
+const url = require("url");
 
 const __prod__ = require("./constants");
 
@@ -41,7 +41,7 @@ mongoose
 let redisClient;
 const redisStore = connectRedis(session);
 if (process.env.REDIS_URL) {
-  const redisUrl = new URL(process.env.REDIS_URL);
+  const redisUrl = url.parse(process.env.REDIS_URL, true);
   redisClient = redis.createClient(redisUrl);
 } else {
   redisClient = redis.createClient();
