@@ -1,6 +1,7 @@
 const usersRouter = require("express").Router();
 const argon2 = require("argon2");
 const User = require("../models/user");
+const logger = require("../utils/logger")
 
 usersRouter.post("/", async (req, res) => {
   const body = req.body;
@@ -15,23 +16,22 @@ usersRouter.post("/", async (req, res) => {
   const user = new User({
     username: body.username,
     name: body.name,
+    role: body.role,
     passwordHash,
   });
 
   let savedUser;
   try {
-      savedUser = await user.save();
+    savedUser = await user.save();
   } catch (error) {
-      console.log(error.message)
+    logger.error(error.message);
   }
-
-  console.log(savedUser)
 
   res.json(savedUser);
 });
 
 usersRouter.get("/", async (req, res) => {
-  const users = await User.find({}).populate('notes');
+  const users = await User.find({})
   res.json(users);
 });
 

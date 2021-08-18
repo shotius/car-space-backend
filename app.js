@@ -13,6 +13,7 @@ const notesRouter = require("./controlers/notes");
 const usersRouter = require("./controlers/users");
 const loginRouter = require("./controlers/login");
 const logoutRouter = require("./controlers/logout");
+const meRouter = require('./controlers/me')
 
 const __prod__ = require("./constants");
 
@@ -52,12 +53,12 @@ const redisClient = redis.createClient();
 //   console.log("Connected to redis successfully");
 // });
 
-app.use(cors({
-  origin: true,
-  methods: ["POST"],
-  credentials: true,
-  maxAge: 3600
-}));
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 //Configure session middleware
@@ -69,8 +70,9 @@ app.use(
     cookie: {
       maxAge: 1000 * 60 * 60 * 24 * 365, // expire in 10 years
       sameSite: "lax",
-      httpOnly: false,
+      httpOnly: true,
       secure: __prod__,
+      path: "/"
     },
     secret: "keyasdf",
     resave: false,
@@ -81,6 +83,7 @@ app.use("/api/notes", notesRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/login", loginRouter);
 app.use("/api/logout", logoutRouter);
+app.use("/api/me", meRouter)
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);

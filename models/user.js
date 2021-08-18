@@ -7,13 +7,8 @@ const userSchema = mongoose.Schema({
         unique: true 
     },
   name: String,
+  role: String,
   passwordHash: String,
-  notes: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Note",
-    },
-  ],
 });
 
 userSchema.plugin(uniqueValidator);

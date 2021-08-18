@@ -1,11 +1,13 @@
 const logoutRouter = require('express').Router()
 
-logoutRouter.get('/', (req, res) => {
-    req.session.destroy( err => {
+logoutRouter.get('/', async (req, res) => {
+    delete req.session.userId
+    delete req.session.token
+    await req.session.destroy( err => {
         if (err) {
             return res.status(500).json({"error": err.message})
         }
-        res.status(200).end()
     })
+    res.send('removed session information')
 })
 module.exports = logoutRouter

@@ -1,4 +1,3 @@
-const jwt = require("jsonwebtoken");
 const argon2 = require("argon2");
 const loginRouter = require("express").Router();
 const User = require("../models/user");
@@ -17,19 +16,18 @@ loginRouter.post("/", async (req, res) => {
     return res.status(401).json({ error: "invalid password or username" });
   }
 
-  req.session.userId = user._id;
-
-  const userForToken = {
+  const userForSession = {
     username: user.username,
+    isAuthenticated: true,
+    role: user.role,
     id: user._id,
   };
 
-  const token = jwt.sign(userForToken, process.env.SECRET);
-  req.session.token = token;
+  req.session.user = userForSession;
 
   res.status(200).send({
-    username: user.username,
-    name: user.name,
+    role: user.role.toLowerCase(),
+    success: true,
   });
 });
 
