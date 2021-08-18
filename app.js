@@ -40,6 +40,7 @@ mongoose
 // configure Redis
 const redisStore = connectRedis(session);
 
+// configure redis client
 let redisClient;
 if (process.env.REDIS_URL) {
   const redis_uri = url.parse(process.env.REDIS_URL, true);
@@ -58,29 +59,10 @@ if (process.env.REDIS_URL) {
   redisClient = new Redis()
 }
 
-// let redisClient;
-// if (process.env.REDIS_URL) {
-//   const redisUrl = url.parse(process.env.REDIS_URL, true);
-//   redisClient = redis.createClient(redisUrl);
-// } else {
-// }
-
-//Configure redis client
-// const redisClient = redis.createClient({
-// host: "localhost",
-// port: 6379,
-// });
-
-// redisClient.on("error", function (err) {
-//   console.log("Could not establish a connection with redis. " + err);
-// });
-// redisClient.on("connect", function (err) {
-//   console.log("Connected to redis successfully");
-// });
-
+const whiteList = ["http://localhost:3000", "https://whispering-atoll-93096.herokuapp.com/"]
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: whiteList,
     credentials: true,
   })
 );
