@@ -13,7 +13,8 @@ const notesRouter = require("./controlers/notes");
 const usersRouter = require("./controlers/users");
 const loginRouter = require("./controlers/login");
 const logoutRouter = require("./controlers/logout");
-const meRouter = require('./controlers/me')
+const meRouter = require("./controlers/me");
+const { URL } = require("url");
 
 const __prod__ = require("./constants");
 
@@ -37,8 +38,14 @@ mongoose
   });
 
 // configure Redis
+let redisClient;
 const redisStore = connectRedis(session);
-const redisClient = redis.createClient();
+if (process.env.REDIS_URL) {
+  const redisUrl = new URL(process.env.REDIS_URL);
+  redisClient = redis.createClient(redisUrl);
+} else {
+  redisClient = redis.createClient();
+}
 
 //Configure redis client
 // const redisClient = redis.createClient({
@@ -72,7 +79,7 @@ app.use(
       sameSite: "lax",
       httpOnly: true,
       secure: __prod__,
-      path: "/"
+      path: "/",
     },
     secret: "keyasdf",
     resave: false,
@@ -83,7 +90,7 @@ app.use("/api/notes", notesRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/login", loginRouter);
 app.use("/api/logout", logoutRouter);
-app.use("/api/me", meRouter)
+app.use("/api/me", meRouter);
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
