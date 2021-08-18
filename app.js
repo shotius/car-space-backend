@@ -23,7 +23,7 @@ logger.info("connecting to db");
 
 // connnection to mongoDB
 mongoose
-  .connect(MONGODB_URI, {
+  .connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
