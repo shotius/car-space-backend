@@ -1,6 +1,7 @@
 const express = require("express");
 const session = require("express-session");
 const redis = require("redis");
+const Redis = require("ioredis");
 const connectRedis = require("connect-redis");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -38,14 +39,32 @@ mongoose
   });
 
 // configure Redis
-let redisClient;
 const redisStore = connectRedis(session);
+
+let redisClient;
 if (process.env.REDIS_URL) {
-  const redisUrl = url.parse(process.env.REDIS_URL, true);
-  redisClient = redis.createClient(redisUrl);
+  const redis_uri = url.parse(process.env.REDIS_URL, true);
+  redisClient = new Redis({
+    port: Number(redis_uri.port) + 1,
+    host: redis_uri.hostname,
+    password: redis_uri.auth.split(":")[1],
+    db: 0,
+    tls: {
+      rejectUnauthorized: false,
+      requestCert: true,
+      agent: false,
+    },
+  });
 } else {
   redisClient = redis.createClient();
 }
+
+// let redisClient;
+// if (process.env.REDIS_URL) {
+//   const redisUrl = url.parse(process.env.REDIS_URL, true);
+//   redisClient = redis.createClient(redisUrl);
+// } else {
+// }
 
 //Configure redis client
 // const redisClient = redis.createClient({
