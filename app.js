@@ -90,9 +90,6 @@ app.use(
 
 app.use(express.static( 'build'));
 
-// app.engine('html', require('ejs').renderFile);
-// app.set('view engine', 'html');
-
 
 app.use("/api/notes", notesRouter);
 app.use("/api/users", usersRouter);
@@ -105,7 +102,7 @@ app.get('*', function (req, res) {
   res.sendFile('index.html', {root: path.join(__dirname, 'build')})
 })
 
-app.use(middleware.unknownEndpoint);
+// app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
 
 module.exports = app;
