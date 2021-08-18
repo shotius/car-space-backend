@@ -1,6 +1,5 @@
 const express = require("express");
 const session = require("express-session");
-const redis = require("redis");
 const Redis = require("ioredis");
 const connectRedis = require("connect-redis");
 const mongoose = require("mongoose");
@@ -56,7 +55,7 @@ if (process.env.REDIS_URL) {
     },
   });
 } else {
-  redisClient = redis.createClient();
+  redisClient = new Redis()
 }
 
 // let redisClient;
@@ -105,13 +104,19 @@ app.use(
   })
 );
 
+app.use(express.static('build'))
+
 app.use("/api/notes", notesRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/login", loginRouter);
 app.use("/api/logout", logoutRouter);
 app.use("/api/me", meRouter);
 
-app.use(middleware.unknownEndpoint);
+app.get('*', function (req, res) {
+  res.render('build/index.html')
+})
+
+// app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
 
 module.exports = app;
