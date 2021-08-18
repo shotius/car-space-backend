@@ -15,6 +15,7 @@ const loginRouter = require("./controlers/login");
 const logoutRouter = require("./controlers/logout");
 const meRouter = require("./controlers/me");
 const url = require("url");
+const path = require('path')
 
 const __prod__ = require("./constants");
 
@@ -87,7 +88,11 @@ app.use(
   })
 );
 
-app.use(express.static(path.join(__dirname, 'build')));
+app.use(express.static( 'build'));
+
+// app.engine('html', require('ejs').renderFile);
+// app.set('view engine', 'html');
+
 
 app.use("/api/notes", notesRouter);
 app.use("/api/users", usersRouter);
@@ -95,11 +100,12 @@ app.use("/api/login", loginRouter);
 app.use("/api/logout", logoutRouter);
 app.use("/api/me", meRouter);
 
+
 app.get('*', function (req, res) {
-  res.render('build/index.html')
+  res.sendFile('index.html', {root: path.join(__dirname, 'build')})
 })
 
-// app.use(middleware.unknownEndpoint);
+app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
 
 module.exports = app;
