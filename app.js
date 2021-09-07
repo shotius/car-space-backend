@@ -21,7 +21,7 @@ const __prod__ = require("./constants");
 
 const app = express();
 
-logger.info("connecting to db", config.MONGODB_URI);
+logger.info("connecting to db");
 
 // connnection to mongoDB
 mongoose
