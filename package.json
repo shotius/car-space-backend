@@ -7,7 +7,7 @@
     "tsc": "tsc",
     "watch": "NODE_PATH=./src tsc -w",
     "lint": "eslint --ext .ts .",
-    "start": "node dist/index.js",
+    "start": "node dist/src/index.js",
     "dev": "NODE_PATH=./dist nodemon dist/src/index.js",
     "build:ui": "rm -rf build && cd ../client && npm run build --prod && cp -r build ../server",
     "deploy": "git push heroku master",
