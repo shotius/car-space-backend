@@ -1,8 +1,10 @@
-const argon2 = require("argon2");
-const loginRouter = require("express").Router();
-const User = require("../models/user");
+import argon2 from "argon2";
+import express from 'express'
+import User from "../models/user";
 
-loginRouter.post("/", async (req, res) => {
+const loginRouter = express.Router();
+
+loginRouter.post("/", async (req: express.Request, res: express.Response) => {
   const body = req.body;
 
   const user = await User.findOne({ username: body.username });
@@ -23,12 +25,12 @@ loginRouter.post("/", async (req, res) => {
     id: user._id,
   };
 
-  req.session.user = userForSession;
+  req.session.user = userForSession
 
-  res.status(200).send({
+  return res.status(200).send({
     role: user.role.toLowerCase(),
     success: true,
   });
 });
 
-module.exports = loginRouter;
+export default loginRouter;

@@ -1,8 +1,9 @@
-const notesRouter = require("express").Router();
-const Note = require("../models/note");
-const User = require("../models/user");
+import express from "express";
+import Note from "../models/note";
+import User from "../models/user";
+const notesRouter = express.Router();
 
-notesRouter.get("/", async (req, res) => {
+notesRouter.get("/", async (_req, res) => {
   const notes = await Note.find({}).populate('user', {username: 1, name: 1})
   res.json(notes)
 });
@@ -19,21 +20,24 @@ notesRouter.get("/:id", (req, res, next) => {
     .catch((error) => next(error));
 });
 
-notesRouter.post("/", async (req, res, next) => {
+notesRouter.post("/", async (req, res) => {
   const body = req.body;
 
   if (!body.userId) {
-    return res.json(400).json({ error: "userId not provided" });
+    res.json(400).json({ error: "userId not provided" });
   }
 
   const user = await User.findById(body.userId);
 
   if (!body.content) {
-    return res.status(400).json({
+    res.status(400).json({
       error: "content missing",
     });
   }
 
+  if (!user) {
+    return res.status(400).send('user not found')
+  }
   const note = new Note({
     content: body.content,
     important: body.important || false,
@@ -46,7 +50,8 @@ notesRouter.post("/", async (req, res, next) => {
   user.notes = user.notes.concat(savedNote._id)
   await user.save()
 
-  res.json(savedNote)
+  return res.json(savedNote)
 });
 
-module.exports = notesRouter;
+
+export default notesRouter

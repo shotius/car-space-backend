@@ -1,7 +1,9 @@
-const usersRouter = require("express").Router();
-const argon2 = require("argon2");
-const User = require("../models/user");
-const logger = require("../utils/logger")
+import argon2 from "argon2";
+import User from "../models/user";
+import logger from "../utils/logger";
+import express from "express";
+
+const usersRouter = express.Router();
 
 usersRouter.post("/", async (req, res) => {
   const body = req.body;
@@ -23,16 +25,16 @@ usersRouter.post("/", async (req, res) => {
   let savedUser;
   try {
     savedUser = await user.save();
-  } catch (error) {
+  } catch (error: any) {
     logger.error(error.message);
   }
 
-  res.json(savedUser);
+  return res.json(savedUser);
 });
 
-usersRouter.get("/", async (req, res) => {
+usersRouter.get("/", async (_req, res) => {
   const users = await User.find({})
   res.json(users);
 });
 
-module.exports = usersRouter;
+export default usersRouter

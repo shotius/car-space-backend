@@ -1,5 +1,6 @@
-const meRouter = require("express").Router();
-const User = require("../models/user");
+import User from "../models/user";
+import express from 'express'
+const meRouter = express.Router();
 
 meRouter.get("/", async (req, res) => {
   const { user } = req.session;
@@ -18,4 +19,4 @@ meRouter.get("/", async (req, res) => {
   }
 });
 
-module.exports = meRouter;
+export default meRouter;
