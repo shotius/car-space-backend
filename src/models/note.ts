@@ -1,13 +1,7 @@
 import {Schema, model} from 'mongoose';
-import { IUser } from './user';
+import { INote } from 'src/types';
 
-export interface INote {
-  content: string;
-  date: Date;
-  user: IUser
-}
-
-const noteSchema = new Schema({
+const noteSchema = new Schema<INote>({
   content: { type: String, minLength: 5, required: true },
   date: { type: Date, required: true },
   important: Boolean,

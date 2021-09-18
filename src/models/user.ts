@@ -1,13 +1,5 @@
-import {Schema, model} from "mongoose";
-import { INote } from "./note";
-
-export interface IUser {
-  username: string,
-  name: string,
-  role: string,
-  passwordHash: string
-  notes: INote[]
-}
+import {Schema, model, Model} from "mongoose";
+import { IUser } from "src/types";
 
 const userSchema = new Schema<IUser>({
   username: {
@@ -35,4 +27,6 @@ userSchema.set("toJSON", {
   },
 });
 
-export default model<IUser>("User", userSchema);
+const User: Model<IUser> = model<IUser>("User", userSchema);
+
+export default User

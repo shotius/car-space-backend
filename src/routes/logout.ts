@@ -3,7 +3,7 @@ const logoutRouter = express.Router();
 
 logoutRouter.get('/', async (req, res) => {
   delete req.session.user ;
-  await req.session.destroy((err) => {
+  req.session.destroy((err) => {
     if (err) {
       return res.status(500).json({ error: err.message });
     } else {

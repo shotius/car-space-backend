@@ -9,16 +9,18 @@ import logger from "./utils/logger";
 import { MONGODB_URI } from "./utils/config";
 import { defaultErrorHander } from "./utils/midlewares";
 
-import notesRouter from "./controlers/notes";
-import usersRouter from "./controlers/users";
-import loginRouter from "./controlers/login";
-import logoutRouter from "./controlers/logout";
-import meRouter from "./controlers/me";
+import notesRouter from "./routes/notes";
+import usersRouter from "./routes/users";
+import loginRouter from "./routes/login";
+import logoutRouter from "./routes/logout";
+import meRouter from "./routes/me";
+import carsRouter from './routes/cars'
+
 import url from "url";
 import path from 'path';
 
 import {__prod__} from "./utils/constants";
-import { SessionUser } from "types";
+import { SessionUser } from "./types";
 
 declare module "express-session" {
   interface Session {
@@ -96,12 +98,12 @@ app.use(
 
 app.use(express.static( 'build'));
 
-
 app.use("/api/notes", notesRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/login", loginRouter);
 app.use("/api/logout", logoutRouter);
 app.use("/api/me", meRouter);
+app.use("/api/cars", carsRouter)
 
 
 app.get('*', function (_req, res) {

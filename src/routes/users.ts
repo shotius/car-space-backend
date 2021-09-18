@@ -2,10 +2,11 @@ import argon2 from "argon2";
 import User from "../models/user";
 import logger from "../utils/logger";
 import express from "express";
+import usersService from '../services/userService'
 
 const usersRouter = express.Router();
 
-usersRouter.post("/", async (req, res) => {
+usersRouter.post("/register", async (req, res) => {
   const body = req.body;
 
   let passwordHash;
@@ -33,8 +34,7 @@ usersRouter.post("/", async (req, res) => {
 });
 
 usersRouter.get("/", async (_req, res) => {
-  const users = await User.find({})
-  res.json(users);
+  res.json(await usersService.getUsers());
 });
 
 export default usersRouter
