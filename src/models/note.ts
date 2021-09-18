@@ -1,5 +1,5 @@
 import {Schema, model} from 'mongoose';
-import { INote } from 'src/types';
+import { INote } from 'types';
 
 const noteSchema = new Schema<INote>({
   content: { type: String, minLength: 5, required: true },

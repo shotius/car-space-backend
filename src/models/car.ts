@@ -1,5 +1,5 @@
 import {Schema, model} from 'mongoose'
-import { ICar } from 'src/types'
+import { ICar } from 'types'
 
 const carSchema = new Schema<ICar>({
   lotNum: String,
