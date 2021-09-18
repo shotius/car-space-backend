@@ -5,19 +5,19 @@ import connectRedis from "connect-redis";
 import mongoose from "mongoose";
 import cors from "cors";
 
-import logger from "../utils/logger";
-import { MONGODB_URI } from "../utils/config";
-import { defaultErrorHander } from "../utils/midlewares";
+import logger from "./utils/logger";
+import { MONGODB_URI } from "./utils/config";
+import { defaultErrorHander } from "./utils/midlewares";
 
-import notesRouter from "../controlers/notes";
-import usersRouter from "../controlers/users";
-import loginRouter from "../controlers/login";
-import logoutRouter from "../controlers/logout";
-import meRouter from "../controlers/me";
+import notesRouter from "./controlers/notes";
+import usersRouter from "./controlers/users";
+import loginRouter from "./controlers/login";
+import logoutRouter from "./controlers/logout";
+import meRouter from "./controlers/me";
 import url from "url";
 import path from 'path';
 
-import {__prod__} from "../utils/constants";
+import {__prod__} from "./utils/constants";
 import { SessionUser } from "types";
 
 declare module "express-session" {

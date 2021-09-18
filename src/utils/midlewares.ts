@@ -1,6 +1,6 @@
 import express from 'express';
-import logger from '../utils/logger';
-import HttpException from 'exceptions/HttpException';
+import logger from './logger';
+import HttpException from 'src/exceptions/HttpException';
 
 export const defaultErrorHander = (
   error: HttpException,
