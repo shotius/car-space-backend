@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "NODE_PATH=./dist node dist/index.js",
     "watch": "NODE_PATH=./src tsc -w",
     "dev": "NODE_PATH=./dist nodemon dist/index.js",
     "build": "tsc",
