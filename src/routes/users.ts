@@ -29,7 +29,7 @@ usersRouter.post("/register", async (req, res) => {
   } catch (error: any) {
     logger.error(error.message);
   }
-
+  console.log('__dirname',__dirname);
   return res.json(savedUser);
 });
 

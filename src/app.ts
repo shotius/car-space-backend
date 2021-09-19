@@ -107,7 +107,7 @@ app.use("/api/cars", carsRouter)
 
 
 app.get('*', function (_req, res) {
-  res.sendFile('index.html', {root: path.join(__dirname, '../../build')})
+  res.sendFile('index.html', {root: path.join(__dirname, '../build')})
 })
 
 // app.use(middleware.unknownEndpoint);
