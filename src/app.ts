@@ -68,10 +68,11 @@ if (process.env.REDIS_URL) {
   redisClient = new Redis()
 }
 
-// const whiteList = ["http://localhost:3000", "https://whispering-atoll-93096.herokuapp.com/"]
+const whiteList = ["http://localhost:3000", "https://whispering-atoll-93096.herokuapp.com/"]
 app.use(
   cors({
-    origin: "https://whispering-atoll-93096.herokuapp.com/",
+    // origin: "https://whispering-atoll-93096.herokuapp.com/",
+    origin: whiteList, 
     credentials: true,
   })
 );
