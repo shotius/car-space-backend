@@ -1,12 +1,11 @@
-import axios from 'axios';
-import { ICar, ICarImages } from 'types';
+import { ICar } from 'types';
 import Car from '../models/car';
 
 const getCars = async (
   page: number
-): Promise<{ cars: ICar[]; pagesTotal: number; Images: Promise<ICarImages>[] }> => {
+): Promise<{ cars: ICar[]; pagesTotal: number }> => {
   // cars per page
-  const perPage = 27;
+  const perPage = 6;
 
   // total cars in the db
   const carsTotal = await Car.find({}).countDocuments();
@@ -20,25 +19,25 @@ const getCars = async (
   // retrieve cars
   const cars = await Car.find({}).skip(startFrom).limit(perPage);
 
-  const ImagePromises = cars.map(async (car): Promise<ICarImages> => {
-    const result = await axios
-      .get(car.imgU)
-      .then(({ data }) => data)
-      .catch((err) => {
-        if (err.response.status === 404) {
-          return 'Car Images not found';
-        }
-        return 'Some Other error occured while fetching car images';
-      });
-      console.log(result);
-    return result;
-  });
+  // const ImagePromises = cars.map(async (car): Promise<ICarImages> => {
+  //   const result = await axios
+  //     .get(car.imgU)
+  //     .then(({ data }) => data)
+  //     .catch((err) => {
+  //       if (err.response.status === 404) {
+  //         return 'Car Images not found';
+  //       }
+  //       return 'Some Other error occured while fetching car images';
+  //     });
+  //     console.log(result);
+  //   return result;
+  // });
 
-  const Images = await Promise.all(ImagePromises)
-    .then((data) => data)
-    .catch((err) => err);
+  // const Images = await Promise.all(ImagePromises)
+  //   .then((data) => data)
+  //   .catch((err) => err);
 
-  return { cars, pagesTotal, Images };
+  return { cars, pagesTotal };
 };
 
 export default {

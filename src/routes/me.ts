@@ -4,6 +4,7 @@ const meRouter = express.Router();
 
 meRouter.get("/", async (req, res) => {
   const { user } = req.session;
+  // console.log('hit');
   if (user) {
     if (await User.findById(user.id)) {
       res.json({

@@ -1,1 +1,0 @@
-{"version":3,"sources":["webpack://src/components/molecules/MainSlider/styles.css","webpack://src/App.css"],"names":[],"mappings":"AAAA,YACE,qBAAsB,CACtB,iBACF,CCHA,GACI,iBACJ","file":"main.f3341ca8.chunk.css","sourcesContent":[".slick-dots {\n  background-color: gray;\n  position: absolute;\n}","h1 {\n    text-align: center;\n}"]}
