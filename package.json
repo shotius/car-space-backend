@@ -11,7 +11,7 @@
     "lint": "eslint --ext .ts .",
     "build:ui": "rm -rf build && cd ../web && rm -r build && npm run build --prod && mv dist build && cp -r build ../server",
     "deploy": "git push heroku master",
-    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push && npm run deploy",
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push origin master && npm run deploy",
     "logs:prod": "heroku logs --tail"
   },
   "author": "",
