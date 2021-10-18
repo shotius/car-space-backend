@@ -40,6 +40,16 @@ const getCars = async (
   return { cars, pagesTotal };
 };
 
+const getAllBrands = async() => {
+  const brands = await Car.distinct('m')
+  return brands
+}
+
+const getModels = async (brand: string) => {
+  const models = await Car.find({m: brand}).distinct('mD')
+  return models
+}
+
 export default {
-  getCars,
+  getCars, getAllBrands, getModels
 };
