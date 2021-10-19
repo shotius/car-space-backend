@@ -9,7 +9,7 @@
     "dev": "NODE_PATH=./dist nodemon dist/index.js",
     "build": "tsc",
     "lint": "eslint --ext .ts .",
-    "build:ui": "rm -rf build && cd ../web && npm run build --prod && mv dist build && cp -r build ../server",
+    "build:ui": "rm -rf build && cd ../web && rm -rf build &&npm run build --prod && mv dist build && cp -r build ../server",
     "deploy": "git push heroku master",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push origin master && npm run deploy",
     "logs:prod": "heroku logs --tail"
