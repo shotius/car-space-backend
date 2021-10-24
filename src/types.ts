@@ -21,7 +21,7 @@ export interface INote {
   user: Types.ObjectId;
 }
 
-export interface ICar {
+export interface ICar{
   lN: string; // Lot number
   m: string; // Make
   vin: string; // VIN
@@ -57,7 +57,7 @@ interface ImageSequense {
   }[]
 }
 
-export interface ICarImages {
+export interface ICarImages extends Document {
   objectId: number;
   imgCount: number;
   lotImages: ImageSequense[];

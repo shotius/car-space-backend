@@ -1,11 +1,14 @@
-import { ICar } from 'types';
+import axios from 'axios';
+import { ICar, ICarImages } from 'types';
 import Car from '../models/car';
 
 const getCars = async (
   page: number
+// ): Promise<{ cars: ICar[]; pagesTotal: number; carImages: ICarImages[] }> => {
 ): Promise<{ cars: ICar[]; pagesTotal: number }> => {
+
   // cars per page
-  const perPage = 6;
+  const perPage = 15;
 
   // total cars in the db
   const carsTotal = await Car.find({}).countDocuments();
@@ -19,8 +22,9 @@ const getCars = async (
   // retrieve cars
   const cars = await Car.find({}).skip(startFrom).limit(perPage);
 
+
   // const ImagePromises = cars.map(async (car): Promise<ICarImages> => {
-  //   const result = await axios
+  //   const result = axios
   //     .get(car.imgU)
   //     .then(({ data }) => data)
   //     .catch((err) => {
@@ -29,15 +33,21 @@ const getCars = async (
   //       }
   //       return 'Some Other error occured while fetching car images';
   //     });
-  //     console.log(result);
+  //     // console.log(result);
   //   return result;
   // });
 
-  // const Images = await Promise.all(ImagePromises)
+  // const carImages = await Promise.all(ImagePromises)
   //   .then((data) => data)
   //   .catch((err) => err);
 
-  return { cars, pagesTotal };
+
+  //   console.log(carImages)
+    // console.log(Images)
+
+  // return { cars, pagesTotal, carImages };
+
+  return {cars, pagesTotal}
 };
 
 const getAllBrands = async() => {
