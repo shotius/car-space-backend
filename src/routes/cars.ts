@@ -1,5 +1,6 @@
 import express from 'express';
 import carsServices from 'services/carsServices';
+import carImagesService from 'services/carImagesService';
 // import carsServices from 'src/services/carsServices';
 // import carsServices from 'services/carsServices';
 // import carsServices from 'src/services/carsServices';
@@ -10,16 +11,29 @@ const carsRouter = express.Router();
 
 carsRouter.get('/', async (req, res) => {
   const page = req.query.page || 1;
+  const limit = req.query.limit || 5;
 
-  const cars = await carsServices.getCars(Number(page));
+  const cars = await carsServices.getCars(Number(page), Number(limit));
 
   return res.send(cars);
 });
+
 
 carsRouter.get('/brands', async (_req, res) => {
   const brands = await carsServices.getAllBrands();
   res.send(brands);
 });
+
+carsRouter.get('/:lotNumber', async (req, res) => {
+  const lotNumber = req.params.lotNumber;
+  const car = await carsServices.getSingleCar(lotNumber);
+  if (car.length) {
+    return res.send(car[0]);
+  } else {
+    return res.status(400).send('car not found')
+  }
+});
+
 
 carsRouter.get('/models', async (req, res) => {
   const brand = req.query.brand || null;
@@ -28,7 +42,12 @@ carsRouter.get('/models', async (req, res) => {
     return res.status(400).send('bad brand query');
   }
   const models = await carsServices.getModels(String(brand).toUpperCase());
-  return res.send(models)
+  return res.send(models);
+});
+
+carsRouter.get('/images', async (_, res) => {
+  const images = await carImagesService.getImages();
+  return res.send(images);
 });
 
 export default carsRouter;

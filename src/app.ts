@@ -11,8 +11,7 @@ import { defaultErrorHander } from "./utils/midlewares";
 
 import notesRouter from "./routes/notes";
 import usersRouter from "./routes/users";
-import loginRouter from "./routes/login";
-import logoutRouter from "./routes/logout";
+// import loginRouter from "./routes/login";
 import meRouter from "./routes/me";
 import carsRouter from './routes/cars'
 
@@ -68,7 +67,7 @@ if (process.env.REDIS_URL) {
   redisClient = new Redis()
 }
 
-const whiteList = ["http://localhost:3000", "https://whispering-atoll-93096.herokuapp.com/"]
+const whiteList = ["http://localhost:3000", "https://whispering-atoll-93096.herokuapp.com/", "http://localhost:5000"]
 app.use(
   cors({
     // origin: "https://whispering-atoll-93096.herokuapp.com/",
@@ -101,8 +100,6 @@ app.use(express.static( 'build'));
 
 app.use("/api/notes", notesRouter);
 app.use("/api/users", usersRouter);
-app.use("/api/login", loginRouter);
-app.use("/api/logout", logoutRouter);
 app.use("/api/me", meRouter);
 app.use("/api/cars", carsRouter)
 

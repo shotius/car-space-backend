@@ -1,28 +1,32 @@
-import axios from 'axios';
-import { ICar, ICarImages } from 'types';
+// import CarImagesService from 'services/carImagesService';
+import { ICar } from 'types';
 import Car from '../models/car';
+// import { ICarImages } from 'types';
+// import {Document} from 'mongoose'
 
 const getCars = async (
-  page: number
-// ): Promise<{ cars: ICar[]; pagesTotal: number; carImages: ICarImages[] }> => {
-): Promise<{ cars: ICar[]; pagesTotal: number }> => {
-
-  // cars per page
-  const perPage = 15;
+  page: number,
+  limit: number
+): Promise<{
+  cars: ICar[];
+  pagesTotal: number;
+  // carImages: (ICarImages & Document<any, any, ICarImages>)[];
+}> => {
+  // ): Promise<{ cars: ICar[]; pagesTotal: number }> => {
 
   // total cars in the db
   const carsTotal = await Car.find({}).countDocuments();
 
   // total pages for pagination
-  const pagesTotal = Math.floor(carsTotal / perPage);
+  const pagesTotal = Math.floor(carsTotal / limit);
 
   // how many cars to skip
-  const startFrom = (page - 1) * perPage;
+  const startFrom = (page - 1) * limit;
 
   // retrieve cars
-  const cars = await Car.find({}).skip(startFrom).limit(perPage);
+  const cars = await Car.find({}).skip(startFrom).limit(limit);
 
-
+  // const carImages = await CarImagesService.getImages();
   // const ImagePromises = cars.map(async (car): Promise<ICarImages> => {
   //   const result = axios
   //     .get(car.imgU)
@@ -41,25 +45,31 @@ const getCars = async (
   //   .then((data) => data)
   //   .catch((err) => err);
 
-
   //   console.log(carImages)
-    // console.log(Images)
+  // console.log(Images)
 
   // return { cars, pagesTotal, carImages };
 
-  return {cars, pagesTotal}
+  return { cars, pagesTotal };
 };
 
-const getAllBrands = async() => {
-  const brands = await Car.distinct('m')
-  return brands
-}
+const getAllBrands = async () => {
+  const brands = await Car.distinct('m');
+  return brands;
+};
 
 const getModels = async (brand: string) => {
-  const models = await Car.find({m: brand}).distinct('mD')
-  return models
-}
+  const models = await Car.find({ m: brand }).distinct('mD');
+  return models;
+};
+
+const getSingleCar = async (lotNumber: string) => {
+  return Car.find({ lN: lotNumber });
+};
 
 export default {
-  getCars, getAllBrands, getModels
+  getCars,
+  getAllBrands,
+  getModels,
+  getSingleCar,
 };

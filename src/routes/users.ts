@@ -7,6 +7,8 @@ import logger from '../utils/logger';
 
 const usersRouter = express.Router();
 
+
+// register
 usersRouter.post('/register', async (req, res) => {
   const body = req.body;
 
@@ -34,6 +36,52 @@ usersRouter.post('/register', async (req, res) => {
   return res.json(savedUser);
 });
 
+// login
+usersRouter.post("/login", async (req, res) => {
+  const body = req.body;
+
+  const user = await User.findOne({ username: body.username });
+
+  const passwordIsCorrect =
+    user === null
+      ? null
+      : await argon2.verify(user.passwordHash, body.password);
+
+  if (!(user && passwordIsCorrect)) {
+    return res.status(401).json({ error: "invalid password or username" });
+  }
+
+  const userForSession = {
+    username: user.username,
+    isAuthenticated: true,
+    role: user.role,
+    id: user._id,
+  };
+
+  req.session.user = userForSession
+
+  return res.status(200).send({
+    role: user.role.toLowerCase(),
+    success: true,
+  });
+});
+
+
+//logout
+usersRouter.get('/logout', async (req, res) => {
+  delete req.session.user ;
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    } else {
+      return res.send('removed session information');
+    }
+  });
+});
+
+
+
+// get all users
 usersRouter.get('/', async (_req, res) => {
   res.json(await userService.getUsers());
 });

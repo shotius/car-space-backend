@@ -24,7 +24,7 @@ const carSchema = new Schema<ICar>(
     trans: String, // Transmission
     imgT: String, // Image Thumbnail
     imgU: String, // Image URL
-    y: String, // Year
+    y: String, // YearTypes
     fuel: String, // Fuel Type
     keys: String, // Has Keys-Yes or No
   },

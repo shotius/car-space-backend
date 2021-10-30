@@ -57,7 +57,7 @@ interface ImageSequense {
   }[]
 }
 
-export interface ICarImages extends Document {
+export interface ICarImages{
   objectId: number;
   imgCount: number;
   lotImages: ImageSequense[];
