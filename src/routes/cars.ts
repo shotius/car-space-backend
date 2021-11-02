@@ -11,7 +11,7 @@ const carsRouter = express.Router();
 
 carsRouter.get('/', async (req, res) => {
   const page = req.query.page || 1;
-  const limit = req.query.limit || 5;
+  const limit = req.query.limit || 20;
 
   const cars = await carsServices.getCars(Number(page), Number(limit));
 
