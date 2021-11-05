@@ -1,1 +1,0 @@
-import{R as e}from"./vendor.41c4480e.js";import{B as a,H as r}from"./index.248baa81.js";import"./react-redux.b99307fc.js";import"./axios.7b768d2b.js";import"./focus-visible.a5aa1618.js";const n=()=>e.createElement(a,null,e.createElement(r,null,"Register"));export{n as RegisterPage,n as default};
