@@ -12,7 +12,6 @@ export interface IUser {
   name: string;
   role: string;
   passwordHash: string;
-  notes: Types.ObjectId[] | Record<string, unknown>[];
 }
 
 export interface INote {

@@ -1,12 +1,13 @@
 import argon2 from 'argon2';
 import express from 'express';
+import { validate } from 'middlewares/validate';
 import userService from 'services/userService';
 import User from '../models/user';
 import { fileExists } from '../utils/fileExists';
 import logger from '../utils/logger';
+import { loginValidations } from './../validation/LoginValidation';
 
 const usersRouter = express.Router();
-
 
 // register
 usersRouter.post('/register', async (req, res) => {
@@ -37,39 +38,40 @@ usersRouter.post('/register', async (req, res) => {
 });
 
 // login
-usersRouter.post("/login", async (req, res) => {
-  const body = req.body;
+usersRouter.post('/login', validate(loginValidations), async (req, res) => {
+  const { username, password } = req.body;
 
-  const user = await User.findOne({ username: body.username });
+  const { user, errors } = await userService.loginUser({
+    username,
+    password,
+  });
 
-  const passwordIsCorrect =
-    user === null
-      ? null
-      : await argon2.verify(user.passwordHash, body.password);
-
-  if (!(user && passwordIsCorrect)) {
-    return res.status(401).json({ error: "invalid password or username" });
+  // if login is not successful return errors
+  if (errors) {
+    return res.status(401).json({errors});
   }
 
-  const userForSession = {
-    username: user.username,
-    isAuthenticated: true,
-    role: user.role,
-    id: user._id,
-  };
+  // if user not received while login
+  if (!user) {
+    return res
+      .status(500)
+      .send(
+        'Internal Server Error, user object not received from login service'
+      );
+  }
 
-  req.session.user = userForSession
+  // set session
+  userService.addUserSession(req, user);
 
-  return res.status(200).send({
+  return res.send({
     role: user.role.toLowerCase(),
     success: true,
   });
 });
 
-
 //logout
 usersRouter.get('/logout', async (req, res) => {
-  delete req.session.user ;
+  delete req.session.user;
   req.session.destroy((err) => {
     if (err) {
       return res.status(500).json({ error: err.message });
@@ -78,8 +80,6 @@ usersRouter.get('/logout', async (req, res) => {
     }
   });
 });
-
-
 
 // get all users
 usersRouter.get('/', async (_req, res) => {

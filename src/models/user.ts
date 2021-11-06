@@ -9,12 +9,6 @@ const userSchema = new Schema<IUser>({
   name: String,
   role: String,
   passwordHash: String,
-  notes: [
-    {
-      type: Schema.Types.ObjectId,
-    ref: 'Note',
-    }
-  ]
 });
 
 userSchema.set("toJSON", {
