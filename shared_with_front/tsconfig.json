@@ -5,6 +5,7 @@
       "declaration": true,
       "declarationMap": true,
       "outDir": "./dist",
+      "rootDir": ".", 
       "composite": true
   },
   "exclude": ["../node_modules"],
