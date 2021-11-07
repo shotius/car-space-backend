@@ -1,9 +1,10 @@
 import { IUser } from "types";
 import { Document } from "mongoose";
+import { ValidationError } from "express-validator";
 
-export interface UserErrors {
-  param: string;
-  msg: string;
+export interface MyValidationErrors {
+  param: ValidationError['param'];
+  msg: ValidationError['msg'];
 }
 
 export interface User {
@@ -12,7 +13,7 @@ export interface User {
 }
 
 export interface UserResponse {
-  errors?: UserErrors[];
+  errors?: MyValidationErrors[];
   user?: (IUser & Document<any, any, IUser>)
 }
 
@@ -23,5 +24,5 @@ export interface LoginParams {
 
 export interface ParsedLogin {
   loginParams?: LoginParams;
-  errors?: UserErrors[]
+  errors?: MyValidationErrors[]
 }
