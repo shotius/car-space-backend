@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { ICar } from 'types';
+import { ICar } from '../../shared_with_front/types/types-shared';
 
 const carSchema = new Schema<ICar>(
   {

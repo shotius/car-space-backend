@@ -1,28 +1,6 @@
-import { IUser } from "types";
-import { Document } from "mongoose";
-import { ValidationError } from "express-validator";
-
-export interface MyValidationErrors {
-  param: ValidationError['param'];
-  msg: ValidationError['msg'];
-}
-
-export interface User {
-  role: IUser
-  
-}
-
-export interface UserResponse {
-  errors?: MyValidationErrors[];
-  user?: (IUser & Document<any, any, IUser>)
-}
-
-export interface LoginParams {
-  username: string;
-  password: string;
-}
+import { LoginParams, MyValidationErrors } from "../../shared_with_front/types/types-shared";
 
 export interface ParsedLogin {
   loginParams?: LoginParams;
-  errors?: MyValidationErrors[]
+  errors?: MyValidationErrors[];
 }

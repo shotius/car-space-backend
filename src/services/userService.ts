@@ -1,19 +1,10 @@
 import argon2 from 'argon2';
 import { Request } from 'express';
 import { Document } from 'mongoose';
-import { IUser, SessionUser } from 'types';
-import { ITimote2 } from '../../../common/interfaces/types-shared';
+import { SessionUser } from 'types';
+import { IUser, LoginParams, UserResponse } from '../../shared_with_front/types/types-shared';
 import User from '../models/user';
 import { getBooks } from '../utils/fileScraper';
-import { LoginParams, UserResponse } from './types';
-
-const test: ITimote2 = {
-  age: 123,
-  lastName: 'lastname',
-  name: 'shotius',
-};
-console.log(test);
-
 
 const startScrape = async () => {
   try {

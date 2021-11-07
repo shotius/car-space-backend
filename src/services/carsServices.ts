@@ -1,5 +1,5 @@
 // import CarImagesService from 'services/carImagesService';
-import { ICar } from 'types';
+import { ICar } from '../../shared_with_front/types/types-shared';
 import Car from '../models/car';
 // import { ICarImages } from 'types';
 // import {Document} from 'mongoose'
