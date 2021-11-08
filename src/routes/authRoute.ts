@@ -44,6 +44,7 @@ authRouter.post('/login', validate(loginValidations), async (req, res) => {
       results: {
         role: user.role.toLowerCase(),
         isAuthenticated: true,
+        username: user.username
       },
     })
   );
@@ -85,7 +86,7 @@ authRouter.get('/logout', async (req, res) => {
       return res.status(500).json({ error: err.message });
     } else {
       // return res.send('removed session information');
-      return res.clearCookie('uid',{path: '/'}).status(200).send('Ok.')
+      return res.clearCookie('uid', { path: '/' }).status(200).send('Ok.');
     }
   });
 });
