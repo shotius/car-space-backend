@@ -1,15 +1,24 @@
-import { Document } from "mongoose";
-import { ValidationError } from "express-validator";
+import { Document } from 'mongoose';
+import { ValidationError } from 'express-validator';
 
+/** General reponse */
+type StatusCode = 200 | 201 | 400 | 401 | 404 | 403 | 422 | 500;
 
+export interface ApiResponse {
+  success: boolean
+  message?: string;
+  results?: any;
+  code?: StatusCode
+  errors?: MyValidationErrors[]
+}
+
+/** IUser */
 export interface IUser {
   username: string;
   name: string;
   role: string;
   passwordHash: string;
 }
-
-
 
 export interface LoginParams {
   username: string;
@@ -21,15 +30,12 @@ export interface MyValidationErrors {
   msg: ValidationError['msg'];
 }
 
-
 export interface UserResponse {
   errors?: MyValidationErrors[];
-  user?: (IUser & Document<any, any, IUser>)
+  user?: IUser & Document<any, any, IUser>;
 }
 
-
-
-export interface ICar{
+export interface ICar {
   lN: string; // Lot number
   m: string; // Make
   vin: string; // VIN

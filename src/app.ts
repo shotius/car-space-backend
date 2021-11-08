@@ -1,27 +1,27 @@
-import express from "express";
-import session from "express-session";
-import Redis from "ioredis";
-import connectRedis from "connect-redis";
-import mongoose from "mongoose";
-import cors from "cors";
+import express from 'express';
+import session from 'express-session';
+import Redis from 'ioredis';
+import connectRedis from 'connect-redis';
+import mongoose from 'mongoose';
+import cors from 'cors';
 
-import logger from "./utils/logger";
-import { MONGODB_URI } from "./utils/config";
-import { defaultErrorHander } from "./utils/midlewares";
+import logger from './utils/logger';
+import { MONGODB_URI } from './utils/config';
+import { defaultErrorHander } from './utils/midlewares';
 
-import notesRouter from "./routes/notes";
-import usersRouter from "./routes/users";
-// import loginRouter from "./routes/login";
-import meRouter from "./routes/me";
-import carsRouter from './routes/cars'
+import notesRouter from './routes/notes';
+import usersRouter from './routes/usersRoute';
+import meRouter from './routes/me';
+import carsRouter from './routes/cars';
+import authRouter from './routes/authRoute';
 
-import url from "url";
+import url from 'url';
 import path from 'path';
 
-import {__prod__} from "./utils/constants";
-import { SessionUser } from "./types";
+import { __prod__ } from './utils/constants';
+import { SessionUser } from './types';
 
-declare module "express-session" {
+declare module 'express-session' {
   interface Session {
     user?: SessionUser;
   }
@@ -29,7 +29,7 @@ declare module "express-session" {
 
 const app = express();
 
-logger.info("connecting to db");
+logger.info('connecting to db');
 
 // connnection to mongoDB
 mongoose
@@ -40,10 +40,10 @@ mongoose
     useCreateIndex: true,
   })
   .then(() => {
-    logger.info("connected to MongoDb");
+    logger.info('connected to MongoDb');
   })
   .catch((error) => {
-    console.error("error connecting to DB", error.message);
+    console.error('error connecting to DB', error.message);
   });
 
 // configure Redis
@@ -56,59 +56,67 @@ if (process.env.REDIS_URL) {
   redisClient = new Redis({
     port: Number(redis_uri.port) + 1,
     host: redis_uri.hostname!,
-    password: redis_uri.auth?.split(":")[1],
+    password: redis_uri.auth?.split(':')[1],
     db: 0,
     tls: {
       rejectUnauthorized: false,
       requestCert: true,
-    }
+    },
   });
 } else {
-  redisClient = new Redis()
+  redisClient = new Redis();
 }
 
-const whiteList = ["http://localhost:3000", "https://whispering-atoll-93096.herokuapp.com/", "http://localhost:5000"]
+// cors
+const whiteList = [
+  'http://localhost:3000',
+  'https://whispering-atoll-93096.herokuapp.com/',
+  'http://localhost:5000',
+];
+
 app.use(
   cors({
-    // origin: "https://whispering-atoll-93096.herokuapp.com/",
-    origin: whiteList, 
+    origin: whiteList,
     credentials: true,
   })
 );
 app.use(express.json());
 
-app.set("trust proxy", 1);
+app.set('trust proxy', 1);
+
 //Configure session middleware
 app.use(
   session({
-    name: "uid",
+    name: 'uid',
     store: new redisStore({ client: redisClient, disableTouch: true }),
     saveUninitialized: false,
     cookie: {
       maxAge: 1000 * 60 * 60 * 24 * 365, // expire in 10 years
-      sameSite: "lax",
+      sameSite: 'lax',
       httpOnly: true,
       secure: __prod__,
-      path: "/",
+      path: '/',
     },
-    secret: "keyasdf",
+    secret: 'keyasdf',
     resave: false,
   })
 );
 
-app.use(express.static( 'build'));
+app.use(express.static('build'));
 
-app.use("/api/notes", notesRouter);
-app.use("/api/users", usersRouter);
-app.use("/api/me", meRouter);
-app.use("/api/cars", carsRouter)
+//routes
+app.use('/api/notes', notesRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/me', meRouter);
+app.use('/api/cars', carsRouter);
+app.use('/api/auth', authRouter);
 
-
+// send front from here
 app.get('*', function (_req, res) {
-  res.sendFile('index.html', {root: path.join(__dirname, '../build')})
-})
+  res.sendFile('index.html', { root: path.join(__dirname, '../build') });
+});
 
 // app.use(middleware.unknownEndpoint);
 app.use(defaultErrorHander);
 
-export default app
+export default app;
