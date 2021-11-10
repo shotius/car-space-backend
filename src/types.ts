@@ -15,14 +15,10 @@ export interface INote {
 
 interface ImageSequense {
   sequence: number;
-  link: {
-    url: string;
-    isThumbNail: boolean;
-    isHdImage: boolean;
-  }[]
+  link: Array<any>;
 }
 
-export interface ICarImages{
+export interface ICarImages {
   objectId: number;
   imgCount: number;
   lotImages: ImageSequense[];

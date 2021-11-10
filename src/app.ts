@@ -12,7 +12,7 @@ import { defaultErrorHander } from './utils/midlewares';
 import notesRouter from './routes/notes';
 import usersRouter from './routes/usersRoute';
 import meRouter from './routes/me';
-import carsRouter from './routes/cars';
+import carsRouter from './routes/carsRoute';
 import authRouter from './routes/authRoute';
 
 import url from 'url';
