@@ -33,33 +33,22 @@ carsRouter.get('/images', async (_, res) => {
   return res.send({ images, count: images.length });
 });
 
-carsRouter.get('/images/small', async (_, res) => {
+carsRouter.get('/images/small', async (req, res) => {
+  const query = req.query
+  console.group('query', query.type)
   const images = await carImagesService.getImages();
-  // let links: any = {};
+  let links: any = {};
   const smallImages: any = {};
 
-  // const smallImages = images.reduce((cur, acc) => {
-  //   console.log()
-  // }, {})
+  images.forEach((img) => {
+    img.lotImages.forEach((lot, k) => {
+      links[k] = lot.link.find((l) => l.isThumbNail === true);
+    });
 
-  console.log('images[0].lotImages[0].link', images[0].lotImages[0].link)
+    smallImages[img.objectId] = links;
+  });
 
-  const data = images[0].lotImages[0].link
-
-  console.log(Object.keys(data))
-  // const keys: string[] = Object.keys(data)
-
-  console.log(data instanceof Array)
-
-  data.map(d => console.log(d))
-  // images.forEach((img) => {
-  //   img.lotImages.forEach((lot, k) => {
-  //     // console.log('link', lot.link[0])
-  //     links[k] = lot.link;
-  //   });
-  //   smallImages[img.objectId] = links[0];
-  // });
-  return res.send({ smallImages });
+  return res.send({ smallImages});
 });
 
 carsRouter.get('/:lotNumber', async (req, res) => {

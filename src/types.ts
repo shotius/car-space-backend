@@ -15,7 +15,11 @@ export interface INote {
 
 interface ImageSequense {
   sequence: number;
-  link: Array<any>;
+  link: {
+    url: String,
+    isThumbNail: Boolean,
+    isHdImage: Boolean,
+  }[];
 }
 
 export interface ICarImages {

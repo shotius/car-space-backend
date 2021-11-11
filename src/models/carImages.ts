@@ -8,16 +8,17 @@ const carImagesSchema = new Schema<ICarImages>(
     lotImages: [
       {
         sequence: Number,
-        link: {
-          url: String,
-          isThumbNail: Boolean,
-          isHdImage: Boolean,
-        },
+        link: [
+          {
+            url: String,
+            isThumbNail: Boolean,
+            isHdImage: Boolean,
+          },
+        ],
       },
     ],
   },
   { collection: 'carImages' }
 );
 
-
-export default model<ICarImages>('CarImages', carImagesSchema)
+export default model<ICarImages>('CarImages', carImagesSchema);
