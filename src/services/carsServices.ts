@@ -53,18 +53,59 @@ const getCars = async (
   return { cars, pagesTotal };
 };
 
+// get all distinct brands
 const getAllBrands = async () => {
   const brands = await Car.distinct('m');
   return brands;
 };
 
+// Based on a brand getting all distrinct models
 const getModels = async (brand: string) => {
   const models = await Car.find({ m: brand }).distinct('mD');
   return models;
 };
 
+// Get a car with lot number
 const getSingleCar = async (lotNumber: string) => {
   return Car.find({ lN: lotNumber });
+};
+
+// Get all distinct damage and secondary damage conditions
+const getConditions = async () => {
+  const conditions = await Promise.all([
+    Car.find({}).distinct('dmg'),
+    Car.find({}).distinct('sDmg'),
+  ]);
+
+  // merge all array results
+  const merged = conditions.reduce<string[]>(
+    (curr: string[], acc: string[]) => {
+      return acc.concat(curr);
+    },
+    []
+  );
+
+  return [...new Set(merged)];
+};
+
+// get all distinct car body styles
+const getTypes = async () => {
+  return await Car.find({}).distinct('bSt');
+};
+
+// Get all locations
+const getLocation = async () => {
+  return await Car.find({}).distinct('lC');
+};
+
+// Get all distinc drives (4x4) and so on
+const getDrives = async () => {
+  return await Car.find({}).distinct('dr');
+};
+
+// get all types of distinct fuel
+const getFuels = async () => {
+  return await Car.find({}).distinct('fuel');
 };
 
 export default {
@@ -72,4 +113,9 @@ export default {
   getAllBrands,
   getModels,
   getSingleCar,
+  getConditions,
+  getTypes,
+  getLocation,
+  getDrives,
+  getFuels,
 };
