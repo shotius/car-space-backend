@@ -35,7 +35,9 @@ carsRouter.get('/images', async (_, res) => {
 
 carsRouter.get('/images/small', async (req, res) => {
   const query = req.query
-  console.group('query', query.type)
+  
+  const 
+
   const images = await carImagesService.getImages();
   let links: any = {};
   const smallImages: any = {};
