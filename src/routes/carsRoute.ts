@@ -36,7 +36,7 @@ carsRouter.get('/models', async (req, res) => {
 carsRouter.get('/conditions', async (_req, res) => {
   try {
     const conditions = await carsServices.getConditions();
-    return res.json({ conditions });
+    return res.send( conditions );
   } catch (err) {
     return res.status(500).send(
       error({
@@ -50,7 +50,7 @@ carsRouter.get('/conditions', async (_req, res) => {
 carsRouter.get('/types', async (_req, res) => {
   try {
     const types = await carsServices.getTypes();
-    return res.json({ types });
+    return res.send(types);
   } catch (erro) {
     return res.status(500).send(
       error({
@@ -63,7 +63,7 @@ carsRouter.get('/types', async (_req, res) => {
 carsRouter.get('/locations', async (_req, res) => {
   try {
     const locations = await carsServices.getLocation();
-    return res.json({ locations });
+    return res.send( locations );
   } catch (err) {
     return res.status(500).send(
       error({
@@ -76,7 +76,7 @@ carsRouter.get('/locations', async (_req, res) => {
 carsRouter.get('/drives', async (_, res) => {
   try {
     const drives = await carsServices.getDrives();
-    return res.json({ drives });
+    return res.send( drives );
   } catch (err) {
     return res.status(500).send(
       error({
@@ -89,7 +89,7 @@ carsRouter.get('/drives', async (_, res) => {
 carsRouter.get('/fuels', async (_, res) => {
   try {
     const fuels = await carsServices.getFuels();
-    return res.json({ fuels });
+    return res.send( fuels );
   } catch (err) {
     return res.status(500).send(
       error({
@@ -98,6 +98,20 @@ carsRouter.get('/fuels', async (_, res) => {
     );
   }
 });
+
+carsRouter.get('/cylinders', async (_, res) => {
+  try {
+    const cylinders = await carsServices.getCylinders();
+    return res.send( cylinders );
+  } catch (err) {
+    return res.status(500).send(
+      error({
+        message: 'could not get Cylinder types for filter',
+      })
+    );
+  }
+});
+
 
 carsRouter.get('/images', async (_, res) => {
   const images = await carImagesService.getImages();

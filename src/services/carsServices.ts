@@ -55,8 +55,7 @@ const getCars = async (
 
 // get all distinct brands
 const getAllBrands = async () => {
-  const brands = await Car.distinct('m');
-  return brands;
+  return await Car.distinct('m');
 };
 
 // Based on a brand getting all distrinct models
@@ -108,6 +107,10 @@ const getFuels = async () => {
   return await Car.find({}).distinct('fuel');
 };
 
+const getCylinders = async () => {
+  return await Car.distinct('cyl')
+}
+
 export default {
   getCars,
   getAllBrands,
@@ -118,4 +121,5 @@ export default {
   getLocation,
   getDrives,
   getFuels,
+  getCylinders
 };
