@@ -1,25 +1,24 @@
+import connectRedis from 'connect-redis';
+import cors from 'cors';
 import express from 'express';
 import session from 'express-session';
 import Redis from 'ioredis';
-import connectRedis from 'connect-redis';
 import mongoose from 'mongoose';
-import cors from 'cors';
-
-import logger from './utils/logger';
-import { MONGODB_URI } from './utils/config';
-import { defaultErrorHander } from './utils/midlewares';
-
+import path from 'path';
+import url from 'url';
+import authRouter from './routes/authRoute';
+import carsRouter from './routes/carsRoute';
 import notesRouter from './routes/notes';
 import usersRouter from './routes/usersRoute';
-import meRouter from './routes/me';
-import carsRouter from './routes/carsRoute';
-import authRouter from './routes/authRoute';
-
-import url from 'url';
-import path from 'path';
-
-import { __prod__ } from './utils/constants';
 import { SessionUser } from './types';
+import { MONGODB_URI } from './utils/config';
+import { __prod__ } from './utils/constants';
+import logger from './utils/logger';
+import { defaultErrorHander } from './utils/midlewares';
+
+
+
+
 
 declare module 'express-session' {
   interface Session {
@@ -107,7 +106,6 @@ app.use(express.static('build'));
 //routes
 app.use('/api/notes', notesRouter);
 app.use('/api/users', usersRouter);
-app.use('/api/me', meRouter);
 app.use('/api/cars', carsRouter);
 app.use('/api/auth', authRouter);
 

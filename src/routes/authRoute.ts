@@ -13,6 +13,7 @@ const authRouter = express.Router();
 authRouter.post('/login', validate(loginValidations), async (req, res) => {
   const { username, password } = req.body;
 
+  console.log('here')
   const { user, errors } = await authServices.loginUser({
     username,
     password,
@@ -89,6 +90,23 @@ authRouter.get('/logout', async (req, res) => {
       return res.clearCookie('uid', { path: '/' }).status(200).send('Ok.');
     }
   });
+});
+
+authRouter.get("/me", async (req, res) => {
+  const { user } = req.session;
+  if (user) {
+    if (await User.findById(user.id)) {
+      res.json({
+        username: user.username,
+        isAuthenticated: user.isAuthenticated,
+        role: user.role.toLowerCase(),
+      });
+    } else {
+      res.status(401).json({ error: "user not found" });
+    }
+  } else {
+    res.json({ username: null, isAuthenticated: false, role: null });
+  }
 });
 
 export default authRouter;
