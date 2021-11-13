@@ -2,6 +2,8 @@ import express from 'express';
 import carsServices from 'services/carsServices';
 import carImagesService from 'services/carImagesService';
 import { error } from 'utils/functions/responseApi';
+import { validate } from 'middlewares/validate';
+import { validateLotNum } from 'validation/LotNumberValidation';
 
 const carsRouter = express.Router();
 
@@ -118,20 +120,27 @@ carsRouter.get('/images', async (_, res) => {
   return res.send({ images, count: images.length });
 });
 
-carsRouter.get('/images/small', async (_req, res) => {
+carsRouter.get('/images/thumb', async (_req, res) => {
   const images = await carImagesService.getImages();
   let links: any = {};
-  const smallImages: any = {};
+  const thumbImages: any = {};
 
   images.forEach((img) => {
     img.lotImages.forEach((lot, k) => {
       links[k] = lot.link.find((l) => l.isThumbNail === true);
     });
 
-    smallImages[img.objectId] = links;
+    thumbImages[img.objectId] = links;
   });
 
-  return res.send({ smallImages });
+  return res.send({ smallImages: thumbImages });
+});
+
+carsRouter.get('/images/medium', validate(validateLotNum), async (req, res) => {
+  const lotNumber = Number(req.query.lotNumber as string)
+
+  const images = await carImagesService.getMediumImages(lotNumber);
+  return res.send(images);
 });
 
 carsRouter.get('/:lotNumber', async (req, res) => {
