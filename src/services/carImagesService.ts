@@ -21,9 +21,10 @@ const getMediumImages = async (lotNumber: number) => {
           )?.url;
         });
       });
+    } else {
+      return null;
     }
-
-    return links;
+    return  Object.values(links).slice(0, 5)
   } catch (error) {
     throw new Error('Could not get Images for a car');
   }

@@ -140,11 +140,19 @@ carsRouter.get('/images/medium', validate(validateLotNum), async (req, res) => {
   const lotNumber = Number(req.query.lotNumber as string)
 
   const images = await carImagesService.getMediumImages(lotNumber);
-  return res.send(images);
+  if (images) {
+    return res.send(images);
+  } else {
+    return res.status(400).send(error({
+      message: `images not found for '${lotNumber}' lot number`
+    }))
+  }
 });
 
-carsRouter.get('/:lotNumber', async (req, res) => {
+// route returns single vehicle based on 8 digit lot number
+carsRouter.get('/:lotNumber(\\d{8})', async (req, res) => {
   const lotNumber = req.params.lotNumber;
+  console.log('here')
   const car = await carsServices.getSingleCar(lotNumber);
   if (car.length) {
     return res.send(car[0]);
