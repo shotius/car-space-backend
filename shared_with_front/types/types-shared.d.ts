@@ -1,4 +1,4 @@
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import { ValidationError } from 'express-validator';
 
 /** General reponse */
@@ -18,6 +18,7 @@ export interface IUser {
   name: string;
   role: string;
   passwordHash: string;
+  favourites?: Types.ObjectId 
 }
 
 export interface LoginParams {
