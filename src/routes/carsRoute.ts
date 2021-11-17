@@ -114,6 +114,20 @@ carsRouter.get('/cylinders', async (_, res) => {
   }
 });
 
+// sales status
+carsRouter.get('/sales_status', async (_, res) => {
+  try {
+    const salesStatus = await carsServices.getSalesStatus();
+    return res.send( salesStatus );
+  } catch (err) {
+    return res.status(500).send(
+      error({
+        message: 'could not get SalesStatus types for filter',
+      })
+    );
+  }
+});
+
 
 carsRouter.get('/images', async (_, res) => {
   const images = await carImagesService.getImages();

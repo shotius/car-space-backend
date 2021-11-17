@@ -111,6 +111,10 @@ const getCylinders = async () => {
   return await Car.distinct('cyl')
 }
 
+const getSalesStatus = async () => {
+  return await Car.distinct('sS')
+}
+
 export default {
   getCars,
   getAllBrands,
@@ -121,5 +125,6 @@ export default {
   getLocation,
   getDrives,
   getFuels,
-  getCylinders
+  getCylinders,
+  getSalesStatus
 };
