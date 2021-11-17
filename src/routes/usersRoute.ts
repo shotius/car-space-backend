@@ -1,6 +1,7 @@
 import express from 'express';
 import userService from 'services/userService';
 import { fileExists } from '../utils/fileExists';
+import { error } from 'utils/functions/responseApi';
 
 const usersRouter = express.Router();
 
@@ -9,7 +10,33 @@ usersRouter.get('/', async (_req, res) => {
   res.json(await userService.getUsers());
 });
 
+usersRouter.post('/like', async (req, res) => {
+  const body = req.body;
 
+  const lotNumber = body.lotNumber as string
+  const { user } = req.session;
+
+  const id = user?.id;
+
+  if (!id) {
+    return res.status(401).send(
+      error({
+        message: 'user not authenticated',
+      })
+    );
+  }
+
+  if (!lotNumber) {
+    return res.status(400).send(error({
+      message: 'lotNumber was not provided to like a car'
+    }))
+  }
+
+  const success = await userService.likeCar({userId: id, lotNumber: lotNumber})
+  return res.json({success});
+});
+
+usersRouter.get('/:user/favourites')
 
 /** TO-DO move it from here */
 usersRouter.get('/check', (_req, res) => {

@@ -1,15 +1,16 @@
-import { Document, Types } from 'mongoose';
+import { Document, Types, Schema } from 'mongoose';
+
 import { ValidationError } from 'express-validator';
 
 /** General reponse */
 type StatusCode = 200 | 201 | 400 | 401 | 404 | 403 | 422 | 500;
 
 export interface ApiResponse {
-  success: boolean
+  success: boolean;
   message?: string;
   results?: any;
-  code?: StatusCode
-  errors?: MyValidationErrors[]
+  code?: StatusCode;
+  errors?: MyValidationErrors[];
 }
 
 /** IUser */
@@ -18,7 +19,7 @@ export interface IUser {
   name: string;
   role: string;
   passwordHash: string;
-  favourites?: Types.ObjectId 
+  favourites?: { type: Schema.Types.ObjectId; ref: 'Car' }[];
 }
 
 export interface LoginParams {
