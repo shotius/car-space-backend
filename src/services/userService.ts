@@ -22,42 +22,44 @@ interface likeCarProps {
   userId: number;
   lotNumber: string;
 }
+
+interface likeCarProps {
+
+}
+
+// user likes vehicle
 const likeCar = async ({ userId, lotNumber }: likeCarProps) => {
   const user = await User.findById(userId);
-  const car = await Car.find({ lN: lotNumber });
+  const car = await Car.findOne({ lN: lotNumber });
 
   if (!user) {
-    return { user: 'not found' };
+    return { error: `car with '${lotNumber}' not found` };
   }
 
-  if (!car.length) {
+  if (!car) {
     return { car: 'not found' };
   }
 
-  // if car id exists in the array remove, else add
-  if (user && user.favourites) {
-    if (user.favourites.includes(car[0]._id)) {
-      user.favourites = user.favourites.filter((el) => el !== car[0]._id);
-    } else {
-      user.favourites = user.favourites.concat(car[0]._id);
-    }
-
-    try {
-      await user.save();
-      return {success: true}
-    } catch (error) {
-      return {error}
-    }
-    
+  // if car is in favourites remove, else add it in it
+  if (user.favourites.includes(lotNumber)) {
+    user.favourites = user.favourites.filter((el) => el !== lotNumber);
+  } else {
+    user.favourites = user.favourites.concat(lotNumber);
   }
 
-  return false;
+  try {
+    const res = await user.save();
+    console.log('res', res)
+    return { success: true };
+  } catch (error) {
+    return { error };
+  }
 };
 
-const getFafouriteCars = async (userId: string) => {
+const getFafouriteCars = async (userId: number) => {
   const user = await User.findById(userId);
   if (!user) {
-    return { user: 'not found' };
+    return null
   }
   return user.favourites;
 };

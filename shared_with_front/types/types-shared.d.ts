@@ -19,7 +19,7 @@ export interface IUser {
   name: string;
   role: string;
   passwordHash: string;
-  favourites?: { type: Schema.Types.ObjectId; ref: 'Car' }[];
+  favourites: string[];
 }
 
 export interface LoginParams {

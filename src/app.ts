@@ -8,7 +8,6 @@ import path from 'path';
 import url from 'url';
 import authRouter from './routes/authRoute';
 import carsRouter from './routes/carsRoute';
-import notesRouter from './routes/notes';
 import usersRouter from './routes/usersRoute';
 import { SessionUser } from './types';
 import { MONGODB_URI } from './utils/config';
@@ -104,7 +103,6 @@ app.use(
 app.use(express.static('build'));
 
 //routes
-app.use('/api/notes', notesRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/cars', carsRouter);
 app.use('/api/auth', authRouter);

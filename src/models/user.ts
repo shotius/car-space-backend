@@ -9,12 +9,7 @@ const userSchema = new Schema<IUser>({
   name: String,
   role: String,
   passwordHash: String,
-  favourites: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'Car',
-    },
-  ],
+  favourites: [String]
 });
 
 userSchema.set('toJSON', {

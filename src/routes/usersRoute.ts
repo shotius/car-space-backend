@@ -36,7 +36,22 @@ usersRouter.post('/like', async (req, res) => {
   return res.json({success});
 });
 
-usersRouter.get('/:user/favourites')
+usersRouter.get('/favourites',async (req, res) => {
+  const {user} = req.session
+  const id = user?.id
+
+  if (!id) {
+    return res.status(401).end()
+  }
+
+  const result = await userService.getFafouriteCars(id)
+
+  if (!result) {
+    return res.status(500).end()
+  }
+
+  return res.send(result)
+})
 
 /** TO-DO move it from here */
 usersRouter.get('/check', (_req, res) => {
