@@ -1,6 +1,6 @@
-import Car from 'models/car';
+import Car from 'models/car.model';
 import { IUser } from '../../shared_with_front/types/types-shared';
-import User from '../models/user';
+import User from '../models/user.model';
 import { getBooks } from '../utils/fileScraper';
 
 //** User service starts from here */

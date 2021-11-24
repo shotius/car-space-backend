@@ -1,10 +1,11 @@
-import { parseCarFilterBrands } from './../utils/queryParsers/parseCarFilterBrands';
 import express from 'express';
-import carsServices from 'services/carsServices';
-import carImagesService from 'services/carImagesService';
-import { error } from 'utils/functions/responseApi';
 import { validate } from 'middlewares/validate';
+import carImagesService from 'services/carImages.service';
+import carsServices from 'services/cars.services';
+import { error } from 'utils/functions/responseApi';
 import { validateLotNum } from 'validation/LotNumberValidation';
+import { parseQueryAsNumber } from '../utils/queryParsers/parseQueryAsNumber';
+import { parseArrayQuery } from './../utils/queryParsers/parseArrayQuery';
 
 const carsRouter = express.Router();
 
@@ -13,17 +14,27 @@ carsRouter.get('/', async (req, res) => {
   const page = req.query.page || 1;
   const limit = req.query.limit || 40;
 
-  const brands = parseCarFilterBrands(req.query);
+  const brands = parseArrayQuery(req.query, 'brand');
+  const models = parseArrayQuery(req.query, 'model');
+
+  const year_from = parseQueryAsNumber(req.query, 'year_from');
+  const year_to = parseQueryAsNumber(req.query, 'year_to');;
 
   const getCars = carsServices.getCarsPaginated({
     page: Number(page),
     limit: Number(limit),
     brands: brands,
+    models: models,
+    year_from,
+    year_to,
   });
 
   const getPagesTotal = carsServices.getPageCount({
     brands,
     limit: Number(limit),
+    models,
+    year_from,
+    year_to,
   });
 
   const [cars, pagesTotal] = await Promise.allSettled([getCars, getPagesTotal]);

@@ -1,4 +1,4 @@
-import CarImages from 'models/carImages';
+import CarImages from 'models/carImages.model';
 
 const getImages = async () => {
   const images = await CarImages.find({}).limit(15);

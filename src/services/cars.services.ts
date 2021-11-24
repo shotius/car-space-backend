@@ -1,27 +1,46 @@
 // import CarImagesService from 'services/carImagesService';
 import { ICar } from '../../shared_with_front/types/types-shared';
-import Car from '../models/car';
+import Car from '../models/car.model';
 
 /** Interfaces */
 interface getCarsProps {
   page: number;
   limit: number;
   brands: string[];
+  models: string[];
+  year_from?: number;
+  year_to?: number;
 }
 
 interface GetPageCountProps {
   brands: string[];
   limit: number;
+  models: string[];
+  year_from?: number;
+  year_to?: number;
 }
 
 interface GetAllCarsProps {
   brands: string[];
+  models: string[];
+  year_from?: number;
+  year_to?: number;
 }
 
 /** Get All cars */
-const getAllCars = ({ brands }: GetAllCarsProps) => {
+const getAllCars = ({
+  models,
+  brands,
+  year_from, 
+  year_to
+}: GetAllCarsProps) => {
   return Car.find({
-    m: brands.length ? { $in: brands } : { $exists: true },
+    $and: [
+      { m: brands.length ? { $in: brands } : { $exists: true } }, // brand filter
+      { mG: models.length ? { $in: models } : { $exists: true } }, // model filter 
+      {$expr: { $gte: [{ $toInt: '$y' },  year_from || 0 ] }}, // year from filter
+      {$expr: { $lte: [{ $toInt: '$y' }, year_to || 9999] }}, // year to filter
+    ],
   });
 };
 
@@ -30,19 +49,35 @@ const getCarsPaginated = async ({
   limit,
   page,
   brands,
+  models,
+  year_from,
+  year_to,
 }: getCarsProps): Promise<ICar[]> => {
   // how many cars to skip
   const startFrom = (page - 1) * limit;
 
   // retrieve cars
-  const cars = await getAllCars({ brands }).skip(startFrom).limit(limit);
+  const cars = await getAllCars({ brands, models, year_to, year_from })
+    .skip(startFrom)
+    .limit(limit);
 
   return cars;
 };
 
 /**Get total pages count */
-const getPageCount = async ({ brands, limit }: GetPageCountProps) => {
-  const carsTotal = await getAllCars({ brands }).countDocuments();
+const getPageCount = async ({
+  brands,
+  limit,
+  models,
+  year_to,
+  year_from,
+}: GetPageCountProps) => {
+  const carsTotal = await getAllCars({
+    brands,
+    models,
+    year_to,
+    year_from,
+  }).countDocuments();
 
   // total cars in the db
   // total pages for pagination
@@ -58,7 +93,7 @@ const getAllBrands = async () => {
 
 // Based on a brand getting all distrinct models
 const getModels = async (brand: string) => {
-  const models = await Car.find({ m: brand }).distinct('mD');
+  const models = await Car.find({ m: brand }).distinct('mG');
   return models;
 };
 

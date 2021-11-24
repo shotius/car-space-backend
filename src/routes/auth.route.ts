@@ -1,9 +1,9 @@
 import express from 'express';
 import { validate } from 'middlewares/validate';
-import authServices from 'services/authServices';
+import authServices from 'services/auth.services';
 import { loginValidations } from 'validation/LoginValidation';
 import argon2 from 'argon2';
-import User from 'models/user';
+import User from 'models/user.model';
 import logger from 'utils/logger';
 import { error, success, validation } from 'utils/functions/responseApi';
 

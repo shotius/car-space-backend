@@ -1,5 +1,5 @@
 import express from 'express';
-import userService from 'services/userService';
+import userService from 'services/user.service';
 import { fileExists } from '../utils/fileExists';
 import { error } from 'utils/functions/responseApi';
 

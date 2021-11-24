@@ -1,4 +1,4 @@
-import User from 'models/user';
+import User from 'models/user.model';
 import { Request } from 'express';
 import { SessionUser } from 'types';
 import {
