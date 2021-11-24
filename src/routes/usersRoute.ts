@@ -10,6 +10,7 @@ usersRouter.get('/', async (_req, res) => {
   res.json(await userService.getUsers());
 });
 
+// user likes a vehicle
 usersRouter.post('/like', async (req, res) => {
   const body = req.body;
 
@@ -36,6 +37,7 @@ usersRouter.post('/like', async (req, res) => {
   return res.json({success});
 });
 
+// user get all favourite vehicles
 usersRouter.get('/favourites',async (req, res) => {
   const {user} = req.session
   const id = user?.id

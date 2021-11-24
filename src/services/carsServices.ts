@@ -1,56 +1,54 @@
 // import CarImagesService from 'services/carImagesService';
 import { ICar } from '../../shared_with_front/types/types-shared';
 import Car from '../models/car';
-// import { ICarImages } from 'types';
-// import {Document} from 'mongoose'
 
-const getCars = async (
-  page: number,
-  limit: number
-): Promise<{
-  cars: ICar[];
-  pagesTotal: number;
-  // carImages: (ICarImages & Document<any, any, ICarImages>)[];
-}> => {
-  // ): Promise<{ cars: ICar[]; pagesTotal: number }> => {
+/** Interfaces */
+interface getCarsProps {
+  page: number;
+  limit: number;
+  brands: string[];
+}
 
-  // total cars in the db
-  const carsTotal = await Car.find({}).countDocuments();
+interface GetPageCountProps {
+  brands: string[];
+  limit: number;
+}
 
-  // total pages for pagination
-  const pagesTotal = Math.floor(carsTotal / limit);
+interface GetAllCarsProps {
+  brands: string[];
+}
 
+/** Get All cars */
+const getAllCars = ({ brands }: GetAllCarsProps) => {
+  return Car.find({
+    m: brands.length ? { $in: brands } : { $exists: true },
+  });
+};
+
+/** GetPaginated Card */
+const getCarsPaginated = async ({
+  limit,
+  page,
+  brands,
+}: getCarsProps): Promise<ICar[]> => {
   // how many cars to skip
   const startFrom = (page - 1) * limit;
 
   // retrieve cars
-  const cars = await Car.find({}).skip(startFrom).limit(limit);
+  const cars = await getAllCars({ brands }).skip(startFrom).limit(limit);
 
-  // const carImages = await CarImagesService.getImages();
-  // const ImagePromises = cars.map(async (car): Promise<ICarImages> => {
-  //   const result = axios
-  //     .get(car.imgU)
-  //     .then(({ data }) => data)
-  //     .catch((err) => {
-  //       if (err.response.status === 404) {
-  //         return 'Car Images not found';
-  //       }
-  //       return 'Some Other error occured while fetching car images';
-  //     });
-  //     // console.log(result);
-  //   return result;
-  // });
+  return cars;
+};
 
-  // const carImages = await Promise.all(ImagePromises)
-  //   .then((data) => data)
-  //   .catch((err) => err);
+/**Get total pages count */
+const getPageCount = async ({ brands, limit }: GetPageCountProps) => {
+  const carsTotal = await getAllCars({ brands }).countDocuments();
 
-  //   console.log(carImages)
-  // console.log(Images)
+  // total cars in the db
+  // total pages for pagination
+  const pagesTotal = Math.ceil(carsTotal / limit);
 
-  // return { cars, pagesTotal, carImages };
-
-  return { cars, pagesTotal };
+  return pagesTotal;
 };
 
 // get all distinct brands
@@ -108,15 +106,15 @@ const getFuels = async () => {
 };
 
 const getCylinders = async () => {
-  return await Car.distinct('cyl')
-}
+  return await Car.distinct('cyl');
+};
 
 const getSalesStatus = async () => {
-  return await Car.distinct('sS')
-}
+  return await Car.distinct('sS');
+};
 
 export default {
-  getCars,
+  getCarsPaginated,
   getAllBrands,
   getModels,
   getSingleCar,
@@ -126,5 +124,6 @@ export default {
   getDrives,
   getFuels,
   getCylinders,
-  getSalesStatus
+  getSalesStatus,
+  getPageCount,
 };

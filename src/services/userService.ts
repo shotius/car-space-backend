@@ -3,14 +3,6 @@ import { IUser } from '../../shared_with_front/types/types-shared';
 import User from '../models/user';
 import { getBooks } from '../utils/fileScraper';
 
-const startScrape = async () => {
-  try {
-    return await getBooks();
-  } catch (error) {
-    return false;
-  }
-};
-
 //** User service starts from here */
 
 const getUsers = async (): Promise<IUser[]> => {
@@ -62,6 +54,15 @@ const getFafouriteCars = async (userId: number) => {
     return null
   }
   return user.favourites;
+};
+
+// TO-DO remove it from here
+const startScrape = async () => {
+  try {
+    return await getBooks();
+  } catch (error) {
+    return false;
+  }
 };
 
 export default {

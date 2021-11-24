@@ -1,3 +1,4 @@
+import { parseCarFilterBrands } from './../utils/queryParsers/parseCarFilterBrands';
 import express from 'express';
 import carsServices from 'services/carsServices';
 import carImagesService from 'services/carImagesService';
@@ -10,11 +11,27 @@ const carsRouter = express.Router();
 // get paginating cars
 carsRouter.get('/', async (req, res) => {
   const page = req.query.page || 1;
-  const limit = req.query.limit || 20;
+  const limit = req.query.limit || 40;
 
-  const cars = await carsServices.getCars(Number(page), Number(limit));
+  const brands = parseCarFilterBrands(req.query);
 
-  return res.send(cars);
+  const getCars = carsServices.getCarsPaginated({
+    page: Number(page),
+    limit: Number(limit),
+    brands: brands,
+  });
+
+  const getPagesTotal = carsServices.getPageCount({
+    brands,
+    limit: Number(limit),
+  });
+
+  const [cars, pagesTotal] = await Promise.allSettled([getCars, getPagesTotal]);
+
+  if (cars.status === 'fulfilled' && pagesTotal.status === 'fulfilled') {
+    return res.send({ cars: cars.value, pagesTotal: pagesTotal.value });
+  }
+  return null;
 });
 
 // all distipnc brands
@@ -38,7 +55,7 @@ carsRouter.get('/models', async (req, res) => {
 carsRouter.get('/conditions', async (_req, res) => {
   try {
     const conditions = await carsServices.getConditions();
-    return res.send( conditions );
+    return res.send(conditions);
   } catch (err) {
     return res.status(500).send(
       error({
@@ -65,7 +82,7 @@ carsRouter.get('/types', async (_req, res) => {
 carsRouter.get('/locations', async (_req, res) => {
   try {
     const locations = await carsServices.getLocation();
-    return res.send( locations );
+    return res.send(locations);
   } catch (err) {
     return res.status(500).send(
       error({
@@ -78,7 +95,7 @@ carsRouter.get('/locations', async (_req, res) => {
 carsRouter.get('/drives', async (_, res) => {
   try {
     const drives = await carsServices.getDrives();
-    return res.send( drives );
+    return res.send(drives);
   } catch (err) {
     return res.status(500).send(
       error({
@@ -91,7 +108,7 @@ carsRouter.get('/drives', async (_, res) => {
 carsRouter.get('/fuels', async (_, res) => {
   try {
     const fuels = await carsServices.getFuels();
-    return res.send( fuels );
+    return res.send(fuels);
   } catch (err) {
     return res.status(500).send(
       error({
@@ -104,7 +121,7 @@ carsRouter.get('/fuels', async (_, res) => {
 carsRouter.get('/cylinders', async (_, res) => {
   try {
     const cylinders = await carsServices.getCylinders();
-    return res.send( cylinders );
+    return res.send(cylinders);
   } catch (err) {
     return res.status(500).send(
       error({
@@ -118,7 +135,7 @@ carsRouter.get('/cylinders', async (_, res) => {
 carsRouter.get('/sales_status', async (_, res) => {
   try {
     const salesStatus = await carsServices.getSalesStatus();
-    return res.send( salesStatus );
+    return res.send(salesStatus);
   } catch (err) {
     return res.status(500).send(
       error({
@@ -127,7 +144,6 @@ carsRouter.get('/sales_status', async (_, res) => {
     );
   }
 });
-
 
 carsRouter.get('/images', async (_, res) => {
   const images = await carImagesService.getImages();
@@ -151,22 +167,24 @@ carsRouter.get('/images/thumb', async (_req, res) => {
 });
 
 carsRouter.get('/images/medium', validate(validateLotNum), async (req, res) => {
-  const lotNumber = Number(req.query.lotNumber as string)
+  const lotNumber = Number(req.query.lotNumber as string);
 
   const images = await carImagesService.getMediumImages(lotNumber);
   if (images) {
     return res.send(images);
   } else {
-    return res.status(400).send(error({
-      message: `images not found for '${lotNumber}' lot number`
-    }))
+    return res.status(400).send(
+      error({
+        message: `images not found for '${lotNumber}' lot number`,
+      })
+    );
   }
 });
 
 // route returns single vehicle based on 8 digit lot number
 carsRouter.get('/:lotNumber(\\d{8})', async (req, res) => {
   const lotNumber = req.params.lotNumber;
-  console.log('here')
+  console.log('here');
   const car = await carsServices.getSingleCar(lotNumber);
   if (car.length) {
     return res.send(car[0]);
