@@ -5,7 +5,7 @@ import carsServices from 'services/cars.services';
 import { error } from 'utils/functions/responseApi';
 import { validateLotNum } from 'validation/LotNumberValidation';
 import { parseQueryAsNumber } from '../utils/queryParsers/parseQueryAsNumber';
-import { parseArrayQuery } from './../utils/queryParsers/parseArrayQuery';
+import { parseQueryAsArray } from '../utils/queryParsers/parseQueryAsArray';
 
 const carsRouter = express.Router();
 
@@ -14,11 +14,11 @@ carsRouter.get('/', async (req, res) => {
   const page = req.query.page || 1;
   const limit = req.query.limit || 40;
 
-  const brands = parseArrayQuery(req.query, 'brand');
-  const models = parseArrayQuery(req.query, 'model');
+  const brands = parseQueryAsArray(req.query, 'brand');
+  const models = parseQueryAsArray(req.query, 'model');
 
   const year_from = parseQueryAsNumber(req.query, 'year_from');
-  const year_to = parseQueryAsNumber(req.query, 'year_to');;
+  const year_to = parseQueryAsNumber(req.query, 'year_to');
 
   const getCars = carsServices.getCarsPaginated({
     page: Number(page),
@@ -51,14 +51,17 @@ carsRouter.get('/brands', async (_req, res) => {
   res.send(brands);
 });
 
-/// all different modles of specifit brand
+// all different models of specific brands
 carsRouter.get('/models', async (req, res) => {
-  const brand = req.query.brand || null;
+  const brands = parseQueryAsArray(req.query, 'brand').map((b) =>
+    b.toUpperCase()
+  );
 
-  if (!brand) {
+  if (!brands.length) {
     return res.status(400).send('bad brand query');
   }
-  const models = await carsServices.getModels(String(brand).toUpperCase());
+
+  const models = await carsServices.getModels(brands);
   return res.send(models);
 });
 

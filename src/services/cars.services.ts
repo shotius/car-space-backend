@@ -31,15 +31,15 @@ interface GetAllCarsProps {
 const getAllCars = ({
   models,
   brands,
-  year_from, 
-  year_to
+  year_from,
+  year_to,
 }: GetAllCarsProps) => {
   return Car.find({
     $and: [
       { m: brands.length ? { $in: brands } : { $exists: true } }, // brand filter
-      { mG: models.length ? { $in: models } : { $exists: true } }, // model filter 
-      {$expr: { $gte: [{ $toInt: '$y' },  year_from || 0 ] }}, // year from filter
-      {$expr: { $lte: [{ $toInt: '$y' }, year_to || 9999] }}, // year to filter
+      { mG: models.length ? { $in: models } : { $exists: true } }, // model filter
+      { $expr: { $gte: [{ $toInt: '$y' }, year_from || 0] } }, // year from filter
+      { $expr: { $lte: [{ $toInt: '$y' }, year_to || 9999] } }, // year to filter
     ],
   });
 };
@@ -92,8 +92,13 @@ const getAllBrands = async () => {
 };
 
 // Based on a brand getting all distrinct models
-const getModels = async (brand: string) => {
-  const models = await Car.find({ m: brand }).distinct('mG');
+const getModels = async (brands: string[]) => {
+  console.log('brands', brands);
+  const models = await Car.aggregate([
+    { $match: { m: { $in: brands } } },
+    { $group: { _id: '$m', models: { $addToSet: '$mG' } } },
+    { $project: { _id: 0, brand: '$_id', models: '$models' } },
+  ]);
   return models;
 };
 
