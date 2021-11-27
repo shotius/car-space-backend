@@ -21,8 +21,8 @@ interface GetPageCountProps {
 }
 
 interface GetAllCarsProps {
-  brands: string[];
-  models: string[];
+  brands?: string[];
+  models?: string[];
   year_from?: number;
   year_to?: number;
 }
@@ -36,35 +36,67 @@ const getAllCars = ({
 }: GetAllCarsProps) => {
   return Car.find({
     $and: [
-      { m: brands.length ? { $in: brands } : { $exists: true } }, // brand filter
-      { mG: models.length ? { $in: models } : { $exists: true } }, // model filter
+      { m: brands?.length ? { $in: brands } : { $exists: true } }, // brand filter
+      { mG: models?.length ? { $in: models } : { $exists: true } }, // model filter
       { $expr: { $gte: [{ $toInt: '$y' }, year_from || 0] } }, // year from filter
       { $expr: { $lte: [{ $toInt: '$y' }, year_to || 9999] } }, // year to filter
     ],
   });
 };
 
-/** GetPaginated Card */
+/**
+ * GetPaginated Card */
 const getCarsPaginated = async ({
   limit,
   page,
-  brands,
-  models,
-  year_from,
-  year_to,
-}: getCarsProps): Promise<ICar[]> => {
+}: // brands,
+// models,
+// year_from,
+// year_to,
+getCarsProps): Promise<ICar[]> => {
   // how many cars to skip
   const startFrom = (page - 1) * limit;
 
-  // retrieve cars
-  const cars = await getAllCars({ brands, models, year_to, year_from })
+  // filters should have this shape
+  const filters: { brand: string; models: string[] }[] = [
+    {
+      brand: 'ACURA',
+      models: ['TSX'],
+    },
+    {
+      brand: 'BMW',
+      models: [],
+    },
+  ];
+
+  // filtered brands for which are not specified models
+  const brandsWithoutModels = filters
+    .filter((item) => !item.models.length)
+    .reduce<string[]>((acc, curr) => acc.concat(curr.brand), []);
+
+  // get all cars without models
+  const carsWithoutModels = await getAllCars({ brands: brandsWithoutModels })
     .skip(startFrom)
     .limit(limit);
+
+  // concat all models
+  const allModels = filters.reduce<string[]>(
+    (acc, curr) => acc.concat(curr.models),
+    []
+  );
+
+  // get cars with specified models
+  const carsWithModels = await getAllCars({ models: allModels })
+    .skip(startFrom)
+    .limit(limit);
+
+  const cars = { ...carsWithoutModels, ...carsWithModels };
 
   return cars;
 };
 
-/**Get total pages count */
+/**
+ * Get total pages count */
 const getPageCount = async ({
   brands,
   limit,
