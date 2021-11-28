@@ -8,7 +8,7 @@ export const parseQueryModels = (
     const brands = Object.keys(models);
     const formatedModels: SelectedCarModel[] = [];
 
-    brands.forEach((brand) => {
+    brands.map((brand) => {
       const model = models[brand];
       if (isString(model)) {
         formatedModels.push({

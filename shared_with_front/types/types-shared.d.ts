@@ -62,6 +62,7 @@ export interface ICar {
   y: string; // Year
   fuel: string; // Fuel Type
   keys: string; // Has Keys-Yes or No
+  sS: string
 }
 
 

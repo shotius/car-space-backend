@@ -1,3 +1,4 @@
+import { BaseFilterProps } from './../types';
 import express from 'express';
 import { validate } from 'middlewares/validate';
 import carImagesService from 'services/carImages.service';
@@ -15,35 +16,43 @@ carsRouter.get('/', async (req, res) => {
   const page = req.query.page || 1;
   const limit = req.query.limit || 40;
 
+  // parse brands and models from query
   const allBrands = parseQueryAsArray(req.query, 'brand');
   const modelsWithBrand = parseQueryModels((req.query as any).model);
 
   const brandsWithModels = modelsWithBrand.map((m) => m.brand);
 
-  const brands = allBrands.filter((brand) => !brandsWithModels.includes(brand));
   const models = modelsWithBrand.reduce<string[]>(
     (acc, cur) => acc.concat(cur.models),
     []
   );
 
-  const year_from = parseQueryAsNumber(req.query, 'year_from');
-  const year_to = parseQueryAsNumber(req.query, 'year_to');
+  // parse other filters from query
+  const filters: BaseFilterProps = {
+    models, 
+    brands: allBrands.filter((brand) => !brandsWithModels.includes(brand)), 
+    year_from: parseQueryAsNumber(req.query, 'year_from'),
+    year_to: parseQueryAsNumber(req.query, 'year_to'),
+    types: parseQueryAsArray(req.query, 'type'),
+    locations: parseQueryAsArray(req.query, 'location'),
+    transmissions: parseQueryAsArray(req.query, 'transmission'),
+    keys: (req.query as any).keys,
+    drives: parseQueryAsArray(req.query, 'drive'),
+    salesStatuses: parseQueryAsArray(req.query, 'sales_status'),
+    fuels: parseQueryAsArray(req.query, 'fuel'),
+    cylinders: parseQueryAsArray(req.query, 'cylinder'),
+    conditions: parseQueryAsArray(req.query, 'condition'),
+  };
 
   const getCars = carsServices.getCarsPaginated({
     page: Number(page),
     limit: Number(limit),
-    brands,
-    models,
-    year_from,
-    year_to,
+    filters, 
   });
 
   const getPagesTotal = carsServices.getPageCount({
-    brands,
     limit: Number(limit),
-    models,
-    year_from,
-    year_to,
+    filters
   });
 
   const [cars, pagesTotal] = await Promise.allSettled([getCars, getPagesTotal]);
@@ -167,6 +176,20 @@ carsRouter.get('/sales_status', async (_, res) => {
     );
   }
 });
+
+// returs all distinct transmission types
+carsRouter.get('/transmissions', async (_, res) => {
+  try {
+    const transmissions = await carsServices.getTransmissions()
+    return res.send(transmissions)
+  } catch (erro) {
+    return res.status(500).send(
+      error({
+        message: "could not get Transmission types for filter"
+      })
+    )
+  }
+})
 
 carsRouter.get('/images', async (_, res) => {
   const images = await carImagesService.getImages();
