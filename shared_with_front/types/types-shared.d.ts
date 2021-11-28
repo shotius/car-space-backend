@@ -63,3 +63,11 @@ export interface ICar {
   fuel: string; // Fuel Type
   keys: string; // Has Keys-Yes or No
 }
+
+
+/**Filters */
+
+export interface SelectedCarModel {
+  brand: string;
+  models: string[]
+}

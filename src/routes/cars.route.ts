@@ -6,6 +6,7 @@ import { error } from 'utils/functions/responseApi';
 import { validateLotNum } from 'validation/LotNumberValidation';
 import { parseQueryAsNumber } from '../utils/queryParsers/parseQueryAsNumber';
 import { parseQueryAsArray } from '../utils/queryParsers/parseQueryAsArray';
+import { parseQueryModels } from 'utils/queryParsers/parseQueryModels';
 
 const carsRouter = express.Router();
 
@@ -14,8 +15,16 @@ carsRouter.get('/', async (req, res) => {
   const page = req.query.page || 1;
   const limit = req.query.limit || 40;
 
-  const brands = parseQueryAsArray(req.query, 'brand');
-  const models = parseQueryAsArray(req.query, 'model');
+  const allBrands = parseQueryAsArray(req.query, 'brand');
+  const modelsWithBrand = parseQueryModels((req.query as any).model);
+
+  const brandsWithModels = modelsWithBrand.map((m) => m.brand);
+
+  const brands = allBrands.filter((brand) => !brandsWithModels.includes(brand));
+  const models = modelsWithBrand.reduce<string[]>(
+    (acc, cur) => acc.concat(cur.models),
+    []
+  );
 
   const year_from = parseQueryAsNumber(req.query, 'year_from');
   const year_to = parseQueryAsNumber(req.query, 'year_to');
@@ -23,8 +32,8 @@ carsRouter.get('/', async (req, res) => {
   const getCars = carsServices.getCarsPaginated({
     page: Number(page),
     limit: Number(limit),
-    brands: brands,
-    models: models,
+    brands,
+    models,
     year_from,
     year_to,
   });
