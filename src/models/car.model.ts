@@ -14,10 +14,8 @@ const carSchema = new Schema<ICar>(
     od: String, // Odometer
     cyl: String, // Cylinders
     dr: String, // Drive
-    eP: String, // Est. Retail Value
     curB: String, // High Bid =non-vix,Sealed=Vix
     hK: String, // Has Keys-Yes or No
-    rC: String, // Repair cost
     mG: String, // Model Group
     mD: String, // Model Detail
     eng: String, // Engine
@@ -29,6 +27,8 @@ const carSchema = new Schema<ICar>(
     fuel: String, // Fuel Type
     keys: String, // Has Keys-Yes or No
     sS: String, // Sales Status
+    eRV: String, // Est. Retail Value
+    rC: String, // Repair Cost
   },
   { collection: 'cars' }
 );

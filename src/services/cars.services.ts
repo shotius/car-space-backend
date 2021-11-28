@@ -29,7 +29,7 @@ const getAllCars = ({ filters }: BaseGetCarInterface) => {
     transmissions,
     // keys,
     drives,
-    // salesStatuses,
+    salesStatuses,
     fuels,
     cylinders,
     conditions,
@@ -41,19 +41,10 @@ const getAllCars = ({ filters }: BaseGetCarInterface) => {
   const isTransmissionsEmpty = !transmissions.length;
   // // const isKeysEmpty = keys.length;
   const isDrivesEmpty = !drives.length;
-  // const isSalesStatusesEmpty = salesStatuses.length;
+  const isSalesStatusesEmpty = salesStatuses.length;
   const isFuelsEmpty = !fuels.length;
   const isCylindersEmpty = !cylinders.length;
   const isConditionsEmpty = !conditions.length;
-
-  // console.log('types', types);
-  // console.log('locations', locations);
-  console.log('transmissions', transmissions);
-  // console.log('keys', keys);
-  // console.log('drives', drives);
-  // console.log('fuels', fuels);
-  console.log('cylinders', cylinders);
-  console.log('conditions', conditions);
 
   return Car.find({
     $and: [
@@ -73,7 +64,7 @@ const getAllCars = ({ filters }: BaseGetCarInterface) => {
           : { $exists: true },
       },
       { dr: !isDrivesEmpty ? { $in: drives } : { $exists: true } },
-      // { sS: !isSalesStatusesEmpty ? { $in: salesStatuses } : { $exists: true } },
+      { sS: !isSalesStatusesEmpty ? { $in: salesStatuses } : { $exists: true } },
       { fuel: !isFuelsEmpty ? { $in: fuels } : { $exists: true } },
       { cyl: !isCylindersEmpty ? { $in: cylinders } : { $exists: true } },
       { dmg: !isConditionsEmpty ? { $in: conditions } : { $exists: true } },
