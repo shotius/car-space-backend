@@ -49,10 +49,8 @@ export interface ICar {
   od: string; // Odometer
   cyl: string; // Cylinders
   dr: string; // Drive
-  eP: string; // Est. Retail Value
   curB: string; // High Bid =non-vix,Sealed=Vix
   hK: string; // Has Keys-Yes or No
-  rC: string; // Repair cost
   mG: string; // Model Group
   mD: string; // Model Detail
   eng: string; // Engine
@@ -62,4 +60,14 @@ export interface ICar {
   y: string; // Year
   fuel: string; // Fuel Type
   keys: string; // Has Keys-Yes or No
+  sS: string; // Sales Status
+  eRV: string; // Est. Retail Value
+  rC: string; // Repair Cost
+}
+
+/**Filters */
+
+export interface SelectedCarModel {
+  brand: string;
+  models: string[];
 }

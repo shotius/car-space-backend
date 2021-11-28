@@ -1,82 +1,106 @@
 // import CarImagesService from 'services/carImagesService';
+import { BaseFilterProps } from 'types';
 import { ICar } from '../../shared_with_front/types/types-shared';
 import Car from '../models/car.model';
 
 /** Interfaces */
-interface getCarsProps {
+interface BaseGetCarInterface {
+  filters: BaseFilterProps;
+}
+
+interface getCarsProps extends BaseGetCarInterface {
   page: number;
   limit: number;
-  brands: string[];
-  models: string[];
-  year_from?: number;
-  year_to?: number;
 }
 
-interface GetPageCountProps {
-  brands: string[];
+interface GetPageCountProps extends BaseGetCarInterface {
   limit: number;
-  models: string[];
-  year_from?: number;
-  year_to?: number;
-}
-
-interface GetAllCarsProps {
-  brands: string[];
-  models: string[];
-  year_from?: number;
-  year_to?: number;
 }
 
 /** Get All cars */
-const getAllCars = ({
-  models,
-  brands,
-  year_from,
-  year_to,
-}: GetAllCarsProps) => {
+const getAllCars = ({ filters }: BaseGetCarInterface) => {
+  const {
+    brands,
+    models,
+    year_from,
+    year_to,
+    types,
+    locations,
+    transmissions,
+    // keys,
+    drives,
+    salesStatuses,
+    fuels,
+    cylinders,
+    conditions,
+  } = filters;
+  const shouldGetAllcars = !!!(models.length || brands.length);
+
+  const isTypesEmpty = !types.length;
+  const isLocationsEmpty = !locations.length;
+  const isTransmissionsEmpty = !transmissions.length;
+  // // const isKeysEmpty = keys.length;
+  const isDrivesEmpty = !drives.length;
+  const isSalesStatusesEmpty = salesStatuses.length;
+  const isFuelsEmpty = !fuels.length;
+  const isCylindersEmpty = !cylinders.length;
+  const isConditionsEmpty = !conditions.length;
+
   return Car.find({
     $and: [
-      { m: brands.length ? { $in: brands } : { $exists: true } }, // brand filter
-      { mG: models.length ? { $in: models } : { $exists: true } }, // model filter
+      {
+        $or: [
+          { m: !shouldGetAllcars ? { $in: brands } : { $exists: true } }, // brand filter
+          { mG: { $in: models } }, // model filter
+        ],
+      },
       { $expr: { $gte: [{ $toInt: '$y' }, year_from || 0] } }, // year from filter
       { $expr: { $lte: [{ $toInt: '$y' }, year_to || 9999] } }, // year to filter
+      { bSt: !isTypesEmpty ? { $in: types } : { $exists: true } },
+      { lC: !isLocationsEmpty ? { $in: locations } : { $exists: true } },
+      {
+        trans: !isTransmissionsEmpty
+          ? { $in: transmissions }
+          : { $exists: true },
+      },
+      { dr: !isDrivesEmpty ? { $in: drives } : { $exists: true } },
+      { sS: !isSalesStatusesEmpty ? { $in: salesStatuses } : { $exists: true } },
+      { fuel: !isFuelsEmpty ? { $in: fuels } : { $exists: true } },
+      { cyl: !isCylindersEmpty ? { $in: cylinders } : { $exists: true } },
+      { dmg: !isConditionsEmpty ? { $in: conditions } : { $exists: true } },
     ],
   });
 };
 
-/** GetPaginated Card */
+/**
+ * GetPaginated Card */
 const getCarsPaginated = async ({
   limit,
   page,
-  brands,
-  models,
-  year_from,
-  year_to,
+  filters,
 }: getCarsProps): Promise<ICar[]> => {
   // how many cars to skip
   const startFrom = (page - 1) * limit;
 
-  // retrieve cars
-  const cars = await getAllCars({ brands, models, year_to, year_from })
+  // const start = performance.now()
+  // console.log('start: ', start)
+  // get cars with specified models
+  const cars = await getAllCars({
+    filters,
+  })
     .skip(startFrom)
     .limit(limit);
 
+  // const end = performance.now()
+  // console.log('time: ', end - start)
   return cars;
 };
 
-/**Get total pages count */
-const getPageCount = async ({
-  brands,
-  limit,
-  models,
-  year_to,
-  year_from,
-}: GetPageCountProps) => {
+/**
+ * Get total pages count */
+const getPageCount = async ({ limit, filters }: GetPageCountProps) => {
   const carsTotal = await getAllCars({
-    brands,
-    models,
-    year_to,
-    year_from,
+    filters,
   }).countDocuments();
 
   // total cars in the db
@@ -93,7 +117,6 @@ const getAllBrands = async () => {
 
 // Based on a brand getting all distrinct models
 const getModels = async (brands: string[]) => {
-  console.log('brands', brands);
   const models = await Car.aggregate([
     { $match: { m: { $in: brands } } },
     { $group: { _id: '$m', models: { $addToSet: '$mG' } } },
@@ -153,6 +176,10 @@ const getSalesStatus = async () => {
   return await Car.distinct('sS');
 };
 
+const getTransmissions = async () => {
+  return await Car.distinct('trans')
+}
+
 export default {
   getCarsPaginated,
   getAllBrands,
@@ -166,4 +193,5 @@ export default {
   getCylinders,
   getSalesStatus,
   getPageCount,
+  getTransmissions
 };
