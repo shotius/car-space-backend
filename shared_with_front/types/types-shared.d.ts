@@ -50,7 +50,6 @@ export interface ICar {
   cyl: string; // Cylinders
   dr: string; // Drive
   curB: string; // High Bid =non-vix,Sealed=Vix
-  hK: string; // Has Keys-Yes or No
   mG: string; // Model Group
   mD: string; // Model Detail
   eng: string; // Engine
@@ -63,6 +62,9 @@ export interface ICar {
   sS: string; // Sales Status
   eRV: string; // Est. Retail Value
   rC: string; // Repair Cost
+  c: string; // Color
+  rd: string; // Runs and drive
+  bin: string // Buy it now
 }
 
 /**Filters */

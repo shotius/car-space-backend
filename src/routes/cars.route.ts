@@ -29,8 +29,8 @@ carsRouter.get('/', async (req, res) => {
 
   // parse other filters from query
   const filters: BaseFilterProps = {
-    models, 
-    brands: allBrands.filter((brand) => !brandsWithModels.includes(brand)), 
+    models,
+    brands: allBrands.filter((brand) => !brandsWithModels.includes(brand)),
     year_from: parseQueryAsNumber(req.query, 'year_from'),
     year_to: parseQueryAsNumber(req.query, 'year_to'),
     types: parseQueryAsArray(req.query, 'type'),
@@ -47,20 +47,27 @@ carsRouter.get('/', async (req, res) => {
   const getCars = carsServices.getCarsPaginated({
     page: Number(page),
     limit: Number(limit),
-    filters, 
+    filters,
   });
 
   const getPagesTotal = carsServices.getPageCount({
     limit: Number(limit),
-    filters
+    filters,
   });
 
+  // Get cars and pages in parallel
   const [cars, pagesTotal] = await Promise.allSettled([getCars, getPagesTotal]);
 
+  // if both requests fullfiled response success
   if (cars.status === 'fulfilled' && pagesTotal.status === 'fulfilled') {
     return res.send({ cars: cars.value, pagesTotal: pagesTotal.value });
+  } else {
+    return res.status(500).send(
+      error({
+        message: 'Cound not get cars from',
+      })
+    );
   }
-  return null;
 });
 
 // all distipnc brands
@@ -79,8 +86,14 @@ carsRouter.get('/models', async (req, res) => {
     return res.status(400).send('bad brand query');
   }
 
-  const models = await carsServices.getModels(brands);
-  return res.send(models);
+  try {
+    const models = await carsServices.getModels(brands);
+    return res.send(models);
+  } catch (err) {
+    return res
+      .status(500)
+      .send(error({ message: `Could not get models ${err}` }));
+  }
 });
 
 // all different conditions
@@ -180,48 +193,56 @@ carsRouter.get('/sales_status', async (_, res) => {
 // returs all distinct transmission types
 carsRouter.get('/transmissions', async (_, res) => {
   try {
-    const transmissions = await carsServices.getTransmissions()
-    return res.send(transmissions)
+    const transmissions = await carsServices.getTransmissions();
+    return res.send(transmissions);
   } catch (erro) {
     return res.status(500).send(
       error({
-        message: "could not get Transmission types for filter"
+        message: 'could not get Transmission types for filter',
       })
-    )
+    );
   }
-})
+});
 
+/** Returns 15 images */
 carsRouter.get('/images', async (_, res) => {
   const images = await carImagesService.getImages();
   return res.send({ images, count: images.length });
 });
 
-carsRouter.get('/images/thumb', async (_req, res) => {
-  const images = await carImagesService.getImages();
-  let links: any = {};
-  const thumbImages: any = {};
-
-  images.forEach((img) => {
-    img.lotImages.forEach((lot, k) => {
-      links[k] = lot.link.find((l) => l.isThumbNail === true);
-    });
-
-    thumbImages[img.objectId] = links;
-  });
-
-  return res.send({ smallImages: thumbImages });
+/**return list of thumbs for given lotnumber */
+carsRouter.get('/images/thumbs', validate(validateLotNum), async (req, res) => {
+  const lotNumber = Number(req.query.lotNumber as string);
+  try {
+    const images = await carImagesService.getThumbs(lotNumber);
+    if (images?.length) {
+      return res.send(images);
+    } else {
+      return res.status(404).send(`Thumbs not found for #'${lotNumber}'`);
+    }
+  } catch (err) {
+    return res.status(500).send(
+      error({
+        message: `Thumbs not found for '${lotNumber}' lot number ${err}`,
+      })
+    );
+  }
 });
 
+/** Returns medium images for a given lotNumber */
 carsRouter.get('/images/medium', validate(validateLotNum), async (req, res) => {
   const lotNumber = Number(req.query.lotNumber as string);
-
-  const images = await carImagesService.getMediumImages(lotNumber);
-  if (images) {
-    return res.send(images);
-  } else {
-    return res.status(400).send(
+  try {
+    const images = await carImagesService.getMediumImages(lotNumber);
+    if (images?.length) {
+      return res.send(images);
+    } else {
+      return res.status(404).send(`Images not found for #'${lotNumber}'`);
+    }
+  } catch (err) {
+    return res.status(404).send(
       error({
-        message: `images not found for '${lotNumber}' lot number`,
+        message: `images not found for '${lotNumber}' lot number ${err}`,
       })
     );
   }
@@ -230,12 +251,11 @@ carsRouter.get('/images/medium', validate(validateLotNum), async (req, res) => {
 // route returns single vehicle based on 8 digit lot number
 carsRouter.get('/:lotNumber(\\d{8})', async (req, res) => {
   const lotNumber = req.params.lotNumber;
-  console.log('here');
   const car = await carsServices.getSingleCar(lotNumber);
   if (car.length) {
     return res.send(car[0]);
   } else {
-    return res.status(400).send('car not found');
+    return res.status(404).send('car not found');
   }
 });
 

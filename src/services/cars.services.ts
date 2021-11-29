@@ -41,7 +41,7 @@ const getAllCars = ({ filters }: BaseGetCarInterface) => {
   const isTransmissionsEmpty = !transmissions.length;
   // // const isKeysEmpty = keys.length;
   const isDrivesEmpty = !drives.length;
-  const isSalesStatusesEmpty = salesStatuses.length;
+  const isSalesStatusesEmpty = !salesStatuses.length;
   const isFuelsEmpty = !fuels.length;
   const isCylindersEmpty = !cylinders.length;
   const isConditionsEmpty = !conditions.length;

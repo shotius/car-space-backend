@@ -15,7 +15,6 @@ const carSchema = new Schema<ICar>(
     cyl: String, // Cylinders
     dr: String, // Drive
     curB: String, // High Bid =non-vix,Sealed=Vix
-    hK: String, // Has Keys-Yes or No
     mG: String, // Model Group
     mD: String, // Model Detail
     eng: String, // Engine
@@ -29,6 +28,9 @@ const carSchema = new Schema<ICar>(
     sS: String, // Sales Status
     eRV: String, // Est. Retail Value
     rC: String, // Repair Cost
+    c: String,  // Color
+    rd: String,  // Runs and drive
+    bin: String // buy it now
   },
   { collection: 'cars' }
 );
