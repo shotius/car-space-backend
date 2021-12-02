@@ -13,7 +13,6 @@ const authRouter = express.Router();
 authRouter.post('/login', validate(loginValidations), async (req, res) => {
   const { username, password } = req.body;
 
-  console.log('here')
   const { user, errors } = await authServices.loginUser({
     username,
     password,
@@ -75,7 +74,7 @@ authRouter.post('/register', async (req, res) => {
   } catch (error: any) {
     logger.error(error.message);
   }
-  console.log('__dirname', __dirname);
+  
   return res.json(savedUser);
 });
 

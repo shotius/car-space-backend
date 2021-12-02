@@ -37,7 +37,9 @@ usersRouter.post('/like', async (req, res) => {
   return res.json({success});
 });
 
-// user get all favourite vehicles
+/**
+ * @return: lotNUmber of all favourite vehicles
+ */
 usersRouter.get('/favourites',async (req, res) => {
   const {user} = req.session
   const id = user?.id
