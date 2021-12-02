@@ -33,6 +33,8 @@ carsRouter.get('/', async (req, res) => {
     brands: allBrands.filter((brand) => !brandsWithModels.includes(brand)),
     year_from: parseQueryAsNumber(req.query, 'year_from'),
     year_to: parseQueryAsNumber(req.query, 'year_to'),
+    engine_from: parseQueryAsNumber(req.query, 'engine_from'),
+    engine_to: parseQueryAsNumber(req.query, 'engine_to'),
     types: parseQueryAsArray(req.query, 'type'),
     locations: parseQueryAsArray(req.query, 'location'),
     transmissions: parseQueryAsArray(req.query, 'transmission'),

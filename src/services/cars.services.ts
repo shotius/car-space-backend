@@ -33,6 +33,8 @@ const getAllCars = ({ filters }: BaseGetCarInterface) => {
     fuels,
     cylinders,
     conditions,
+    engine_from,
+    engine_to,
   } = filters;
   const shouldGetAllcars = !!!(models.length || brands.length);
 
@@ -56,6 +58,8 @@ const getAllCars = ({ filters }: BaseGetCarInterface) => {
       },
       { $expr: { $gte: [{ $toInt: '$y' }, year_from || 0] } }, // year from filter
       { $expr: { $lte: [{ $toInt: '$y' }, year_to || 9999] } }, // year to filter
+      { $expr: { $gte: [{ $toDouble: '$eng' }, engine_from || 0] } }, // engine from filter
+      { $expr: { $lte: [{ $toDouble: '$eng' }, engine_to || 9999] } }, // engine to filter
       { bSt: !isTypesEmpty ? { $in: types } : { $exists: true } },
       { lC: !isLocationsEmpty ? { $in: locations } : { $exists: true } },
       {
@@ -64,7 +68,9 @@ const getAllCars = ({ filters }: BaseGetCarInterface) => {
           : { $exists: true },
       },
       { dr: !isDrivesEmpty ? { $in: drives } : { $exists: true } },
-      { sS: !isSalesStatusesEmpty ? { $in: salesStatuses } : { $exists: true } },
+      {
+        sS: !isSalesStatusesEmpty ? { $in: salesStatuses } : { $exists: true },
+      },
       { fuel: !isFuelsEmpty ? { $in: fuels } : { $exists: true } },
       { cyl: !isCylindersEmpty ? { $in: cylinders } : { $exists: true } },
       { dmg: !isConditionsEmpty ? { $in: conditions } : { $exists: true } },
@@ -82,17 +88,12 @@ const getCarsPaginated = async ({
   // how many cars to skip
   const startFrom = (page - 1) * limit;
 
-  // const start = performance.now()
-  // console.log('start: ', start)
-  // get cars with specified models
   const cars = await getAllCars({
     filters,
   })
     .skip(startFrom)
     .limit(limit);
 
-  // const end = performance.now()
-  // console.log('time: ', end - start)
   return cars;
 };
 
@@ -177,8 +178,8 @@ const getSalesStatus = async () => {
 };
 
 const getTransmissions = async () => {
-  return await Car.distinct('trans')
-}
+  return await Car.distinct('trans');
+};
 
 export default {
   getCarsPaginated,
@@ -193,5 +194,5 @@ export default {
   getCylinders,
   getSalesStatus,
   getPageCount,
-  getTransmissions
+  getTransmissions,
 };

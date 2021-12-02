@@ -42,4 +42,6 @@ export interface BaseFilterProps {
   year_from?: number;
   year_to?: number;
   conditions: string[]
+  engine_from?: number;
+  engine_to?: number;
 }
