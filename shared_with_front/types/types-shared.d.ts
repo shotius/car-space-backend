@@ -64,7 +64,8 @@ export interface ICar {
   rC: string; // Repair Cost
   c: string; // Color
   rd: string; // Runs and drive
-  bin: string // Buy it now
+  bin: string; // Buy it now
+  imgsM?: string[]; // medium images
 }
 
 /**Filters */

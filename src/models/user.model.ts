@@ -1,7 +1,7 @@
 import { Schema, model, Model } from 'mongoose';
 import { IUser } from '../../shared_with_front/types/types-shared';
 
-const userSchema = new Schema<IUser>({
+const userSchema: Schema = new Schema({
   username: {
     type: String,
     unique: true,
@@ -9,7 +9,7 @@ const userSchema = new Schema<IUser>({
   name: String,
   role: String,
   passwordHash: String,
-  favourites: [String]
+  favourites: [String],
 });
 
 userSchema.set('toJSON', {

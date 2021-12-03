@@ -1,9 +1,8 @@
-import { model, Schema, Types } from 'mongoose';
+import { model, Schema } from 'mongoose';
 import { ICar } from '../../shared_with_front/types/types-shared';
 
 const carSchema = new Schema<ICar>(
   {
-    _id: Types.ObjectId, 
     lN: String, // Lot number
     m: String, // Make
     vin: String, // VIN
@@ -30,14 +29,16 @@ const carSchema = new Schema<ICar>(
     rC: String, // Repair Cost
     c: String,  // Color
     rd: String,  // Runs and drive
-    bin: String // buy it now
+    bin: String,  // buy it now
+    imgsM: [String]
   },
   { collection: 'cars' }
 );
 
 carSchema.set('toJSON', {
   transform: (_document, returnedObject) => {
-    delete returnedObject._id;
+    // returnedObject.id = returnedObject._id.toString();
+    // delete returnedObject._id;
     delete returnedObject.__v;
   },
 });

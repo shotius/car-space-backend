@@ -97,6 +97,11 @@ const getCarsPaginated = async ({
   return cars;
 };
 
+const getCarsFromLotNumbers = async (lotNumbers: string[]): Promise<ICar[]> => {
+  const cars = await Car.find({ lN: { $in: lotNumbers } });
+  return cars;
+};
+
 /**
  * Get total pages count */
 const getPageCount = async ({ limit, filters }: GetPageCountProps) => {
@@ -195,4 +200,5 @@ export default {
   getSalesStatus,
   getPageCount,
   getTransmissions,
+  getCarsFromLotNumbers,
 };

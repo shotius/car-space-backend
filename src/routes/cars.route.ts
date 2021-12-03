@@ -1,13 +1,13 @@
-import { BaseFilterProps } from './../types';
 import express from 'express';
 import { validate } from 'middlewares/validate';
 import carImagesService from 'services/carImages.service';
 import carsServices from 'services/cars.services';
 import { error } from 'utils/functions/responseApi';
-import { validateLotNum } from 'validation/LotNumberValidation';
-import { parseQueryAsNumber } from '../utils/queryParsers/parseQueryAsNumber';
-import { parseQueryAsArray } from '../utils/queryParsers/parseQueryAsArray';
 import { parseQueryModels } from 'utils/queryParsers/parseQueryModels';
+import { validateLotNum } from 'validation/LotNumberValidation';
+import { parseQueryAsArray } from '../utils/queryParsers/parseQueryAsArray';
+import { parseQueryAsNumber } from '../utils/queryParsers/parseQueryAsNumber';
+import { BaseFilterProps } from './../types';
 
 const carsRouter = express.Router();
 
