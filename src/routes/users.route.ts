@@ -52,7 +52,7 @@ usersRouter.post('/like', isAuth, async (req, res) => {
 /**
  * @return: lotNUmber of all favourite vehicles
  */
-usersRouter.get('/lots/favourites', async (req, res) => {
+usersRouter.get('/lots/favourites', isAuth, async (req, res) => {
   const { user } = req.session;
   const id = user?.id;
 
@@ -70,7 +70,7 @@ usersRouter.get('/lots/favourites', async (req, res) => {
 });
 
 // return cars and favourite images
-usersRouter.get('/cars/favourites', async (req, res) => {
+usersRouter.get('/cars/favourites', isAuth, async (req, res) => {
   const { user } = req.session;
   const id = user?.id;
 
@@ -115,10 +115,25 @@ usersRouter.post(
     if (!req.file) {
       return res.send('files not provied');
     }
+
     const { buffer } = req.file;
 
+    const userid = userService.getIdFromSession(req.session);
+
+    // compress the image
     const sharpBuffer = await sharp(buffer).webp({ quality: 10 }).toBuffer();
+    // upload image to the cloudinary
     const result = await uploadStreamCloudinary(sharpBuffer, `users/avatars`);
+
+    if (result.message === 'Fail') {
+      throw new Error(result.error);
+    }
+
+    if (!result.url) {
+      throw new Error('Cloudinary did not return url');
+    }
+
+    await userService.addProfilePicture(userid, result.url);
 
     return res.json({
       result,

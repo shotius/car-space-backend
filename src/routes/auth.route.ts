@@ -1,3 +1,4 @@
+import  userService  from 'services/user.service';
 import express from 'express';
 import { validate } from 'middlewares/validate';
 import authServices from 'services/auth.services';
@@ -6,6 +7,7 @@ import argon2 from 'argon2';
 import User from 'models/user.model';
 import logger from 'utils/logger';
 import { error, success, validation } from 'utils/functions/responseApi';
+import { isAuth } from 'utils/midlewares';
 
 const authRouter = express.Router();
 
@@ -44,7 +46,7 @@ authRouter.post('/login', validate(loginValidations), async (req, res) => {
       results: {
         role: user.role.toLowerCase(),
         isAuthenticated: true,
-        username: user.username
+        username: user.username,
       },
     })
   );
@@ -74,7 +76,7 @@ authRouter.post('/register', async (req, res) => {
   } catch (error: any) {
     logger.error(error.message);
   }
-  
+
   return res.json(savedUser);
 });
 
@@ -91,20 +93,20 @@ authRouter.get('/logout', async (req, res) => {
   });
 });
 
-authRouter.get("/me", async (req, res) => {
-  const { user } = req.session;
+authRouter.get('/me', isAuth, async (req, res) => {
+  const userid = userService.getIdFromSession(req.session);
+  console.log(req.session.user)
+  const user = await User.findById(userid)
+  console.log('here: ', userid)
   if (user) {
-    if (await User.findById(user.id)) {
-      res.json({
-        username: user.username,
-        isAuthenticated: user.isAuthenticated,
-        role: user.role.toLowerCase(),
-      });
-    } else {
-      res.status(401).json({ error: "user not found" });
-    }
+    res.json({
+      username: user.username,
+      isAuthenticated: true,
+      role: user.role.toLowerCase(),
+      avatar: user.avatar,
+    });
   } else {
-    res.json({ username: null, isAuthenticated: false, role: null });
+    res.status(401).json({ error: 'user not found' });
   }
 });
 

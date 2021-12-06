@@ -4,6 +4,12 @@ import fs from 'fs';
 import { bufferStream } from 'utils/functions/bufferStream';
 dotenv.config();
 
+interface CloudinaryResponse {
+  message: 'Success' | 'Fail';
+  error?: string;
+  url?: string;
+}
+
 // this is base url on the cloud
 const baseFolderonCloudinary = 'car-space';
 
@@ -20,7 +26,7 @@ if (typeof process.env.CLOUDINARY_URL === 'undefined') {
 }
 
 /**
- * 
+ *
  * @param localFilePath : this is a file locaiton on the machine
  * @param fileFolder : this is sub folder in the cloud
  * @returns : error message or success message with images url
@@ -28,7 +34,7 @@ if (typeof process.env.CLOUDINARY_URL === 'undefined') {
 export const uploadToCloudinary = async (
   localFilePath: string,
   fileFolder: string
-) => {
+): Promise<CloudinaryResponse> => {
   const pathFolders = localFilePath.split('/');
   const fileName = pathFolders.slice(pathFolders.length - 1);
 
@@ -45,7 +51,10 @@ export const uploadToCloudinary = async (
     };
   } catch (error) {
     fs.unlinkSync(localFilePath);
-    return { message: `Fail upload on Cloudinary: ${error}` };
+    return {
+      message: `Fail`,
+      error: `error on cloudinary upload file ${error}`,
+    };
   }
 };
 
@@ -59,7 +68,7 @@ export const uploadStreamCloudinary = async (
   buffer: Buffer,
   folder: string
 ) => {
-  return new Promise((resolve, reject) => {
+  return new Promise<CloudinaryResponse>((resolve, reject) => {
     const path = `${baseFolderonCloudinary}/${folder}`;
 
     const stream = cloudinary.uploader.upload_stream(

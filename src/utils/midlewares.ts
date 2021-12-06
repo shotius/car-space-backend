@@ -25,6 +25,8 @@ export const defaultErrorHander = (
     response.status(400).send({ error: 'malformed Id' });
   } else if (error.name === 'ValidationError') {
     response.status(400).send({ error: error.message });
+  } else if (error.name === 'not authenticated') {
+    response.status(401).send({error: error.message})
   }
 
   // ------
