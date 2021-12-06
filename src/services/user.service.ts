@@ -1,9 +1,11 @@
 import { IUser } from '../../shared_with_front/types/types-shared';
 import User from '../models/user.model';
-import { getBooks } from '../utils/fileScraper';
 
 //** User service starts from here */
 
+/**
+ * @returns : list of users
+ */
 const getUsers = async (): Promise<IUser[]> => {
   const users = await User.find({});
   return users;
@@ -52,6 +54,10 @@ const likeCar = async ({ userId, lotNumber }: likeCarProps) => {
   }
 };
 
+/**
+ * @param userId 
+ * @returns : return lot numbers of favourite cars
+ */
 const getFafouriteCars = async (userId: number) => {
   const user = await User.findById(userId);
   if (!user) {
@@ -60,18 +66,8 @@ const getFafouriteCars = async (userId: number) => {
   return user.favourites;
 };
 
-// TO-DO remove it from here
-const startScrape = async () => {
-  try {
-    return await getBooks();
-  } catch (error) {
-    return false;
-  }
-};
-
 export default {
   getUsers,
-  startScrape,
   likeCar,
   getFafouriteCars,
   getUser,

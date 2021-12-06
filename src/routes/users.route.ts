@@ -3,34 +3,25 @@ import carImagesService from 'services/carImages.service';
 import carsServices from 'services/cars.services';
 import userService from 'services/user.service';
 import sharp from 'sharp';
-import {
-  uploadStreamCloudinary
-} from 'utils/cloudinary/cloudinary';
+import { uploadStreamCloudinary } from 'utils/cloudinary/cloudinary';
 import { error } from 'utils/functions/responseApi';
+import { isAuth } from 'utils/midlewares';
 import { upload } from 'utils/multer';
-import { fileExists } from '../utils/fileExists';
 import { multerMemoryUpload } from './../utils/multer';
-
 
 const usersRouter = express.Router();
 
-
+// middlewares
 usersRouter.use(express.urlencoded({ extended: true }));
-
 usersRouter.use('/uploads', express.static('dist/uploads'));
-
 
 // get all users
 usersRouter.get('/', async (_req, res) => {
   res.json(await userService.getUsers());
 });
 
-// usersRouter.get('/user', async (_req, res) => {
-//   res.json(await userService.getUser());
-// });
-
 // user likes a vehicle
-usersRouter.post('/like', async (req, res) => {
+usersRouter.post('/like', isAuth, async (req, res) => {
   const body = req.body;
 
   const lotNumber = String(body.lotNumber);
@@ -39,11 +30,8 @@ usersRouter.post('/like', async (req, res) => {
   const id = user?.id;
 
   if (!id) {
-    return res.status(401).send(
-      error({
-        message: 'user not authenticated',
-      })
-    );
+    // this is for typescript, because here we know that id exists
+    return;
   }
 
   if (!lotNumber) {
@@ -116,13 +104,13 @@ usersRouter.get('/cars/favourites', async (req, res) => {
   return res.send(cars);
 });
 
-
 /**
  * Set user avatar
  */
 usersRouter.post(
-  '/upload-comp',
-  multerMemoryUpload.single('picture'),
+  '/avatar',
+  isAuth,
+  multerMemoryUpload.single('avatar'),
   async (req, res) => {
     if (!req.file) {
       return res.send('files not provied');
@@ -130,13 +118,13 @@ usersRouter.post(
     const { buffer } = req.file;
 
     const sharpBuffer = await sharp(buffer).webp({ quality: 10 }).toBuffer();
-    const result = await uploadStreamCloudinary(sharpBuffer, `wallpapers`);
+    const result = await uploadStreamCloudinary(sharpBuffer, `users/avatars`);
 
     return res.json({
       result,
     });
   }
-); 
+);
 
 usersRouter.post('/upload-multi', upload.array('images', 10), (req, res) => {
   var response = '<a href="/">Home</a><br>';
@@ -153,28 +141,4 @@ usersRouter.post('/upload-multi', upload.array('images', 10), (req, res) => {
   return res.send(response);
 });
 
-//--------------------------file upload end
-
-/** TO-DO move it from here */
-usersRouter.get('/check', (_req, res) => {
-  const exists = fileExists();
-  if (exists) {
-    res.send('exist');
-  } else {
-    res.send('not exists');
-  }
-});
-
-usersRouter.get('/scrape', async (_req, res) => {
-  const fileDownloaded = await userService.startScrape();
-  if (!fileDownloaded) {
-    res.send('file could not downloaded');
-  }
-  const exists = fileExists();
-  if (exists) {
-    res.send('file downloaded and it is found');
-  } else {
-    res.send('file Downloaded but could not find it');
-  }
-});
 export default usersRouter;

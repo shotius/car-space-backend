@@ -107,12 +107,13 @@ app.use('/api/users', usersRouter);
 app.use('/api/cars', carsRouter);
 app.use('/api/auth', authRouter);
 
+app.use(defaultErrorHander);
+
 // send front from here
 app.get('*', function (_req, res) {
   res.sendFile('index.html', { root: path.join(__dirname, '../build') });
 });
 
-// app.use(middleware.unknownEndpoint);
-app.use(defaultErrorHander);
+
 
 export default app;
