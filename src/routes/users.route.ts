@@ -1,13 +1,24 @@
+import express from 'express';
 import carImagesService from 'services/carImages.service';
 import carsServices from 'services/cars.services';
-import express from 'express';
 import userService from 'services/user.service';
-import { fileExists } from '../utils/fileExists';
+import sharp from 'sharp';
+import {
+  uploadStreamCloudinary
+} from 'utils/cloudinary/cloudinary';
 import { error } from 'utils/functions/responseApi';
 import { upload } from 'utils/multer';
-import { uploadToCloudinary } from 'utils/cloudinary/cloudinary';
+import { fileExists } from '../utils/fileExists';
+import { multerMemoryUpload } from './../utils/multer';
+
 
 const usersRouter = express.Router();
+
+
+usersRouter.use(express.urlencoded({ extended: true }));
+
+usersRouter.use('/uploads', express.static('dist/uploads'));
+
 
 // get all users
 usersRouter.get('/', async (_req, res) => {
@@ -105,20 +116,27 @@ usersRouter.get('/cars/favourites', async (req, res) => {
   return res.send(cars);
 });
 
-usersRouter.use(express.urlencoded({ extended: true }));
 
-usersRouter.use('/uploads', express.static('dist/uploads'));
+/**
+ * Set user avatar
+ */
+usersRouter.post(
+  '/upload-comp',
+  multerMemoryUpload.single('picture'),
+  async (req, res) => {
+    if (!req.file) {
+      return res.send('files not provied');
+    }
+    const { buffer } = req.file;
 
-usersRouter.post('/upload', upload.single('profile-avatar'), async (req, res) => {
-  if (!req.file) {
-    return res.status(400).send('files not provied')
+    const sharpBuffer = await sharp(buffer).webp({ quality: 10 }).toBuffer();
+    const result = await uploadStreamCloudinary(sharpBuffer, `wallpapers`);
+
+    return res.json({
+      result,
+    });
   }
-
-  const localFilePath = req.file.path
-  const result = await uploadToCloudinary(localFilePath, 'profile-avatars')
-  return res.json(result);
-  // return res.send(localFilePath)
-});
+); 
 
 usersRouter.post('/upload-multi', upload.array('images', 10), (req, res) => {
   var response = '<a href="/">Home</a><br>';
@@ -134,6 +152,8 @@ usersRouter.post('/upload-multi', upload.array('images', 10), (req, res) => {
 
   return res.send(response);
 });
+
+//--------------------------file upload end
 
 /** TO-DO move it from here */
 usersRouter.get('/check', (_req, res) => {

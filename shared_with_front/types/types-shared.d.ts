@@ -19,6 +19,7 @@ export interface IUser {
   name: string;
   role: string;
   passwordHash: string;
+  avatar: string;
   favourites: string[];
 }
 

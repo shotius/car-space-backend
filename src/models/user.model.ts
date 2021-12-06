@@ -9,6 +9,7 @@ const userSchema: Schema = new Schema({
   name: String,
   role: String,
   passwordHash: String,
+  avatar: String, 
   favourites: [String],
 });
 
