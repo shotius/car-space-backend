@@ -4,6 +4,8 @@ import express from 'express';
 import userService from 'services/user.service';
 import { fileExists } from '../utils/fileExists';
 import { error } from 'utils/functions/responseApi';
+import { upload } from 'utils/multer';
+import { uploadToCloudinary } from 'utils/cloudinary/cloudinary';
 
 const usersRouter = express.Router();
 
@@ -101,6 +103,36 @@ usersRouter.get('/cars/favourites', async (req, res) => {
   }
 
   return res.send(cars);
+});
+
+usersRouter.use(express.urlencoded({ extended: true }));
+
+usersRouter.use('/uploads', express.static('dist/uploads'));
+
+usersRouter.post('/upload', upload.single('profile-avatar'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).send('files not provied')
+  }
+
+  const localFilePath = req.file.path
+  const result = await uploadToCloudinary(localFilePath, 'profile-avatars')
+  return res.json(result);
+  // return res.send(localFilePath)
+});
+
+usersRouter.post('/upload-multi', upload.array('images', 10), (req, res) => {
+  var response = '<a href="/">Home</a><br>';
+  response += 'Files uploaded successfully.<br>';
+  console.log('file: ', req.files);
+  if (!req.files || !req.files.length) {
+    return res.send('failed');
+  }
+  for (var i = 0; i < req.files?.length; i++) {
+    //@ts-ignore
+    response += `<img src="${req.files[i].path}" /><br>`;
+  }
+
+  return res.send(response);
 });
 
 /** TO-DO move it from here */
