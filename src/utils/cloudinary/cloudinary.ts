@@ -5,21 +5,15 @@ import { bufferStream } from 'utils/functions/bufferStream';
 import { CloudinaryResponse } from '../../../shared_with_front/types/types-shared';
 dotenv.config();
 
-
 // this is base url on the cloud
 const baseFolderonCloudinary = 'car-space';
 
-if (typeof process.env.CLOUDINARY_URL === 'undefined') {
-  console.warn('!! cloudinary config is undefined !!');
-  console.warn('export CLOUDINARY_URL or set dotenv file');
-} else {
-  cloudinary.config({
-    cloud_name: process.env.CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-    secure: true,
-  });
-}
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+  secure: true,
+});
 
 /**
  *
