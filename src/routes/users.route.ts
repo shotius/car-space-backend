@@ -7,7 +7,10 @@ import { uploadStreamCloudinary } from 'utils/cloudinary/cloudinary';
 import { error } from 'utils/functions/responseApi';
 import { isAuth } from 'utils/midlewares';
 import { upload } from 'utils/multer';
-import { ApiSuccessResponse, CloudinaryResponse } from '../../shared_with_front/types/types-shared';
+import {
+  ApiSuccessResponse,
+  CloudinaryResponse,
+} from '../../shared_with_front/types/types-shared';
 import { multerMemoryUpload } from './../utils/multer';
 
 const usersRouter = express.Router();
@@ -71,12 +74,13 @@ usersRouter.get('/lots/favourites', isAuth, async (req, res) => {
 });
 
 // return cars and favourite images
-usersRouter.get('/cars/favourites', isAuth, async (req, res) => {
-  const { user } = req.session;
-  const id = user?.id;
-
+usersRouter.get('/cars/favourites', isAuth, async (req, res, next) => {
+  const id = userService.getIdFromSession(req.session);
   if (!id) {
-    return res.status(401).end();
+    return next({
+      messa: 'not authorized', 
+      status: 401
+    });
   }
 
   const lotNumbers = await userService.getFafouriteCars(id);
@@ -112,14 +116,18 @@ usersRouter.post(
   '/avatar',
   isAuth,
   multerMemoryUpload.single('profile-avatar'),
-  async (req, res) => {
+  async (req, res, next) => {
     if (!req.file) {
       return res.send('files not provied');
     }
 
     const { buffer } = req.file;
 
+    // get user from the session
     const userid = userService.getIdFromSession(req.session);
+    if (!userid) {
+      return next('not authorized')
+    }
 
     // compress the image
     const sharpBuffer = await sharp(buffer).webp({ quality: 10 }).toBuffer();
@@ -127,20 +135,23 @@ usersRouter.post(
     const result = await uploadStreamCloudinary(sharpBuffer, `users/avatars`);
 
     if (result.message === 'Fail') {
-      throw new Error(result.error);
+      return next(result.error);
     }
 
     if (!result.url) {
-      throw new Error('Cloudinary did not return url');
+      return next('Cloudinary did not return url')
     }
 
-    await userService.addProfilePicture(userid, result.url);
-
-    
-    const response: ApiSuccessResponse<CloudinaryResponse> =  {
-      results: result, 
-      success: true
+    try {
+      await userService.changeProfilePicture(userid, result.url);
+    } catch (error) {
+      return next(error);
     }
+
+    const response: ApiSuccessResponse<CloudinaryResponse> = {
+      results: result,
+      success: true,
+    };
 
     return res.send(response);
   }
@@ -160,5 +171,13 @@ usersRouter.post('/upload-multi', upload.array('images', 10), (req, res) => {
 
   return res.send(response);
 });
+
+usersRouter.get("/test", async (_req, _res, next ) => {
+  // return next({
+  //   message: 'testing error handling', 
+  //   status: 401
+  // })
+  next()
+})
 
 export default usersRouter;

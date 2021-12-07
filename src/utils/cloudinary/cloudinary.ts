@@ -1,5 +1,5 @@
-import dotenv from 'dotenv';
 import { v2 as cloudinary } from 'cloudinary';
+import dotenv from 'dotenv';
 import fs from 'fs';
 import { bufferStream } from 'utils/functions/bufferStream';
 import { CloudinaryResponse } from '../../../shared_with_front/types/types-shared';
@@ -82,4 +82,31 @@ export const uploadStreamCloudinary = async (
     // write post strem
     bufferStream(buffer).pipe(stream);
   });
+};
+
+/**
+ * Function deletes image from the Cloudinary storage
+ * @param public_id : image uri
+ * @returns {CloudinaryResponse}
+ */
+export const deleteOnCloudinary = async (
+  public_id: string
+): Promise<CloudinaryResponse> => {
+  try {
+    const result = await cloudinary.uploader.destroy(public_id);
+    if (result.result === 'not found') {
+      return {
+        message: 'Fail',
+        error: 'Could not delete the the image:  ' + public_id,
+      };
+    }
+    return {
+      message: 'Success',
+    };
+  } catch (error) {
+    return {
+      message: 'Fail',
+      error: `Failed to remove url: ${public_id} from cloudinary. ${error}`,
+    };
+  }
 };

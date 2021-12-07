@@ -1,4 +1,6 @@
+import { removeExtension } from './../utils/functions/removeExtension';
 import { Session } from 'express-session';
+import { deleteOnCloudinary } from 'utils/cloudinary/cloudinary';
 import { IUser } from '../../shared_with_front/types/types-shared';
 import User from '../models/user.model';
 
@@ -66,20 +68,34 @@ const getFafouriteCars = async (userId: number) => {
 };
 
 /**
- * 
- * @param userId 
+ *
+ * @param userId
  * @param avatar : cloudinary url for user avatar
  * @returns true if there no error
  */
-const addProfilePicture = async (userId: number, avatar: string) => {
+const changeProfilePicture = async (userId: number, avatar: string) => {
   const user = await User.findById(userId);
   if (!user) {
     throw new Error('User not found');
   }
+
+  // remove existing avatar from cloudinary
+  if (user.avatar) {
+    // get public id from the url
+    const public_id = removeExtension(user.avatar).slice(
+      user.avatar.indexOf('car-space')
+    );
+    const isDeleted = await deleteOnCloudinary(public_id);
+    if (isDeleted.message === 'Fail') {
+      throw new Error(isDeleted.error);
+    }
+  }
+
   user.avatar = avatar;
+
   try {
     await user.save();
-    return true
+    return true;
   } catch (error) {
     throw new Error(`Error saving user avatar : ${error}`);
   }
@@ -90,20 +106,20 @@ const addProfilePicture = async (userId: number, avatar: string) => {
  * @param session : express session
  * @returns : id of user
  */
-const getIdFromSession = (session: Session): number => {
-  const {user} = session
-  const id = user?.id
+const getIdFromSession = (session: Session): number | null => {
+  const { user } = session;
+  const id = user?.id;
   if (!id) {
-    throw new Error('Id not found')
+    return null;
   }
-  return id
-}
+  return id;
+};
 
 export default {
   getUsers,
   likeCar,
   getFafouriteCars,
   getUser,
-  addProfilePicture, 
-  getIdFromSession
+  changeProfilePicture,
+  getIdFromSession,
 };

@@ -1,3 +1,4 @@
+import { error } from 'utils/functions/responseApi';
 import express from 'express';
 import logger from './logger';
 import HttpException from 'exceptions/HttpException';
@@ -20,6 +21,8 @@ export const defaultErrorHander = (
   next: express.NextFunction
 ) => {
   logger.error(error.message);
+
+  // console.log('error in default middleware: ', error)
   // default error response
   let defaultResponse: ApiDefaultError = {
     success: false,
@@ -62,12 +65,18 @@ export const defaultErrorHander = (
  * @param _res
  * @param next
  */
-export const isAuth = (req: Request, _res: Response, next: NextFunction) => {
+export const isAuth = (req: Request, res: Response, next: NextFunction) => {
   const { user } = req.session;
   const id = user?.id;
   if (!id) {
-    throw new Error('not authenticated');
+    // throw new Error('not authenticated');
+    return res.status(401).send(
+      error({
+        message: 'not authenticated',
+        status: 401,
+      })
+    );
   }
 
-  next();
+  return next();
 };
