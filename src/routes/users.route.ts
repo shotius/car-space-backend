@@ -7,6 +7,7 @@ import { uploadStreamCloudinary } from 'utils/cloudinary/cloudinary';
 import { error } from 'utils/functions/responseApi';
 import { isAuth } from 'utils/midlewares';
 import { upload } from 'utils/multer';
+import { ApiSuccessResponse, CloudinaryResponse } from '../../shared_with_front/types/types-shared';
 import { multerMemoryUpload } from './../utils/multer';
 
 const usersRouter = express.Router();
@@ -110,7 +111,7 @@ usersRouter.get('/cars/favourites', isAuth, async (req, res) => {
 usersRouter.post(
   '/avatar',
   isAuth,
-  multerMemoryUpload.single('avatar'),
+  multerMemoryUpload.single('profile-avatar'),
   async (req, res) => {
     if (!req.file) {
       return res.send('files not provied');
@@ -135,9 +136,13 @@ usersRouter.post(
 
     await userService.addProfilePicture(userid, result.url);
 
-    return res.json({
-      result,
-    });
+    
+    const response: ApiSuccessResponse<CloudinaryResponse> =  {
+      results: result, 
+      success: true
+    }
+
+    return res.send(response);
   }
 );
 

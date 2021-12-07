@@ -1,30 +1,34 @@
 import {
+  ApiDefaultError,
+  ApiSuccessResponse,
+  ApiValidationError,
   MyValidationErrors,
-  ApiResponse,
 } from '../../../shared_with_front/types/types-shared';
 
 //** Success */
-interface SuccessProps {
-  results: unknown;
+interface SuccessProps<Type> {
+  results: Type;
   message?: string;
 }
 
-export const success = ({
+export function success<Type>({
   results,
-}: SuccessProps): ApiResponse => {
+}: SuccessProps<Type>): ApiSuccessResponse<Type> {
   return {
     success: true,
     results,
   };
-};
+}
 
 /** Error */
-type ErrorProps = Pick<SuccessProps, 'message'>;
+type ErrorProps = {
+  message: string;
+};
 
-export const error = ({ message}: ErrorProps): ApiResponse => {
+export const error = ({ message }: ErrorProps): ApiDefaultError => {
   return {
-    message,
     success: false,
+    error: message,
   };
 };
 
@@ -33,11 +37,11 @@ interface ValidationProps {
   errors: MyValidationErrors[];
 }
 
-export const validation = ({ errors }: ValidationProps): ApiResponse => {
+export const validation = ({ errors }: ValidationProps): ApiValidationError => {
   return {
     message: 'Validation Error',
     success: false,
-    code: 422,
+    status: 422,
     errors,
   };
 };

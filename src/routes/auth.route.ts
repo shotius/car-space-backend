@@ -8,6 +8,7 @@ import User from 'models/user.model';
 import logger from 'utils/logger';
 import { error, success, validation } from 'utils/functions/responseApi';
 import { isAuth } from 'utils/midlewares';
+import { RoleTypes, SessionUser } from '../../shared_with_front/types/types-shared';
 
 const authRouter = express.Router();
 
@@ -93,19 +94,25 @@ authRouter.get('/logout', async (req, res) => {
   });
 });
 
+
+/**
+ * if user is authenticated response will be 
+ */
 authRouter.get('/me', isAuth, async (req, res) => {
   const userid = userService.getIdFromSession(req.session);
-  console.log(req.session.user)
   const user = await User.findById(userid)
-  console.log('here: ', userid)
+
   if (user) {
-    res.json({
-      username: user.username,
-      isAuthenticated: true,
-      role: user.role.toLowerCase(),
-      avatar: user.avatar,
-    });
+    const response: Omit<SessionUser, "id"> = {
+      username: user.username, 
+      isAuthenticated: true, 
+      role: user.role.toLowerCase() as RoleTypes, 
+      avatar: user.avatar
+    }
+
+    res.send(response);
   } else {
+
     res.status(401).json({ error: 'user not found' });
   }
 });

@@ -2,13 +2,9 @@ import dotenv from 'dotenv';
 import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs';
 import { bufferStream } from 'utils/functions/bufferStream';
+import { CloudinaryResponse } from '../../../shared_with_front/types/types-shared';
 dotenv.config();
 
-interface CloudinaryResponse {
-  message: 'Success' | 'Fail';
-  error?: string;
-  url?: string;
-}
 
 // this is base url on the cloud
 const baseFolderonCloudinary = 'car-space';

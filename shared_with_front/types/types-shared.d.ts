@@ -1,26 +1,50 @@
-import { Document, Types, Schema } from 'mongoose';
+import { Document } from 'mongoose';
 
 import { ValidationError } from 'express-validator';
 
 /** General reponse */
-type StatusCode = 200 | 201 | 400 | 401 | 404 | 403 | 422 | 500;
+export enum Roles {
+  ADMIN = 'admin',
+  DEALER = 'dealer',
+  USER = 'user',
+}
 
-export interface ApiResponse {
+export interface ApiBaseResponse {
   success: boolean;
   message?: string;
-  results?: any;
-  code?: StatusCode;
-  errors?: MyValidationErrors[];
+  status?: number;
+}
+
+export interface ApiValidationError extends ApiBaseResponse {
+  errors: MyValidationErrors[];
+}
+
+export interface ApiSuccessResponse<Type> extends ApiBaseResponse {
+  results: Type
+}
+
+export interface ApiDefaultError extends ApiBaseResponse {
+  error: string | null;
 }
 
 /** IUser */
+export type RoleTypes = Roles.ADMIN | Roles.DEALER;
+
 export interface IUser {
   username: string;
   name: string;
-  role: string;
+  role: RoleTypes;
   passwordHash: string;
   avatar: string;
   favourites: string[];
+}
+
+export interface SessionUser {
+  username: string;
+  isAuthenticated: boolean;
+  role: RoleTypes;
+  id: number;
+  avatar: string;
 }
 
 export interface LoginParams {
@@ -67,6 +91,13 @@ export interface ICar {
   rd: string; // Runs and drive
   bin: string; // Buy it now
   imgsM?: string[]; // medium images
+}
+
+// response from cloudinary
+interface CloudinaryResponse {
+  message: 'Success' | 'Fail';
+  error?: string;
+  url?: string;
 }
 
 /**Filters */

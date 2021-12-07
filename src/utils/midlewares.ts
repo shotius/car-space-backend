@@ -2,6 +2,7 @@ import express from 'express';
 import logger from './logger';
 import HttpException from 'exceptions/HttpException';
 import { Request, Response, NextFunction } from 'express';
+import { ApiDefaultError } from '../../shared_with_front/types/types-shared';
 
 /**
  * Function is the last error handler middleware
@@ -19,14 +20,22 @@ export const defaultErrorHander = (
   next: express.NextFunction
 ) => {
   logger.error(error.message);
+  // default error response
+  let defaultResponse: ApiDefaultError = {
+    success: false,
+    error: 'something went wrong',
+  };
 
   // handle known errors
   if (error.name === 'CastError') {
-    response.status(400).send({ error: 'malformed Id' });
+    defaultResponse.error = 'malformed Id';
+    return response.status(400).send(defaultResponse);
   } else if (error.name === 'ValidationError') {
-    response.status(400).send({ error: error.message });
+    defaultResponse.error = error.message;
+    return response.status(400).send(defaultResponse);
   } else if (error.name === 'not authenticated') {
-    response.status(401).send({error: error.message})
+    defaultResponse.error = error.message;
+    return response.status(401).send(defaultResponse);
   }
 
   // ------
@@ -37,11 +46,13 @@ export const defaultErrorHander = (
 
   // it is not a server error
   if (!pathes.includes('api')) {
-    next();
+    return next();
   } else {
     const status = error.status || 500;
     const message = error.message || 'something went wrong';
-    response.status(status).send({ status, message });
+    defaultResponse.status = status;
+    defaultResponse.error = message;
+    return response.status(status).send(defaultResponse);
   }
 };
 
