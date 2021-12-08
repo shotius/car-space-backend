@@ -4,9 +4,10 @@ module.exports = {
       name: 'car-space',
       script: 'dist/index.js',
       watch: '.',
-      cron_restart: '0 * * * *',
+      cron_restart: '0 * * * * *',
       instances: 'max',
       exec_mode: 'cluster',
+      watch: true,
       env: {
         NODE_ENV: 'development',
         NODE_PATH: './dist',
