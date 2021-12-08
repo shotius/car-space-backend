@@ -9,16 +9,14 @@ import url from 'url';
 import authRouter from './routes/auth.route';
 import carsRouter from './routes/cars.route';
 import usersRouter from './routes/users.route';
-import { SessionUser } from './types';
 import { MONGODB_URI } from './utils/config';
 import { __prod__ } from './utils/constants';
 import logger from './utils/logger';
 import { defaultErrorHander } from './utils/midlewares';
+import compression from 'compression';
+import { SessionUser } from '../shared_with_front/types/types-shared';
 
-
-
-
-
+// -- declare session
 declare module 'express-session' {
   interface Session {
     user?: SessionUser;
@@ -29,7 +27,7 @@ const app = express();
 
 logger.info('connecting to db');
 
-// connnection to mongoDB
+// -- connnection to mongoDB
 mongoose
   .connect(MONGODB_URI!, {
     useNewUrlParser: true,
@@ -44,10 +42,10 @@ mongoose
     console.error('error connecting to DB', error.message);
   });
 
-// configure Redis
+// -- configure Redis
 const redisStore = connectRedis(session);
 
-// configure redis client
+// -- configure redis client
 let redisClient;
 if (process.env.REDIS_URL) {
   const redis_uri = url.parse(process.env.REDIS_URL, true);
@@ -65,11 +63,10 @@ if (process.env.REDIS_URL) {
   redisClient = new Redis();
 }
 
-// cors
+// -- cors
 const whiteList = [
   'http://localhost:3000',
   'https://whispering-atoll-93096.herokuapp.com/',
-  'http://localhost:5000',
 ];
 
 app.use(
@@ -82,7 +79,7 @@ app.use(express.json());
 
 app.set('trust proxy', 1);
 
-//Configure session middleware
+// -- Configure session middleware
 app.use(
   session({
     name: 'uid',
@@ -100,9 +97,11 @@ app.use(
   })
 );
 
+// -- middewares
+app.use(compression());
 app.use(express.static('build'));
 
-//routes
+// -- routes
 app.use('/api/users', usersRouter);
 app.use('/api/cars', carsRouter);
 app.use('/api/auth', authRouter);
@@ -113,7 +112,5 @@ app.use(defaultErrorHander);
 app.get('*', function (_req, res) {
   res.sendFile('index.html', { root: path.join(__dirname, '../build') });
 });
-
-
 
 export default app;

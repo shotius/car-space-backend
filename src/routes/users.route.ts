@@ -21,6 +21,7 @@ usersRouter.use('/uploads', express.static('dist/uploads'));
 
 // get all users
 usersRouter.get('/', async (_req, res) => {
+  console.log('users')
   res.json(await userService.getUsers());
 });
 
