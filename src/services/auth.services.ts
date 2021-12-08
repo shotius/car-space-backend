@@ -1,9 +1,9 @@
 import User from 'models/user.model';
 import { Request } from 'express';
-import { SessionUser } from 'types';
 import {
   IUser,
   LoginParams,
+  SessionUser,
   UserResponse,
 } from '../../shared_with_front/types/types-shared';
 import argon2 from 'argon2';
@@ -54,6 +54,7 @@ const addUserSession = (
     isAuthenticated: true,
     role: user.role,
     id: user._id,
+    avatar: user.avatar
   };
 
   req.session.user = sessionUser;
