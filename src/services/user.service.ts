@@ -83,7 +83,7 @@ const changeProfilePicture = async (userId: number, avatar: string) => {
   if (user.avatar) {
     // get public id from the url
     const public_id = removeExtension(user.avatar).slice(
-      user.avatar.indexOf('car-space')
+      user.avatar.indexOf('car-space/')
     );
     const isDeleted = await deleteOnCloudinary(public_id);
     if (isDeleted.message === 'Fail') {

@@ -1,5 +1,5 @@
 {
-  "name": "server",
+  "name": "cars-space-server",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -15,7 +15,7 @@
     "logs:prod": "heroku logs --tail",
     "mk:uploads": "mkdir -p dist/uploads"
   },
-  "author": "",
+  "author": "Shota Archemashvili",
   "license": "ISC",
   "dependencies": {
     "argon2": "^0.28.2",

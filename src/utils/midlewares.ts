@@ -69,7 +69,6 @@ export const isAuth = (req: Request, res: Response, next: NextFunction) => {
   const { user } = req.session;
   const id = user?.id;
   if (!id) {
-    // throw new Error('not authenticated');
     return res.status(401).send(
       error({
         message: 'not authenticated',

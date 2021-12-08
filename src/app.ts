@@ -77,6 +77,7 @@ app.use(
 );
 app.use(express.json());
 
+// -- when server is behing of reverse proxy
 app.set('trust proxy', 1);
 
 // -- Configure session middleware
@@ -108,7 +109,7 @@ app.use('/api/auth', authRouter);
 
 app.use(defaultErrorHander);
 
-// send front from here
+// -- send front from here
 app.get('*', function (_req, res) {
   res.sendFile('index.html', { root: path.join(__dirname, '../build') });
 });
