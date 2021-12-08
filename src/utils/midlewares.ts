@@ -1,9 +1,37 @@
+import { ApiError } from './functions/ApiError';
 import { error } from 'utils/functions/responseApi';
-import express from 'express';
 import logger from './logger';
 import HttpException from 'exceptions/HttpException';
-import { Request, Response, NextFunction } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import { ApiDefaultError } from '../../shared_with_front/types/types-shared';
+import mongoose from 'mongoose';
+import httpStatus from 'http-status';
+
+/**
+ * Function will convert errors into the standard ApiError type
+ * @param err any type oferror 
+ * @param _req 
+ * @param _res 
+ * @param next 
+ */
+export const errorConverter = (
+  err: any,
+  _req: Request,
+  _res: Response,
+  next: NextFunction
+) => {
+  let error = err;
+  if (!(error instanceof ApiError)) {
+    const statusCode =
+      error.statusCode || error instanceof mongoose.Error
+        ? httpStatus.BAD_REQUEST
+        : httpStatus.INTERNAL_SERVER_ERROR;
+
+    const message = error.message || httpStatus[statusCode].toString();
+    error = new ApiError(statusCode, message, err.stack);
+  }
+  next(error)
+};
 
 /**
  * Function is the last error handler middleware

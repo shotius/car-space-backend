@@ -62,7 +62,8 @@ export interface UserResponse {
   user?: IUser & Document<any, any, IUser>;
 }
 
-export interface ICar {
+// Car Copart 
+export interface ICarCopart {
   lN: string; // Lot number
   m: string; // Make
   vin: string; // VIN
@@ -77,7 +78,6 @@ export interface ICar {
   curB: string; // High Bid =non-vix,Sealed=Vix
   mG: string; // Model Group
   mD: string; // Model Detail
-  eng: string; // Engine
   trans: string; // Transmission
   imgT: string; // Image Thumbnail
   imgU: string; // Image URL
@@ -93,6 +93,29 @@ export interface ICar {
   imgsM?: string[]; // medium images
 }
 
+// Car for dealers
+export interface ICarDealer {
+  m: string; // Manufacturer
+  bSt: string; // Body Style
+  dmg: string; // Damage Description
+  sDmg: string; // Secondary Damage
+  lC: string; // Location country
+  od: string; // Odometer
+  cyl: string; // Cylinders
+  dr: string; // Drive
+  mG: string; // Model Group
+  mD: string; // Model Detail
+  eng: string; // Engine
+  trans: string; // Transmission
+  imgT: string; // Image Thumbnail
+  imgUrls: string[]; // Image URL
+  y: string; // Year
+  fuel: string; // Fuel Type
+  keys: string; // Has Keys-Yes or No
+  c: string; // Color
+  bin: string; // Buy it now
+}
+
 // response from cloudinary
 interface CloudinaryResponse {
   message: 'Success' | 'Fail';
@@ -101,8 +124,8 @@ interface CloudinaryResponse {
 }
 
 /**Filters */
-
 export interface SelectedCarModel {
   brand: string;
   models: string[];
 }
+

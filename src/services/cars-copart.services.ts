@@ -1,9 +1,25 @@
-// import CarImagesService from 'services/carImagesService';
-import { BaseFilterProps } from 'types';
-import { ICar } from '../../shared_with_front/types/types-shared';
-import Car from '../models/car.model';
+import { ICarCopart } from '../../shared_with_front/types/types-shared';
+import Car from '../models/car-copart.model';
 
 /** Interfaces */
+interface BaseFilterProps {
+  brands: string[];
+  models: string[];
+  types: string[];
+  locations: string[];
+  transmissions: string[];
+  keys: string;
+  drives: string[];
+  salesStatuses: string[];
+  fuels: string[];
+  cylinders: string[];
+  year_from?: number;
+  year_to?: number;
+  conditions: string[];
+  engine_from?: number;
+  engine_to?: number;
+}
+
 interface BaseGetCarInterface {
   filters: BaseFilterProps;
 }
@@ -84,7 +100,7 @@ const getCarsPaginated = async ({
   limit,
   page,
   filters,
-}: getCarsProps): Promise<ICar[]> => {
+}: getCarsProps): Promise<ICarCopart[]> => {
   // how many cars to skip
   const startFrom = (page - 1) * limit;
 
@@ -97,7 +113,9 @@ const getCarsPaginated = async ({
   return cars;
 };
 
-const getCarsFromLotNumbers = async (lotNumbers: string[]): Promise<ICar[]> => {
+const getCarsFromLotNumbers = async (
+  lotNumbers: string[]
+): Promise<ICarCopart[]> => {
   const cars = await Car.find({ lN: { $in: lotNumbers } });
   return cars;
 };
@@ -186,7 +204,7 @@ const getTransmissions = async () => {
   return await Car.distinct('trans');
 };
 
-export default {
+const copartCarServices = {
   getCarsPaginated,
   getAllBrands,
   getModels,
@@ -202,3 +220,5 @@ export default {
   getTransmissions,
   getCarsFromLotNumbers,
 };
+
+export default copartCarServices;

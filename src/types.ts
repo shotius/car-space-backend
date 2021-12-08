@@ -22,7 +22,7 @@ interface ImageSequense {
   }[];
 }
 
-export interface ICarImages {
+export interface ICarCopartImages {
   objectId: number;
   imgCount: number;
   lotImages: ImageSequense[];

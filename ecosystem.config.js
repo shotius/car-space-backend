@@ -4,7 +4,7 @@ module.exports = {
       name: 'car-space',
       script: 'dist/index.js',
       watch: '.',
-      cron_restart: '*/60 * * * * *',
+      cron_restart: '0 0 * * * *',
       instances: 'max',
       exec_mode: 'cluster',
       watch: true,

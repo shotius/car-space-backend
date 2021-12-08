@@ -1,9 +1,10 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import carImagesService from 'services/carImages.service';
-import carsServices from 'services/cars.services';
+import copartCarServices from 'services/cars-copart.services';
 import userService from 'services/user.service';
 import sharp from 'sharp';
 import { uploadStreamCloudinary } from 'utils/cloudinary/cloudinary';
+import { asyncHandler } from 'utils/functions/asyncHandler';
 import { error } from 'utils/functions/responseApi';
 import { isAuth } from 'utils/midlewares';
 import { upload } from 'utils/multer';
@@ -21,94 +22,83 @@ usersRouter.use('/uploads', express.static('dist/uploads'));
 
 // get all users
 usersRouter.get('/', async (_req, res) => {
-  console.log('users')
+  console.log('users');
   res.json(await userService.getUsers());
 });
 
 // user likes a vehicle
-usersRouter.post('/like', isAuth, async (req, res) => {
-  const body = req.body;
+usersRouter.post(
+  '/like',
+  isAuth,
+  asyncHandler(async (req: Request, res: Response) => {
+    const id = userService.getIdFromSession(req.session);
+    const lotNumber = String(req.body.lotNumber);
 
-  const lotNumber = String(body.lotNumber);
-  const { user } = req.session;
+    if (!lotNumber) {
+      return res.status(400).send(
+        error({
+          message: 'lotNumber was not provided to like a car',
+        })
+      );
+    }
 
-  const id = user?.id;
-
-  if (!id) {
-    // this is for typescript, because here we know that id exists
-    return;
-  }
-
-  if (!lotNumber) {
-    return res.status(400).send(
-      error({
-        message: 'lotNumber was not provided to like a car',
-      })
-    );
-  }
-
-  const success = await userService.likeCar({
-    userId: id,
-    lotNumber: lotNumber,
-  });
-  return res.json({ success });
-});
+    const success = await userService.likeCar({
+      userId: id,
+      lotNumber: lotNumber,
+    });
+    return res.json({ success });
+  })
+);
 
 /**
  * @return: lotNUmber of all favourite vehicles
  */
-usersRouter.get('/lots/favourites', isAuth, async (req, res) => {
-  const { user } = req.session;
-  const id = user?.id;
+usersRouter.get(
+  '/lots/favourites',
+  isAuth,
+  asyncHandler(async (req: Request, res: Response) => {
+    const id = userService.getIdFromSession(req.session);
+    const result = await userService.getFafouriteCars(id);
 
-  if (!id) {
-    return res.status(401).end();
-  }
-
-  const result = await userService.getFafouriteCars(id);
-
-  if (!result) {
-    return res.status(500).end();
-  }
-
-  return res.send(result);
-});
+    if (!result) {
+      return res.status(500).end();
+    }
+    return res.send(result);
+  })
+);
 
 // return cars and favourite images
-usersRouter.get('/cars/favourites', isAuth, async (req, res, next) => {
-  const id = userService.getIdFromSession(req.session);
-  if (!id) {
-    return next({
-      messa: 'not authorized', 
-      status: 401
-    });
+usersRouter.get(
+  '/cars/favourites',
+  isAuth,
+  async (req: Request, res: Response) => {
+    const id = userService.getIdFromSession(req.session);
+    const lotNumbers = await userService.getFafouriteCars(id);
+
+    if (!lotNumbers) {
+      return res.status(401).send(
+        error({
+          message: 'error while fetching lot numbers',
+        })
+      );
+    }
+
+    // get cars
+    const cars = await copartCarServices.getCarsFromLotNumbers(lotNumbers);
+    // console.log(cars);
+
+    // get images
+    const lotNs = lotNumbers.map((lot) => parseInt(lot));
+    const images = await carImagesService.getMedimImagesList(lotNs);
+
+    // asign images to cars
+    for (let car of cars) {
+      car.imgsM = images[car.lN];
+    }
+
+    return res.send(cars);
   }
-
-  const lotNumbers = await userService.getFafouriteCars(id);
-
-  if (!lotNumbers) {
-    return res.status(401).send(
-      error({
-        message: 'error while fetching lot numbers',
-      })
-    );
-  }
-
-  // get cars
-  const cars = await carsServices.getCarsFromLotNumbers(lotNumbers);
-  // console.log(cars);
-
-  // get images
-  const lotNs = lotNumbers.map((lot) => parseInt(lot));
-  const images = await carImagesService.getMedimImagesList(lotNs);
-
-  // asign images to cars
-  for (let car of cars) {
-    car.imgsM = images[car.lN];
-  }
-
-  return res.send(cars);
-});
+);
 
 /**
  * Set user avatar
@@ -127,7 +117,7 @@ usersRouter.post(
     // get user from the session
     const userid = userService.getIdFromSession(req.session);
     if (!userid) {
-      return next('not authorized')
+      return next('not authorized');
     }
 
     // compress the image
@@ -140,7 +130,7 @@ usersRouter.post(
     }
 
     if (!result.url) {
-      return next('Cloudinary did not return url')
+      return next('Cloudinary did not return url');
     }
 
     try {
@@ -172,13 +162,5 @@ usersRouter.post('/upload-multi', upload.array('images', 10), (req, res) => {
 
   return res.send(response);
 });
-
-usersRouter.get("/test", async (_req, _res, next ) => {
-  // return next({
-  //   message: 'testing error handling', 
-  //   status: 401
-  // })
-  next()
-})
 
 export default usersRouter;

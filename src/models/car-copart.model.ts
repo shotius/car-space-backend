@@ -1,7 +1,7 @@
 import { model, Schema } from 'mongoose';
-import { ICar } from '../../shared_with_front/types/types-shared';
+import { ICarCopart } from '../../shared_with_front/types/types-shared';
 
-const carSchema = new Schema<ICar>(
+const carSchema = new Schema<ICarCopart>(
   {
     lN: String, // Lot number
     m: String, // Make
@@ -43,4 +43,4 @@ carSchema.set('toJSON', {
   },
 });
 
-export default model<ICar>('Car', carSchema);
+export default model<ICarCopart>('Car', carSchema);

@@ -7,12 +7,13 @@ import mongoose from 'mongoose';
 import path from 'path';
 import url from 'url';
 import authRouter from './routes/auth.route';
-import carsRouter from './routes/cars.route';
+import carsRouter from './routes/cars-copart.route';
 import usersRouter from './routes/users.route';
+import dealerCarsRouter from './routes/cars-dealer.route'
 import { MONGODB_URI } from './utils/config';
 import { __prod__ } from './utils/constants';
 import logger from './utils/logger';
-import { defaultErrorHander } from './utils/midlewares';
+import { defaultErrorHander, errorConverter } from './utils/midlewares';
 import compression from 'compression';
 import { SessionUser } from '../shared_with_front/types/types-shared';
 
@@ -105,11 +106,14 @@ app.use(express.static('build'));
 // -- routes
 app.use('/api/users', usersRouter);
 app.use('/api/cars', carsRouter);
+app.use('/api/dealers/cars', dealerCarsRouter)
 app.use('/api/auth', authRouter);
 
+app.use(errorConverter)
 app.use(defaultErrorHander);
 
 // -- send front from here
+// -- 404 error will be handled in the front
 app.get('*', function (_req, res) {
   res.sendFile('index.html', { root: path.join(__dirname, '../build') });
 });

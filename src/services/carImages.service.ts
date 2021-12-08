@@ -1,4 +1,4 @@
-import { ICarImages } from 'types';
+import { ICarCopartImages } from 'types';
 import CarImages from 'models/carImages.model';
 
 const getImages = async () => {
@@ -11,7 +11,7 @@ const getImages = async () => {
  * @param lotNumbers
  * @returns: returns images of lot numbers
  */
-const parseMediums = (images: ICarImages): string[] => {
+const parseMediums = (images: ICarCopartImages): string[] => {
   let links: any = {};
   // get all links from the image sequence
   images.lotImages.forEach((lot, k) => {

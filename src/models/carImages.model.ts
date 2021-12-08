@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
-import { ICarImages } from 'types';
+import { ICarCopartImages } from 'types';
 
-const carImagesSchema = new Schema<ICarImages>(
+const carImagesSchema = new Schema<ICarCopartImages>(
   {
     objectId: Number,
     imgCount: Number,
@@ -21,4 +21,4 @@ const carImagesSchema = new Schema<ICarImages>(
   { collection: 'carImages' }
 );
 
-export default model<ICarImages>('CarImages', carImagesSchema);
+export default model<ICarCopartImages>('CarImages', carImagesSchema);

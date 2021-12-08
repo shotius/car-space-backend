@@ -106,11 +106,11 @@ const changeProfilePicture = async (userId: number, avatar: string) => {
  * @param session : express session
  * @returns : id of user
  */
-const getIdFromSession = (session: Session): number | null => {
+const getIdFromSession = (session: Session): number => {
   const { user } = session;
   const id = user?.id;
   if (!id) {
-    return null;
+    throw new Error('not authenticated')
   }
   return id;
 };
