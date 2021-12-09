@@ -1,29 +1,103 @@
-import { Request, Response } from 'express';
+import httpStatus from 'http-status';
+import { ApiError } from './../utils/functions/ApiError';
+import { NextFunction, Request, Response } from 'express';
+import CarDealer from 'models/car-dealer.model';
+import copartCarServices from 'services/cars-copart.services';
+import dealerCarService from 'services/cars-dealer.service';
 import { asyncHandler } from 'utils/functions/asyncHandler';
+// import { success } from 'utils/functions/responseApi';
+import { toBlur, toWebp } from 'utils/functions/imageTranformsFuncts';
 import { success } from 'utils/functions/responseApi';
-import dealerCarService from '../services/cars-dealer.service';
+import { uploadStreamCloudinary } from './../utils/cloudinary/cloudinary';
+import { extractFilters } from './../utils/functions/extractFilters';
+// import dealerCarService from '../services/cars-dealer.service';
 
 // -- Get all cars
-const getDealerCars = asyncHandler(async (_req: Request, res: Response) => {
-  const cars = await dealerCarService.getAllCars();
-  res.send(
-    success({
-      results: cars,
-    })
-  );
-});
+const getDealerCars = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const page = req.query.page || 1;
+    const limit = req.query.limit || 40;
+
+    const filters = extractFilters(req.query);
+
+    const getCars = copartCarServices.getCarsPaginated({
+      page: Number(page),
+      limit: Number(limit),
+      filters,
+    });
+
+    const getPagesTotal = copartCarServices.getPageCount({
+      limit: Number(limit),
+      filters,
+    });
+
+    // Get cars and pages in parallel
+    const [cars, pagesTotal] = await Promise.allSettled([
+      getCars,
+      getPagesTotal,
+    ]);
+
+    // if both requests fullfiled response success
+    if (cars.status === 'fulfilled' && pagesTotal.status === 'fulfilled') {
+      return res.send(
+        success({
+          results: { cars: cars.value, pagesTotal: pagesTotal.value },
+        })
+      );
+    } else {
+      return next(
+        new ApiError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          'Cound not get cars from'
+        )
+      );
+    }
+  }
+);
 
 // -- Add car to the db
 const addDealerCar = asyncHandler(async (req: Request, res: Response) => {
+  const files = req.files;
+  const car = JSON.parse(req.body.carDescription);
   console.log(req.body);
-  const car = req.body;
-  await dealerCarService.addCar(car);
-  res.send('saved dealer car');
+  let imgUrls: string[] = [];
+
+  // upload images to the cloudinary and get urls
+  if (Array.isArray(files) && files.length) {
+    const requests = files.map(async (file) => {
+      const { buffer } = file;
+      const convertedBuffer = await toWebp(buffer);
+      return uploadStreamCloudinary(convertedBuffer, 'cars/medium-sized-cars');
+    });
+    const cloudResponses = await Promise.allSettled(requests);
+    imgUrls = cloudResponses.map((res) => {
+      if (res.status === 'fulfilled') {
+        return res.value.url || '';
+      } else {
+        return '';
+      }
+    });
+  }
+
+  const blur = toBlur(imgUrls[0]) || '';
+  await dealerCarService.addCar({ car, blur, imgUrls });
+
+  res.json({
+    imgUrls,
+    req: car,
+    blur,
+  });
 });
+
+const removeAllCars = async (_req: Request, res: Response) => {
+  await CarDealer.deleteMany({});
+  res.send('cars removed');
+};
 
 // -- Exports
 const dealerController = {
   getDealerCars,
   addDealerCar,
+  removeAllCars,
 };
 export default dealerController;

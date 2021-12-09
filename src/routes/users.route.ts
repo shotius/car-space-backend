@@ -1,8 +1,9 @@
-import express, { Request, Response } from 'express';
+import httpStatus from 'http-status';
+import { ApiError } from './../utils/functions/ApiError';
+import express, { NextFunction, Request, Response } from 'express';
 import carImagesService from 'services/carImages.service';
 import copartCarServices from 'services/cars-copart.services';
 import userService from 'services/user.service';
-import sharp from 'sharp';
 import { uploadStreamCloudinary } from 'utils/cloudinary/cloudinary';
 import { asyncHandler } from 'utils/functions/asyncHandler';
 import { error } from 'utils/functions/responseApi';
@@ -13,6 +14,7 @@ import {
   CloudinaryResponse,
 } from '../../shared_with_front/types/types-shared';
 import { multerMemoryUpload } from './../utils/multer';
+import { toWebp } from 'utils/functions/imageTranformsFuncts';
 
 const usersRouter = express.Router();
 
@@ -107,7 +109,7 @@ usersRouter.post(
   '/avatar',
   isAuth,
   multerMemoryUpload.single('profile-avatar'),
-  async (req, res, next) => {
+  asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     if (!req.file) {
       return res.send('files not provied');
     }
@@ -117,27 +119,35 @@ usersRouter.post(
     // get user from the session
     const userid = userService.getIdFromSession(req.session);
     if (!userid) {
-      return next('not authorized');
+      return next(
+        new ApiError(
+          httpStatus.NETWORK_AUTHENTICATION_REQUIRED,
+          'not authorized'
+        )
+      );
     }
 
-    // compress the image
-    const sharpBuffer = await sharp(buffer).webp({ quality: 10 }).toBuffer();
+    // compress the image and converto webp format
+    const sharpBuffer = await toWebp(buffer);
     // upload image to the cloudinary
     const result = await uploadStreamCloudinary(sharpBuffer, `users/avatars`);
 
     if (result.message === 'Fail') {
-      return next(result.error);
+      return next(
+        new ApiError(httpStatus.INTERNAL_SERVER_ERROR, '' + result.error)
+      );
     }
 
     if (!result.url) {
-      return next('Cloudinary did not return url');
+      return next(
+        new ApiError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          'Cloudinary did not return url'
+        )
+      );
     }
 
-    try {
-      await userService.changeProfilePicture(userid, result.url);
-    } catch (error) {
-      return next(error);
-    }
+    await userService.changeProfilePicture(userid, result.url);
 
     const response: ApiSuccessResponse<CloudinaryResponse> = {
       results: result,
@@ -145,7 +155,7 @@ usersRouter.post(
     };
 
     return res.send(response);
-  }
+  })
 );
 
 usersRouter.post('/upload-multi', upload.array('images', 10), (req, res) => {

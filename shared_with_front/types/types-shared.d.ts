@@ -77,6 +77,7 @@ export interface ICarCopart {
   dr: string; // Drive
   curB: string; // High Bid =non-vix,Sealed=Vix
   mG: string; // Model Group
+  eng: string; // 
   mD: string; // Model Detail
   trans: string; // Transmission
   imgT: string; // Image Thumbnail

@@ -26,8 +26,10 @@ const schemaCarDealer = new Schema<ICarDealer>({
 schemaCarDealer.set('toJSON', {
   transform: (_document, returnedObj) => {
     returnedObj.id = returnedObj._id.toString();
+    delete returnedObj._id
     delete returnedObj.__v;
   },
 });
 
-export const CarDealer = model<ICarDealer>('carDealer', schemaCarDealer);
+const CarDealer = model<ICarDealer>('carDealer', schemaCarDealer);
+export default CarDealer
