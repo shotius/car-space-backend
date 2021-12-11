@@ -53,7 +53,7 @@ const parseString = (text: unknown): string | undefined => {
   return text;
 };
 
-const parseNumber = (num: unknown): number  => {
+const parseNumber = (num: unknown): number => {
   if (!num || !isNumber(num)) {
     return 0;
   }
@@ -74,6 +74,7 @@ const parseKeys = (keys: unknown): Keys | undefined => {
   return keys;
 };
 
+
 /**
  * Function parses object as a new Dealer car without img thumbnail and img urls
  * @param props receives uknown object
@@ -81,8 +82,8 @@ const parseKeys = (keys: unknown): Keys | undefined => {
  */
 export const parseNewCar = (
   props: Fields
-): Omit<ICarDealer, 'imgT' | 'imgUrls'> => {
-  const newCar: Omit<ICarDealer, 'imgT' | 'imgUrls'> = {
+): Omit<ICarDealer, 'imgT' | 'imgUrls' | "id"> => {
+  const newCar: Omit<ICarDealer, 'imgT' | 'imgUrls' | 'id'> = {
     m: parseString(props.manufacturer),
     bSt: parseString(props.bodyStyle),
     c: parseString(props.color),
@@ -92,6 +93,7 @@ export const parseNewCar = (
     lC: parseString(props.location),
     mD: parseString(props.modelDetail),
     mG: parseString(props.modelGroup),
+    desc: parseString(props.description), 
     price: parseNumber(props.price),
     y: parseNumber(props.year),
     od: parseNumber(props.odometer),

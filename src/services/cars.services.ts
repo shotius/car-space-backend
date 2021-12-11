@@ -53,7 +53,6 @@ export const getAllCars = ({ filters }: BaseGetCarInterface) => {
     // engine_to,
   } = filters;
   const shouldGetAllcars = !!!(models.length || brands.length);
-  console.log(shouldGetAllcars)
 
   // const isTypesEmpty = !types.length;
   // const isLocationsEmpty = !locations.length;
@@ -99,8 +98,6 @@ const getCarsPaginated = async ({
 }: getCarsProps): Promise<ICarDealer[]> => {
   // how many cars to skip
   const startFrom = (page - 1) * limit;
-  console.log(filters, startFrom)
-  // const cars = await allCars()
 
   const cars = await getAllCars({
     filters,

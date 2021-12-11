@@ -3,7 +3,7 @@ import  CarDealer from '../models/car-dealer.model';
 
 /** Interfaces */
 interface AddCarProps {
-  car: Omit<ICarDealer, "imgT" | "imgUrls">;
+  car: Omit<ICarDealer, "imgT" | "imgUrls" | "id">;
   blur: string;
   imgUrls: string[];
 }

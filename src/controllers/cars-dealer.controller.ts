@@ -60,6 +60,7 @@ const getDealerCars = asyncHandler(
 const addDealerCar = asyncHandler(async (req: Request, res: Response) => {
   const files = req.files;
   const car = parseNewCar(req.body);
+  console.log('values.price', car.price)
   let imgUrls: string[] = [];
 
   // upload images to the cloudinary and get urls
@@ -79,7 +80,7 @@ const addDealerCar = asyncHandler(async (req: Request, res: Response) => {
     });
   }
 
-  const blur = toBlur(imgUrls[0]) || '';
+  const blur = toBlur(imgUrls[0] || '');
   const addedCar = await dealerCarService.addCar({ car, blur, imgUrls });
 
   res.send(addedCar);

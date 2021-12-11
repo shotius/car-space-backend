@@ -20,7 +20,8 @@ const schemaCarDealer = new Schema<ICarDealer>({
   fuel: String, // Fuel Type
   keys: String, // Has Keys-Yes or No
   c: String, // Color
-  bin: String, // Buy it now
+  price: String, // Buy it now
+  desc: String
 });
 
 schemaCarDealer.set('toJSON', {

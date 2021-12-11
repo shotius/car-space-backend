@@ -50,7 +50,6 @@ export const defaultErrorHander = (
 ) => {
   logger.error(error.message);
 
-  // console.log('error in default middleware: ', error)
   // default error response
   let defaultResponse: ApiDefaultError = {
     success: false,

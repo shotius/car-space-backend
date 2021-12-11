@@ -24,7 +24,6 @@ usersRouter.use('/uploads', express.static('dist/uploads'));
 
 // get all users
 usersRouter.get('/', async (_req, res) => {
-  console.log('users');
   res.json(await userService.getUsers());
 });
 
@@ -87,7 +86,6 @@ usersRouter.get(
 
     // get cars
     const cars = await carServices.getCarsFromLotNumbers(lotNumbers);
-    // console.log(cars);
 
     // get images
     const lotNs = lotNumbers.map((lot) => parseInt(lot));
@@ -161,7 +159,6 @@ usersRouter.post(
 usersRouter.post('/upload-multi', upload.array('images', 10), (req, res) => {
   var response = '<a href="/">Home</a><br>';
   response += 'Files uploaded successfully.<br>';
-  console.log('file: ', req.files);
   if (!req.files || !req.files.length) {
     return res.send('failed');
   }

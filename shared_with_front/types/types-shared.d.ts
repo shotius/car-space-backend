@@ -64,6 +64,7 @@ export interface UserResponse {
 
 // Car Copart 
 export interface ICarCopart {
+  id: string;
   lN: string; // Lot number
   m: string; // Make
   vin: string; // VIN
@@ -96,6 +97,7 @@ export interface ICarCopart {
 
 // Car for dealers
 export interface ICarDealer {
+  id: string; 
   m?: string; // Manufacturer
   bSt?: string; // Body Style
   dmg?: string; // Damage Description
@@ -114,6 +116,7 @@ export interface ICarDealer {
   keys?: Keys; // Has Keys-Yes or No
   c?: string; // Color
   price: number; // Price
+  desc?: string;
 }
 
 // response from cloudinary
