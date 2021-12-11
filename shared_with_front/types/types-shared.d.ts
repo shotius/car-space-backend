@@ -96,25 +96,24 @@ export interface ICarCopart {
 
 // Car for dealers
 export interface ICarDealer {
-  m: string; // Manufacturer
-  bSt: string; // Body Style
-  dmg: string; // Damage Description
-  sDmg: string; // Secondary Damage
-  lC: string; // Location country
-  od: string; // Odometer
-  cyl: string; // Cylinders
-  dr: string; // Drive
-  mG: string; // Model Group
-  mD: string; // Model Detail
-  eng: string; // Engine
-  trans: string; // Transmission
+  m?: string; // Manufacturer
+  bSt?: string; // Body Style
+  dmg?: string; // Damage Description
+  lC?: string; // Location country
+  od: number; // Odometer
+  cyl: number; // Cylinders
+  dr?: string; // Drive
+  mG?: string; // Model Group
+  mD?: string; // Model Detail
+  eng: number; // Engine
+  trans?: Transmission; // Transmission
   imgT: string; // Image Thumbnail
   imgUrls: string[]; // Image URL
-  y: string; // Year
-  fuel: string; // Fuel Type
-  keys: string; // Has Keys-Yes or No
-  c: string; // Color
-  bin: string; // Buy it now
+  y: number; // Year
+  fuel?: string; // Fuel Type
+  keys?: Keys; // Has Keys-Yes or No
+  c?: string; // Color
+  price: number; // Price
 }
 
 // response from cloudinary
@@ -130,3 +129,32 @@ export interface SelectedCarModel {
   models: string[];
 }
 
+//** Add new car body */
+
+export type Transmission =
+  | TransmissionEnum.MANUAL
+  | TransmissionEnum.AUTOMATIC
+  | TransmissionEnum.CVT;
+
+export type Keys = KeysEnum.YES | KeysEnum.NO;
+
+export interface AddCarValues {
+  manufacturer: string;
+  modelGroup: string;
+  modelDetail: string;
+  bodyStyle: string;
+  damage: string;
+  location: string;
+  odometer: number;
+  cylinders: number;
+  drive: string;
+  engine: number;
+  transmission: Transmission | '';
+  year: string;
+  hasKeys: Keys | '';
+  fuelType: string;
+  color: string;
+  price: number;
+  description: string;
+  photos: FileList | null;
+}

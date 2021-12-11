@@ -2,7 +2,7 @@ import httpStatus from 'http-status';
 import { ApiError } from './../utils/functions/ApiError';
 import express, { NextFunction, Request, Response } from 'express';
 import carImagesService from 'services/carImages.service';
-import copartCarServices from 'services/cars-copart.services';
+import carServices from 'services/cars.services';
 import userService from 'services/user.service';
 import { uploadStreamCloudinary } from 'utils/cloudinary/cloudinary';
 import { asyncHandler } from 'utils/functions/asyncHandler';
@@ -74,7 +74,7 @@ usersRouter.get(
   '/cars/favourites',
   isAuth,
   async (req: Request, res: Response) => {
-    const id = userService.getIdFromSession(req.session);
+    const id = req.session.user!.id;
     const lotNumbers = await userService.getFafouriteCars(id);
 
     if (!lotNumbers) {
@@ -86,7 +86,7 @@ usersRouter.get(
     }
 
     // get cars
-    const cars = await copartCarServices.getCarsFromLotNumbers(lotNumbers);
+    const cars = await carServices.getCarsFromLotNumbers(lotNumbers);
     // console.log(cars);
 
     // get images

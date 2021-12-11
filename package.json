@@ -6,7 +6,7 @@
   "scripts": {
     "start": "pm2-runtime start ecosystem.config.js --env production",
     "watch": "NODE_PATH=./src tsc --build -w",
-    "dev": "npm run mk:uploads && NODE_PATH=./dist nodemon dist/index.js",
+    "dev": "NODE_PATH=./dist nodemon dist/index.js",
     "build": "tsc && npm run mk:uploads",
     "lint": "eslint --ext .ts .",
     "build:ui": "rm -rf build && cd ../web && rm -rf build &&npm run build --prod && mv dist build && cp -r build ../server",

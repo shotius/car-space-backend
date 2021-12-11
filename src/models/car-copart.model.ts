@@ -43,4 +43,5 @@ carSchema.set('toJSON', {
   },
 });
 
-export default model<ICarCopart>('Car', carSchema);
+const CarCopart = model<ICarCopart>('Car', carSchema);
+export default CarCopart

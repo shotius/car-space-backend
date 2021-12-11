@@ -1,14 +1,15 @@
-import httpStatus from 'http-status';
-import { ApiError } from './../utils/functions/ApiError';
 import { NextFunction, Request, Response } from 'express';
+import httpStatus from 'http-status';
 import CarDealer from 'models/car-dealer.model';
-import copartCarServices from 'services/cars-copart.services';
 import dealerCarService from 'services/cars-dealer.service';
+import carServices from 'services/cars.services';
 import { asyncHandler } from 'utils/functions/asyncHandler';
 // import { success } from 'utils/functions/responseApi';
 import { toBlur, toWebp } from 'utils/functions/imageTranformsFuncts';
 import { success } from 'utils/functions/responseApi';
+import { parseNewCar } from '../utils/functions/parseNewCar';
 import { uploadStreamCloudinary } from './../utils/cloudinary/cloudinary';
+import { ApiError } from './../utils/functions/ApiError';
 import { extractFilters } from './../utils/functions/extractFilters';
 // import dealerCarService from '../services/cars-dealer.service';
 
@@ -20,13 +21,13 @@ const getDealerCars = asyncHandler(
 
     const filters = extractFilters(req.query);
 
-    const getCars = copartCarServices.getCarsPaginated({
+    const getCars = carServices.getCarsPaginated({
       page: Number(page),
       limit: Number(limit),
       filters,
     });
 
-    const getPagesTotal = copartCarServices.getPageCount({
+    const getPagesTotal = carServices.getPageCount({
       limit: Number(limit),
       filters,
     });
@@ -58,8 +59,7 @@ const getDealerCars = asyncHandler(
 // -- Add car to the db
 const addDealerCar = asyncHandler(async (req: Request, res: Response) => {
   const files = req.files;
-  const car = JSON.parse(req.body.carDescription);
-  console.log(req.body);
+  const car = parseNewCar(req.body);
   let imgUrls: string[] = [];
 
   // upload images to the cloudinary and get urls
@@ -80,13 +80,9 @@ const addDealerCar = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const blur = toBlur(imgUrls[0]) || '';
-  await dealerCarService.addCar({ car, blur, imgUrls });
+  const addedCar = await dealerCarService.addCar({ car, blur, imgUrls });
 
-  res.json({
-    imgUrls,
-    req: car,
-    blur,
-  });
+  res.send(addedCar);
 });
 
 const removeAllCars = async (_req: Request, res: Response) => {

@@ -1,5 +1,7 @@
-import { ICarCopart } from '../../shared_with_front/types/types-shared';
-import Car from '../models/car-copart.model';
+import { ICarCopart } from './../../shared_with_front/types/types-shared.d';
+import CarDealer from 'models/car-dealer.model';
+import { ICarDealer } from '../../shared_with_front/types/types-shared';
+import CarCopart from 'models/car-copart.model';
 
 /** Interfaces */
 interface BaseFilterProps {
@@ -34,37 +36,34 @@ interface GetPageCountProps extends BaseGetCarInterface {
 }
 
 /** Get All cars */
-const getAllCars = ({ filters }: BaseGetCarInterface) => {
+export const getAllCars = ({ filters }: BaseGetCarInterface) => {
   const {
     brands,
     models,
     year_from,
     year_to,
-    types,
-    locations,
-    transmissions,
-    // keys,
-    drives,
-    salesStatuses,
-    fuels,
-    cylinders,
-    conditions,
-    engine_from,
-    engine_to,
+    // types,
+    // locations,
+    // transmissions,
+    // drives,
+    // fuels,
+    // cylinders,
+    // conditions,
+    // engine_from,
+    // engine_to,
   } = filters;
   const shouldGetAllcars = !!!(models.length || brands.length);
+  console.log(shouldGetAllcars)
 
-  const isTypesEmpty = !types.length;
-  const isLocationsEmpty = !locations.length;
-  const isTransmissionsEmpty = !transmissions.length;
-  // // const isKeysEmpty = keys.length;
-  const isDrivesEmpty = !drives.length;
-  const isSalesStatusesEmpty = !salesStatuses.length;
-  const isFuelsEmpty = !fuels.length;
-  const isCylindersEmpty = !cylinders.length;
-  const isConditionsEmpty = !conditions.length;
+  // const isTypesEmpty = !types.length;
+  // const isLocationsEmpty = !locations.length;
+  // const isTransmissionsEmpty = !transmissions.length;
+  // const isDrivesEmpty = !drives.length;
+  // const isFuelsEmpty = !fuels.length;
+  // const isCylindersEmpty = !cylinders.length;
+  // const isConditionsEmpty = !conditions.length;
 
-  return Car.find({
+  return CarDealer.find({
     $and: [
       {
         $or: [
@@ -74,22 +73,19 @@ const getAllCars = ({ filters }: BaseGetCarInterface) => {
       },
       { $expr: { $gte: [{ $toInt: '$y' }, year_from || 0] } }, // year from filter
       { $expr: { $lte: [{ $toInt: '$y' }, year_to || 9999] } }, // year to filter
-      { $expr: { $gte: [{ $toDouble: '$eng' }, engine_from || 0] } }, // engine from filter
-      { $expr: { $lte: [{ $toDouble: '$eng' }, engine_to || 9999] } }, // engine to filter
-      { bSt: !isTypesEmpty ? { $in: types } : { $exists: true } },
-      { lC: !isLocationsEmpty ? { $in: locations } : { $exists: true } },
-      {
-        trans: !isTransmissionsEmpty
-          ? { $in: transmissions }
-          : { $exists: true },
-      },
-      { dr: !isDrivesEmpty ? { $in: drives } : { $exists: true } },
-      {
-        sS: !isSalesStatusesEmpty ? { $in: salesStatuses } : { $exists: true },
-      },
-      { fuel: !isFuelsEmpty ? { $in: fuels } : { $exists: true } },
-      { cyl: !isCylindersEmpty ? { $in: cylinders } : { $exists: true } },
-      { dmg: !isConditionsEmpty ? { $in: conditions } : { $exists: true } },
+      // { $expr: { $gte: [{ $toDouble: '$eng' }, engine_from || 0] } }, // engine from filter
+      // { $expr: { $lte: [{ $toDouble: '$eng' }, engine_to || 9999] } }, // engine to filter
+      // { bSt: !isTypesEmpty ? { $in: types } : { $exists: true } },
+      // { lC: !isLocationsEmpty ? { $in: locations } : { $exists: true } },
+      // {
+      //   trans: !isTransmissionsEmpty
+      //     ? { $in: transmissions }
+      //     : { $exists: true },
+      // },
+      // { dr: !isDrivesEmpty ? { $in: drives } : { $exists: true } },
+      // { fuel: !isFuelsEmpty ? { $in: fuels } : { $exists: true } },
+      // { cyl: !isCylindersEmpty ? { $in: cylinders } : { $exists: true } },
+      // { dmg: !isConditionsEmpty ? { $in: conditions } : { $exists: true } },
     ],
   });
 };
@@ -100,9 +96,11 @@ const getCarsPaginated = async ({
   limit,
   page,
   filters,
-}: getCarsProps): Promise<ICarCopart[]> => {
+}: getCarsProps): Promise<ICarDealer[]> => {
   // how many cars to skip
   const startFrom = (page - 1) * limit;
+  console.log(filters, startFrom)
+  // const cars = await allCars()
 
   const cars = await getAllCars({
     filters,
@@ -116,32 +114,34 @@ const getCarsPaginated = async ({
 const getCarsFromLotNumbers = async (
   lotNumbers: string[]
 ): Promise<ICarCopart[]> => {
-  const cars = await Car.find({ lN: { $in: lotNumbers } });
+  const cars = await CarCopart.find({ lN: { $in: lotNumbers } });
   return cars;
 };
 
 /**
  * Get total pages count */
-const getPageCount = async ({ limit, filters }: GetPageCountProps) => {
-  const carsTotal = await getAllCars({
-    filters,
-  }).countDocuments();
+const getPageCount = async ({ limit }: GetPageCountProps) => {
+  // const carsTotal = await getAllCars({
+  //   filters,
+  // }).countDocuments();
+  const carsTotal = 10
 
   // total cars in the db
   // total pages for pagination
   const pagesTotal = Math.ceil(carsTotal / limit);
+
 
   return pagesTotal;
 };
 
 // get all distinct brands
 const getAllBrands = async () => {
-  return await Car.distinct('m');
+  return await CarDealer.distinct('m');
 };
 
 // Based on a brand getting all distrinct models
 const getModels = async (brands: string[]) => {
-  const models = await Car.aggregate([
+  const models = await CarDealer.aggregate([
     { $match: { m: { $in: brands } } },
     { $group: { _id: '$m', models: { $addToSet: '$mG' } } },
     { $project: { _id: 0, brand: '$_id', models: '$models' } },
@@ -151,14 +151,14 @@ const getModels = async (brands: string[]) => {
 
 // Get a car with lot number
 const getSingleCar = async (lotNumber: string) => {
-  return Car.find({ lN: lotNumber });
+  return CarDealer.find({ lN: lotNumber });
 };
 
 // Get all distinct damage and secondary damage conditions
 const getConditions = async () => {
   const conditions = await Promise.all([
-    Car.find({}).distinct('dmg'),
-    Car.find({}).distinct('sDmg'),
+    CarDealer.find({}).distinct('dmg'),
+    CarDealer.find({}).distinct('sDmg'),
   ]);
 
   // merge all array results
@@ -174,37 +174,62 @@ const getConditions = async () => {
 
 // get all distinct car body styles
 const getTypes = async () => {
-  return await Car.find({}).distinct('bSt');
+  return await CarDealer.find({}).distinct('bSt');
 };
 
 // Get all locations
 const getLocation = async () => {
-  return await Car.find({}).distinct('lC');
+  return await CarDealer.find({}).distinct('lC');
 };
 
 // Get all distinc drives (4x4) and so on
 const getDrives = async () => {
-  return await Car.find({}).distinct('dr');
+  return await CarDealer.find({}).distinct('dr');
 };
 
 // get all types of distinct fuel
 const getFuels = async () => {
-  return await Car.find({}).distinct('fuel');
+  return await CarDealer.find({}).distinct('fuel');
 };
 
 const getCylinders = async () => {
-  return await Car.distinct('cyl');
+  return await CarDealer.distinct('cyl');
 };
 
 const getSalesStatus = async () => {
-  return await Car.distinct('sS');
+  return await CarDealer.distinct('sS');
 };
 
 const getTransmissions = async () => {
-  return await Car.distinct('trans');
+  return await CarDealer.distinct('trans');
 };
 
-const copartCarServices = {
+/**
+ *
+ * @param param0 {car} car body received from input
+ * @param param1 {thumb} blured img
+ * @returns true if everything is ok
+ */
+ interface AddCarProps {
+  car: ICarDealer;
+  blur: string;
+  imgUrls: string[];
+}
+
+ const addCar = async ({ car, blur, imgUrls }: AddCarProps) => {
+  const carObj = car
+  carObj['imgUrls'] = imgUrls
+  carObj['imgT'] = blur
+
+  const newCar = new CarDealer(carObj);
+
+  await newCar.save();
+  return true;
+};
+
+
+const carServices = {
+  addCar, 
   getCarsPaginated,
   getAllBrands,
   getModels,
@@ -221,4 +246,4 @@ const copartCarServices = {
   getCarsFromLotNumbers,
 };
 
-export default copartCarServices;
+export default carServices;

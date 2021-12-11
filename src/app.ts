@@ -9,7 +9,7 @@ import url from 'url';
 import authRouter from './routes/auth.route';
 import carsRouter from './routes/cars-copart.route';
 import usersRouter from './routes/users.route';
-import dealerCarsRouter from './routes/cars-dealer.route'
+import dealerCarsRouter from './routes/cars-dealer.route';
 import { MONGODB_URI } from './utils/config';
 import { __prod__ } from './utils/constants';
 import logger from './utils/logger';
@@ -104,12 +104,14 @@ app.use(compression());
 app.use(express.static('build'));
 
 // -- routes
+app.use('/api/status', (_req, res) => res.send('ok'));
+
 app.use('/api/users', usersRouter);
 app.use('/api/cars', carsRouter);
-app.use('/api/dealers/cars', dealerCarsRouter)
+app.use('/api/dealers/cars', dealerCarsRouter);
 app.use('/api/auth', authRouter);
 
-app.use(errorConverter)
+app.use(errorConverter);
 app.use(defaultErrorHander);
 
 // -- send front from here

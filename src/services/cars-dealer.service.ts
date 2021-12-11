@@ -3,7 +3,7 @@ import  CarDealer from '../models/car-dealer.model';
 
 /** Interfaces */
 interface AddCarProps {
-  car: ICarDealer;
+  car: Omit<ICarDealer, "imgT" | "imgUrls">;
   blur: string;
   imgUrls: string[];
 }
@@ -19,14 +19,14 @@ const getAllCars = async () => {
  * @returns true if everything is ok
  */
 const addCar = async ({ car, blur, imgUrls }: AddCarProps) => {
-  const carObj = car
+  const carObj: Partial<ICarDealer> = car
+
   carObj['imgUrls'] = imgUrls
   carObj['imgT'] = blur
 
   const newCar = new CarDealer(carObj);
 
-  await newCar.save();
-  return true;
+  return await newCar.save();
 };
 
 const dealerCarService = {
