@@ -117,12 +117,11 @@ const getCarsFromLotNumbers = async (
 
 /**
  * Get total pages count */
-const getPageCount = async ({ limit }: GetPageCountProps) => {
-  // const carsTotal = await getAllCars({
-  //   filters,
-  // }).countDocuments();
-  const carsTotal = 10
-
+const getPageCount = async ({ filters,  limit }: GetPageCountProps) => {
+  const carsTotal = await getAllCars({
+    filters,
+  }).countDocuments();
+  // const carsTotal = 10
   // total cars in the db
   // total pages for pagination
   const pagesTotal = Math.ceil(carsTotal / limit);
