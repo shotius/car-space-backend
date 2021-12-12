@@ -17,7 +17,7 @@ dealerCarsRouter.post(
   validate(addNewDealerCar),
   dealerController.addDealerCar
 );
-dealerCarsRouter.delete('/', isAuth, isAdmin, dealerController.removeCar);
+dealerCarsRouter.delete('/', isAuth, isAdmin, dealerController.removeSingleCar);
 dealerCarsRouter.get('/reset', dealerController.removeAllCars);
 
 export default dealerCarsRouter;

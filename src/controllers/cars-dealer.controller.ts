@@ -92,26 +92,26 @@ const removeAllCars = asyncHandler(async (_req: Request, res: Response) => {
 });
 
 // -- Remove one car
-const removeCar = asyncHandler(async (req: Request, res: Response) => {
-  const result = await dealerCarService.removeCar(req.body.id);
-  if (result) {
+const removeSingleCar = asyncHandler(async (req: Request, res: Response) => {
+  try {
+    await dealerCarService.removeSingleCar(req.body.id);
     return res.send(
       success({
-        message: 'Ok',
         results: '',
       })
     );
+  } catch (err) {
+    return res.send(
+      error({
+        message: 'Could not delete car' + req.body.id,
+      })
+    );
   }
-  return res.send(
-    error({
-      message: 'Could not delete car' + req.body.id,
-    })
-  );
 });
 
 // -- Exports
 const dealerController = {
-  removeCar,
+  removeSingleCar,
   getDealerCars,
   addDealerCar,
   removeAllCars,

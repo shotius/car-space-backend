@@ -1,20 +1,20 @@
-import httpStatus from 'http-status';
-import { ApiError } from './../utils/functions/ApiError';
 import express, { NextFunction, Request, Response } from 'express';
+import httpStatus from 'http-status';
 import carImagesService from 'services/carImages.service';
 import carServices from 'services/cars.services';
 import userService from 'services/user.service';
 import { uploadStreamCloudinary } from 'utils/cloudinary/cloudinary';
 import { asyncHandler } from 'utils/functions/asyncHandler';
+import { toWebp } from 'utils/functions/imageTranformsFuncts';
 import { error } from 'utils/functions/responseApi';
 import { isAuth } from 'utils/midlewares';
 import { upload } from 'utils/multer';
 import {
   ApiSuccessResponse,
-  CloudinaryResponse,
+  CloudinaryResponse
 } from '../../shared_with_front/types/types-shared';
+import { ApiError } from './../utils/functions/ApiError';
 import { multerMemoryUpload } from './../utils/multer';
-import { toWebp } from 'utils/functions/imageTranformsFuncts';
 
 const usersRouter = express.Router();
 
@@ -32,7 +32,7 @@ usersRouter.post(
   '/like',
   isAuth,
   asyncHandler(async (req: Request, res: Response) => {
-    const id = userService.getIdFromSession(req.session);
+    const id = req.session.user!.id
     const lotNumber = String(req.body.lotNumber);
 
     if (!lotNumber) {
@@ -58,7 +58,7 @@ usersRouter.get(
   '/lots/favourites',
   isAuth,
   asyncHandler(async (req: Request, res: Response) => {
-    const id = userService.getIdFromSession(req.session);
+    const id = req.session.user!.id
     const result = await userService.getFafouriteCars(id);
 
     if (!result) {
@@ -115,7 +115,7 @@ usersRouter.post(
     const { buffer } = req.file;
 
     // get user from the session
-    const userid = userService.getIdFromSession(req.session);
+    const userid = req.session.user!.id;
     if (!userid) {
       return next(
         new ApiError(

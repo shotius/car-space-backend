@@ -94,7 +94,6 @@ export const defaultErrorHander = (
  * @param next
  */
 export const isAuth = (req: Request, res: Response, next: NextFunction) => {
-  console.log('isAuth')
   const { user } = req.session;
   const id = user?.id;
   if (!id) {
@@ -105,17 +104,14 @@ export const isAuth = (req: Request, res: Response, next: NextFunction) => {
       })
     );
   }
-
-  console.log('here in')
   return next();
 };
 
-// -- checks if admin
+// -- checks if admin is sending request
 export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
   const { user } = req.session;
   const role = user!.role;
-  console.log('here in', role)
-  if (role !== Roles.ADMIN) {
+  if (role.toLocaleLowerCase() !== Roles.ADMIN.toLocaleLowerCase()) {
     return res.status(401).send(
       error({
         status: httpStatus.NETWORK_AUTHENTICATION_REQUIRED,

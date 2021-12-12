@@ -1,5 +1,4 @@
 import { removeExtension } from './../utils/functions/removeExtension';
-import { Session } from 'express-session';
 import { deleteOnCloudinary } from 'utils/cloudinary/cloudinary';
 import { IUser } from '../../shared_with_front/types/types-shared';
 import User from '../models/user.model';
@@ -101,26 +100,10 @@ const changeProfilePicture = async (userId: number, avatar: string) => {
   }
 };
 
-/**
- * Function extracts id from session
- * @param session : express session
- * @returns : id of user
- */
-const getIdFromSession = (session: Session): number => {
-  const { user } = session;
-  console.log('get from session', user)
-  const id = user?.id;
-  if (!id) {
-    throw new Error('not ')
-  }
-  return id;
-};
-
 export default {
   getUsers,
   likeCar,
   getFafouriteCars,
   getUser,
   changeProfilePicture,
-  getIdFromSession,
 };

@@ -1,14 +1,12 @@
-import  userService  from 'services/user.service';
+import argon2 from 'argon2';
 import express from 'express';
 import { validate } from 'middlewares/validate';
-import authServices from 'services/auth.services';
-import { loginValidations } from 'validation/LoginValidation';
-import argon2 from 'argon2';
 import User from 'models/user.model';
-import logger from 'utils/logger';
+import authServices from 'services/auth.services';
 import { error, success, validation } from 'utils/functions/responseApi';
-import { isAuth } from 'utils/midlewares';
-import { RoleTypes, SessionUser } from '../../shared_with_front/types/types-shared';
+import logger from 'utils/logger';
+import { loginValidations } from 'validation/LoginValidation';
+import { isAuth } from './../utils/midlewares';
 
 const authRouter = express.Router();
 
@@ -94,27 +92,17 @@ authRouter.get('/logout', async (req, res) => {
   });
 });
 
-
 /**
- * if user is authenticated response will be 
+ * if user is authenticated response response with user info
  */
 authRouter.get('/me', isAuth, async (req, res) => {
-  const userid = userService.getIdFromSession(req.session);
-  const user = await User.findById(userid)
-
-  if (user) {
-    const response: Omit<SessionUser, "id"> = {
-      username: user.username, 
-      isAuthenticated: true, 
-      role: user.role.toLowerCase() as RoleTypes, 
-      avatar: user.avatar
-    }
-
-    res.send(response);
-  } else {
-
-    res.status(401).json({ error: 'user not found' });
-  }
+  const user = req.session.user!;
+  const { id: _id, ...response } = user;
+  res.send(
+    success({
+      results: response,
+    })
+  );
 });
 
 export default authRouter;

@@ -34,11 +34,11 @@ const addCar = async ({ car, blur, imgUrls }: AddCarProps) => {
  * @param id id of the car
  * @returns 
  */
-const removeCar = async (id: string) => {
+const removeSingleCar = async (id: string) => {
   return await CarDealer.findByIdAndDelete(id)
 }
 const dealerCarService = {
-  removeCar, 
+  removeSingleCar, 
   addCar,
   getAllCars,
 };

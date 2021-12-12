@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'car-space',
-      script: 'dist/index.js',
+      script: 'dist/src/index.js',
       watch: '.',
       cron_restart: '0 0 * * * *',
       instances: 'max',
@@ -10,10 +10,10 @@ module.exports = {
       watch: true,
       env: {
         NODE_ENV: 'development',
-        NODE_PATH: './dist',
+        NODE_PATH: './dist/src',
       },
       env_production: {
-        NODE_PATH: './dist',
+        NODE_PATH: './dist/src',
         NODE_ENV: 'production',
       },
     },
