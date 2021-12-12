@@ -1,14 +1,9 @@
 import { Document } from 'mongoose';
 
 import { ValidationError } from 'express-validator';
+import { Roles } from '../contants';
 
 /** General reponse */
-export enum Roles {
-  ADMIN = 'admin',
-  DEALER = 'dealer',
-  USER = 'user',
-}
-
 export interface ApiBaseResponse {
   success: boolean;
   message?: string;

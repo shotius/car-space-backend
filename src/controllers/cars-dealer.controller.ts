@@ -6,7 +6,7 @@ import carServices from 'services/cars.services';
 import { asyncHandler } from 'utils/functions/asyncHandler';
 // import { success } from 'utils/functions/responseApi';
 import { toBlur, toWebp } from 'utils/functions/imageTranformsFuncts';
-import { success } from 'utils/functions/responseApi';
+import { error, success } from 'utils/functions/responseApi';
 import { parseNewCar } from '../utils/functions/parseNewCar';
 import { uploadStreamCloudinary } from './../utils/cloudinary/cloudinary';
 import { ApiError } from './../utils/functions/ApiError';
@@ -60,7 +60,6 @@ const getDealerCars = asyncHandler(
 const addDealerCar = asyncHandler(async (req: Request, res: Response) => {
   const files = req.files;
   const car = parseNewCar(req.body);
-  console.log('values.price', car.price)
   let imgUrls: string[] = [];
 
   // upload images to the cloudinary and get urls
@@ -86,13 +85,33 @@ const addDealerCar = asyncHandler(async (req: Request, res: Response) => {
   res.send(addedCar);
 });
 
-const removeAllCars = async (_req: Request, res: Response) => {
+// -- Remove all cars
+const removeAllCars = asyncHandler(async (_req: Request, res: Response) => {
   await CarDealer.deleteMany({});
   res.send('cars removed');
-};
+});
+
+// -- Remove one car
+const removeCar = asyncHandler(async (req: Request, res: Response) => {
+  const result = await dealerCarService.removeCar(req.body.id);
+  if (result) {
+    return res.send(
+      success({
+        message: 'Ok',
+        results: '',
+      })
+    );
+  }
+  return res.send(
+    error({
+      message: 'Could not delete car' + req.body.id,
+    })
+  );
+});
 
 // -- Exports
 const dealerController = {
+  removeCar,
   getDealerCars,
   addDealerCar,
   removeAllCars,

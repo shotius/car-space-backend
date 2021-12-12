@@ -29,7 +29,16 @@ const addCar = async ({ car, blur, imgUrls }: AddCarProps) => {
   return await newCar.save();
 };
 
+/**
+ * Function removes car from the db
+ * @param id id of the car
+ * @returns 
+ */
+const removeCar = async (id: string) => {
+  return await CarDealer.findByIdAndDelete(id)
+}
 const dealerCarService = {
+  removeCar, 
   addCar,
   getAllCars,
 };

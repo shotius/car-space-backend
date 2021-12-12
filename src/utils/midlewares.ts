@@ -6,13 +6,14 @@ import express, { Request, Response, NextFunction } from 'express';
 import { ApiDefaultError } from '../../shared_with_front/types/types-shared';
 import mongoose from 'mongoose';
 import httpStatus from 'http-status';
+import { Roles } from '../../shared_with_front/contants';
 
 /**
  * Function will convert errors into the standard ApiError type
- * @param err any type oferror 
- * @param _req 
- * @param _res 
- * @param next 
+ * @param err any type oferror
+ * @param _req
+ * @param _res
+ * @param next
  */
 export const errorConverter = (
   err: any,
@@ -30,7 +31,7 @@ export const errorConverter = (
     const message = error.message || httpStatus[statusCode].toString();
     error = new ApiError(statusCode, message, err.stack);
   }
-  next(error)
+  next(error);
 };
 
 /**
@@ -93,6 +94,7 @@ export const defaultErrorHander = (
  * @param next
  */
 export const isAuth = (req: Request, res: Response, next: NextFunction) => {
+  console.log('isAuth')
   const { user } = req.session;
   const id = user?.id;
   if (!id) {
@@ -104,5 +106,22 @@ export const isAuth = (req: Request, res: Response, next: NextFunction) => {
     );
   }
 
+  console.log('here in')
+  return next();
+};
+
+// -- checks if admin
+export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
+  const { user } = req.session;
+  const role = user!.role;
+  console.log('here in', role)
+  if (role !== Roles.ADMIN) {
+    return res.status(401).send(
+      error({
+        status: httpStatus.NETWORK_AUTHENTICATION_REQUIRED,
+        message: 'not authenticated',
+      })
+    );
+  }
   return next();
 };

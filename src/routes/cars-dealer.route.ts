@@ -1,3 +1,5 @@
+import { isAdmin } from './../utils/midlewares';
+import { isAuth } from 'utils/midlewares';
 import { addNewDealerCar } from './../validation/addNewDealerCar';
 import dealerController from 'controllers/cars-dealer.controller';
 import express from 'express';
@@ -15,6 +17,7 @@ dealerCarsRouter.post(
   validate(addNewDealerCar),
   dealerController.addDealerCar
 );
+dealerCarsRouter.delete('/', isAuth, isAdmin, dealerController.removeCar);
 dealerCarsRouter.get('/reset', dealerController.removeAllCars);
 
 export default dealerCarsRouter;

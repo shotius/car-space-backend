@@ -108,9 +108,10 @@ const changeProfilePicture = async (userId: number, avatar: string) => {
  */
 const getIdFromSession = (session: Session): number => {
   const { user } = session;
+  console.log('get from session', user)
   const id = user?.id;
   if (!id) {
-    throw new Error('not authenticated')
+    throw new Error('not ')
   }
   return id;
 };
