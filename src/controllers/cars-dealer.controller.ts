@@ -97,7 +97,7 @@ const removeSingleCar = asyncHandler(async (req: Request, res: Response) => {
     await dealerCarService.removeSingleCar(req.body.id);
     return res.send(
       success({
-        results: '',
+        results: 'Ok',
       })
     );
   } catch (err) {

@@ -13,10 +13,8 @@ const getUsers = async (): Promise<IUser[]> => {
 
 interface likeCarProps {
   userId: number;
-  lotNumber: string;
+  carId: string;
 }
-
-interface likeCarProps {}
 
 /**
  * @param id
@@ -32,26 +30,25 @@ const getUser = async (id: string): Promise<IUser | null> => {
  * @param lotNumber
  * @returns success or error
  */
-const likeCar = async ({ userId, lotNumber }: likeCarProps) => {
+const likeCar = async ({ userId, carId }: likeCarProps) => {
   const user = await User.findById(userId);
 
   if (!user) {
-    return { error: `car with '${lotNumber}' not found` };
+    return { error: `user not found` };
   }
 
   // if car is in favourites remove, else add it in it
-  if (user.favourites.includes(lotNumber)) {
-    user.favourites = user.favourites.filter((el) => el !== lotNumber);
+  if (user.favourites.includes(carId)) {
+    user.favourites = user.favourites.filter((el) => el !== carId);
   } else {
-    user.favourites = user.favourites.concat(lotNumber);
+    user.favourites = user.favourites.concat(carId);
   }
 
-  try {
-    await user.save();
-    return { success: true };
-  } catch (error) {
-    return { error };
-  }
+  // tidy
+  user.favourites = user.favourites.filter((fav) => fav);
+
+  const savedUser = await user.save();
+  return savedUser;
 };
 
 /**

@@ -74,7 +74,6 @@ const parseKeys = (keys: unknown): Keys | undefined => {
   return keys;
 };
 
-
 /**
  * Function parses object as a new Dealer car without img thumbnail and img urls
  * @param props receives uknown object
@@ -82,25 +81,25 @@ const parseKeys = (keys: unknown): Keys | undefined => {
  */
 export const parseNewCar = (
   props: Fields
-): Omit<ICarDealer, 'imgT' | 'imgUrls' | "id"> => {
+): Omit<ICarDealer, 'imgT' | 'imgUrls' | 'id'> => {
   const newCar: Omit<ICarDealer, 'imgT' | 'imgUrls' | 'id'> = {
-    m: parseString(props.manufacturer),
-    bSt: parseString(props.bodyStyle),
-    c: parseString(props.color),
-    dmg: parseString(props.damage),
-    dr: parseString(props.drive),
-    fuel: parseString(props.fuelType),
-    lC: parseString(props.location),
-    mD: parseString(props.modelDetail),
-    mG: parseString(props.modelGroup),
-    desc: parseString(props.description), 
+    m: parseString(props.manufacturer)?.toUpperCase(),
+    bSt: parseString(props.bodyStyle)?.toUpperCase(),
+    c: parseString(props.color)?.toUpperCase(),
+    dmg: parseString(props.damage)?.toUpperCase(),
+    dr: parseString(props.drive)?.toUpperCase(),
+    fuel: parseString(props.fuelType)?.toUpperCase(),
+    lC: parseString(props.location)?.toUpperCase(),
+    mD: parseString(props.modelDetail)?.toUpperCase(),
+    mG: parseString(props.modelGroup)?.toUpperCase(),
+    desc: parseString(props.description)?.toUpperCase(),
     price: parseNumber(props.price),
     y: parseNumber(props.year),
     od: parseNumber(props.odometer),
     eng: parseNumber(props.engine),
     cyl: parseNumber(props.cylinders),
-    trans: parseTransmission(props.transmission),
-    keys: parseKeys(props.hasKeys),
+    trans: parseTransmission(props.transmission)?.toUpperCase(),
+    keys: parseKeys(props.hasKeys)?.toUpperCase(),
   };
   return newCar;
 };

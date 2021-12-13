@@ -23,7 +23,7 @@ export interface ApiDefaultError extends ApiBaseResponse {
 }
 
 /** IUser */
-export type RoleTypes = Roles.ADMIN | Roles.DEALER;
+export type RoleTypes = Roles.ADMIN | Roles.DEALER | Roles.USER;
 
 export interface IUser {
   username: string;

@@ -11,10 +11,11 @@ import { isAuth } from 'utils/midlewares';
 import { upload } from 'utils/multer';
 import {
   ApiSuccessResponse,
-  CloudinaryResponse
+  CloudinaryResponse,
 } from '../../shared_with_front/types/types-shared';
 import { ApiError } from './../utils/functions/ApiError';
 import { multerMemoryUpload } from './../utils/multer';
+import { success } from 'utils/functions/responseApi';
 
 const usersRouter = express.Router();
 
@@ -32,22 +33,20 @@ usersRouter.post(
   '/like',
   isAuth,
   asyncHandler(async (req: Request, res: Response) => {
-    const id = req.session.user!.id
-    const lotNumber = String(req.body.lotNumber);
+    const userId = req.session.user!.id;
+    const carId = req.body.carId;
 
-    if (!lotNumber) {
-      return res.status(400).send(
-        error({
-          message: 'lotNumber was not provided to like a car',
-        })
-      );
-    }
-
-    const success = await userService.likeCar({
-      userId: id,
-      lotNumber: lotNumber,
+    const savedCar = await userService.likeCar({
+      userId,
+      carId,
     });
-    return res.json({ success });
+    
+    return res.send(
+      success({
+        message: 'Ok',
+        results: savedCar,
+      })
+    );
   })
 );
 
@@ -58,7 +57,7 @@ usersRouter.get(
   '/lots/favourites',
   isAuth,
   asyncHandler(async (req: Request, res: Response) => {
-    const id = req.session.user!.id
+    const id = req.session.user!.id;
     const result = await userService.getFafouriteCars(id);
 
     if (!result) {
@@ -169,5 +168,17 @@ usersRouter.post('/upload-multi', upload.array('images', 10), (req, res) => {
 
   return res.send(response);
 });
+
+// usersRouter.get('/reset', isAuth, async  (req, res) => {
+//   const id = req.session.user!.id
+//   const user = await User.findById(id)
+//   if (user) {
+//     user.favourites = []
+//     await user.save()
+//   }
+//   return res.json({
+//     id, user
+//   })
+// })
 
 export default usersRouter;
