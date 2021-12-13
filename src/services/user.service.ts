@@ -2,6 +2,7 @@ import { removeExtension } from './../utils/functions/removeExtension';
 import { deleteOnCloudinary } from 'utils/cloudinary/cloudinary';
 import { IUser } from '../../shared_with_front/types/types-shared';
 import User from '../models/user.model';
+import { Types } from 'mongoose';
 
 /**
  * @returns : list of users
@@ -13,7 +14,7 @@ const getUsers = async (): Promise<IUser[]> => {
 
 interface likeCarProps {
   userId: number;
-  carId: string;
+  carId: Types.ObjectId;
 }
 
 /**
@@ -22,6 +23,16 @@ interface likeCarProps {
  */
 const getUser = async (id: string): Promise<IUser | null> => {
   const user = await User.findById(id);
+  return user;
+};
+
+/**
+ * Funtion returns the user with populated favourites
+ * @param id userId
+ * @returns user
+ */
+const getUserWithFavouriteCars = async (id: string) => {
+  const user = await User.findById(id).populate('favourites');
   return user;
 };
 
@@ -39,7 +50,9 @@ const likeCar = async ({ userId, carId }: likeCarProps) => {
 
   // if car is in favourites remove, else add it in it
   if (user.favourites.includes(carId)) {
-    user.favourites = user.favourites.filter((el) => el !== carId);
+    user.favourites = user.favourites.filter(
+      (el) => el.toString() !== carId.toString()
+    );
   } else {
     user.favourites = user.favourites.concat(carId);
   }
@@ -48,6 +61,9 @@ const likeCar = async ({ userId, carId }: likeCarProps) => {
   user.favourites = user.favourites.filter((fav) => fav);
 
   const savedUser = await user.save();
+  if (!savedUser) {
+    return null;
+  }
   return savedUser;
 };
 
@@ -55,7 +71,7 @@ const likeCar = async ({ userId, carId }: likeCarProps) => {
  * @param userId
  * @returns : return lot numbers of favourite cars
  */
-const getFafouriteCars = async (userId: number) => {
+const getFavouriteCarIds = async (userId: number) => {
   const user = await User.findById(userId);
   if (!user) {
     return null;
@@ -100,7 +116,8 @@ const changeProfilePicture = async (userId: number, avatar: string) => {
 export default {
   getUsers,
   likeCar,
-  getFafouriteCars,
+  getFavouriteCarIds,
   getUser,
   changeProfilePicture,
+  getUserWithFavouriteCars,
 };

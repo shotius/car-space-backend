@@ -1,21 +1,18 @@
 import express, { NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status';
-import carImagesService from 'services/carImages.service';
-import carServices from 'services/cars.services';
 import userService from 'services/user.service';
 import { uploadStreamCloudinary } from 'utils/cloudinary/cloudinary';
 import { asyncHandler } from 'utils/functions/asyncHandler';
 import { toWebp } from 'utils/functions/imageTranformsFuncts';
-import { error } from 'utils/functions/responseApi';
+import { success } from 'utils/functions/responseApi';
 import { isAuth } from 'utils/midlewares';
 import { upload } from 'utils/multer';
 import {
   ApiSuccessResponse,
-  CloudinaryResponse,
+  CloudinaryResponse
 } from '../../shared_with_front/types/types-shared';
 import { ApiError } from './../utils/functions/ApiError';
 import { multerMemoryUpload } from './../utils/multer';
-import { success } from 'utils/functions/responseApi';
 
 const usersRouter = express.Router();
 
@@ -40,7 +37,7 @@ usersRouter.post(
       userId,
       carId,
     });
-    
+
     return res.send(
       success({
         message: 'Ok',
@@ -51,52 +48,39 @@ usersRouter.post(
 );
 
 /**
- * @return: lotNUmber of all favourite vehicles
+ * @returns: lotNUmber of all favourite vehicles
  */
 usersRouter.get(
-  '/lots/favourites',
+  '/favourites/carIds',
   isAuth,
   asyncHandler(async (req: Request, res: Response) => {
     const id = req.session.user!.id;
-    const result = await userService.getFafouriteCars(id);
+    const carIds = await userService.getFavouriteCarIds(id);
 
-    if (!result) {
+    if (!carIds) {
       return res.status(500).end();
     }
-    return res.send(result);
+    return res.send(
+      success({
+        results: carIds 
+      })
+    );
   })
 );
 
-// return cars and favourite images
+/**
+ * @returns user favourite cars
+ */
 usersRouter.get(
-  '/cars/favourites',
+  '/favourites/cars',
   isAuth,
-  async (req: Request, res: Response) => {
+  asyncHandler(async (req: Request, res: Response) => {
     const id = req.session.user!.id;
-    const lotNumbers = await userService.getFafouriteCars(id);
-
-    if (!lotNumbers) {
-      return res.status(401).send(
-        error({
-          message: 'error while fetching lot numbers',
-        })
-      );
-    }
-
-    // get cars
-    const cars = await carServices.getCarsFromLotNumbers(lotNumbers);
-
-    // get images
-    const lotNs = lotNumbers.map((lot) => parseInt(lot));
-    const images = await carImagesService.getMedimImagesList(lotNs);
-
-    // asign images to cars
-    for (let car of cars) {
-      car.imgsM = images[car.lN];
-    }
-
-    return res.send(cars);
-  }
+    const user = await userService.getUserWithFavouriteCars(id.toString())
+    return res.send(success({
+      results: user?.favourites
+    }));
+  })
 );
 
 /**

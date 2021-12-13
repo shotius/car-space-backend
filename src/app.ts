@@ -117,7 +117,7 @@ app.use(defaultErrorHander);
 // -- send front from here
 // -- 404 error will be handled in the front
 app.get('*', function (_req, res) {
-  res.sendFile('index.html', { root: path.join(__dirname, '../build') });
+  res.sendFile('index.html', { root: path.join(__dirname, '../../build') });
 });
 
 export default app;

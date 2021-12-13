@@ -1,4 +1,4 @@
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 import { ValidationError } from 'express-validator';
 import { Roles } from '../contants';
@@ -31,7 +31,7 @@ export interface IUser {
   role: RoleTypes;
   passwordHash: string;
   avatar: string;
-  favourites: string[];
+  favourites: Types.ObjectId[];
 }
 
 export interface SessionUser {

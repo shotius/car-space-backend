@@ -10,7 +10,10 @@ const userSchema: Schema = new Schema({
   role: String,
   passwordHash: String,
   avatar: String, 
-  favourites: [String],
+  favourites: [{
+    type: "ObjectId", 
+    ref: "carDealer"
+  }],
 });
 
 userSchema.set('toJSON', {
