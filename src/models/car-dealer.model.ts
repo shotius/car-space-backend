@@ -12,7 +12,7 @@ const schemaCarDealer = new Schema<ICarDealer>({
   dr: String, // Drive
   mG: String, // Model Group
   mD: String, // Model Detail
-  eng: String, // Engine
+  eng: Number, // Engine
   trans: String, // Transmission
   imgT: String, // Image Thumbnail
   imgUrls: [String], // Image URL

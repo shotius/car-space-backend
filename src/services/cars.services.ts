@@ -1,7 +1,5 @@
-import { ICarCopart } from './../../shared_with_front/types/types-shared.d';
 import CarDealer from 'models/car-dealer.model';
 import { ICarDealer } from '../../shared_with_front/types/types-shared';
-import CarCopart from 'models/car-copart.model';
 
 /** Interfaces */
 interface BaseFilterProps {
@@ -12,7 +10,6 @@ interface BaseFilterProps {
   transmissions: string[];
   keys: string;
   drives: string[];
-  salesStatuses: string[];
   fuels: string[];
   cylinders: string[];
   year_from?: number;
@@ -42,26 +39,30 @@ export const getAllCars = ({ filters }: BaseGetCarInterface) => {
     models,
     year_from,
     year_to,
-    // types,
-    // locations,
-    // transmissions,
-    // drives,
-    // fuels,
-    // cylinders,
-    // conditions,
-    // engine_from,
-    // engine_to,
+    types,
+    locations,
+    transmissions,
+    drives,
+    fuels,
+    cylinders,
+    conditions,
+    engine_from,
+    engine_to,
+    // keys
   } = filters;
   const shouldGetAllcars = !!!(models.length || brands.length);
 
-  // const isTypesEmpty = !types.length;
-  // const isLocationsEmpty = !locations.length;
-  // const isTransmissionsEmpty = !transmissions.length;
-  // const isDrivesEmpty = !drives.length;
-  // const isFuelsEmpty = !fuels.length;
-  // const isCylindersEmpty = !cylinders.length;
-  // const isConditionsEmpty = !conditions.length;
+  const isTypesEmpty = !types.length;
+  const isLocationsEmpty = !locations.length;
+  const isTransmissionsEmpty = !transmissions.length;
+  const isDrivesEmpty = !drives.length;
+  const isFuelsEmpty = !fuels.length;
+  const isCylindersEmpty = !cylinders.length;
+  const isConditionsEmpty = !conditions.length;
 
+  const numCylinders = cylinders.map(c => parseInt(c))
+
+  console.log('filtes: ', filters);
   return CarDealer.find({
     $and: [
       {
@@ -72,19 +73,20 @@ export const getAllCars = ({ filters }: BaseGetCarInterface) => {
       },
       { $expr: { $gte: [{ $toInt: '$y' }, year_from || 0] } }, // year from filter
       { $expr: { $lte: [{ $toInt: '$y' }, year_to || 9999] } }, // year to filter
-      // { $expr: { $gte: [{ $toDouble: '$eng' }, engine_from || 0] } }, // engine from filter
-      // { $expr: { $lte: [{ $toDouble: '$eng' }, engine_to || 9999] } }, // engine to filter
-      // { bSt: !isTypesEmpty ? { $in: types } : { $exists: true } },
-      // { lC: !isLocationsEmpty ? { $in: locations } : { $exists: true } },
-      // {
-      //   trans: !isTransmissionsEmpty
-      //     ? { $in: transmissions }
-      //     : { $exists: true },
-      // },
-      // { dr: !isDrivesEmpty ? { $in: drives } : { $exists: true } },
-      // { fuel: !isFuelsEmpty ? { $in: fuels } : { $exists: true } },
-      // { cyl: !isCylindersEmpty ? { $in: cylinders } : { $exists: true } },
-      // { dmg: !isConditionsEmpty ? { $in: conditions } : { $exists: true } },
+      { $expr: { $gte: [{ $toDouble: '$eng' }, engine_from || 0] } }, // engine from filter
+      { $expr: { $lte: [{ $toDouble: '$eng' }, engine_to || 9999] } }, // engine to filter
+      { bSt: !isTypesEmpty ? { $in: types } : { $exists: true } },
+      { lC: !isLocationsEmpty ? { $in: locations } : { $exists: true } },
+      {
+        trans: !isTransmissionsEmpty
+          ? { $in: transmissions }
+          : { $exists: true },
+      },
+      { dr: !isDrivesEmpty ? { $in: drives } : { $exists: true } },
+      { fuel: !isFuelsEmpty ? { $in: fuels } : { $exists: true } },
+      { cyl: !isCylindersEmpty ? { $in: numCylinders } : { $exists: true } },
+      { dmg: !isConditionsEmpty ? { $in: conditions } : { $exists: true } },
+      // {keys: 'YES'}
     ],
   });
 };
@@ -108,16 +110,16 @@ const getCarsPaginated = async ({
   return cars;
 };
 
-const getCarsFromLotNumbers = async (
-  lotNumbers: string[]
-): Promise<ICarCopart[]> => {
-  const cars = await CarCopart.find({ lN: { $in: lotNumbers } });
-  return cars;
-};
+// const getCarsFromLotNumbers = async (
+//   lotNumbers: string[]
+// ): Promise<ICarCopart[]> => {
+//   const cars = await CarCopart.find({ lN: { $in: lotNumbers } });
+//   return cars;
+// };
 
 /**
  * Get total pages count */
-const getPageCount = async ({ filters,  limit }: GetPageCountProps) => {
+const getPageCount = async ({ filters, limit }: GetPageCountProps) => {
   const carsTotal = await getAllCars({
     filters,
   }).countDocuments();
@@ -125,7 +127,6 @@ const getPageCount = async ({ filters,  limit }: GetPageCountProps) => {
   // total cars in the db
   // total pages for pagination
   const pagesTotal = Math.ceil(carsTotal / limit);
-
 
   return pagesTotal;
 };
@@ -206,16 +207,16 @@ const getTransmissions = async () => {
  * @param param1 {thumb} blured img
  * @returns true if everything is ok
  */
- interface AddCarProps {
+interface AddCarProps {
   car: ICarDealer;
   blur: string;
   imgUrls: string[];
 }
 
- const addCar = async ({ car, blur, imgUrls }: AddCarProps) => {
-  const carObj = car
-  carObj['imgUrls'] = imgUrls
-  carObj['imgT'] = blur
+const addCar = async ({ car, blur, imgUrls }: AddCarProps) => {
+  const carObj = car;
+  carObj['imgUrls'] = imgUrls;
+  carObj['imgT'] = blur;
 
   const newCar = new CarDealer(carObj);
 
@@ -223,9 +224,8 @@ const getTransmissions = async () => {
   return true;
 };
 
-
 const carServices = {
-  addCar, 
+  addCar,
   getCarsPaginated,
   getAllBrands,
   getModels,
@@ -239,7 +239,7 @@ const carServices = {
   getSalesStatus,
   getPageCount,
   getTransmissions,
-  getCarsFromLotNumbers,
+  // getCarsFromLotNumbers,
 };
 
 export default carServices;

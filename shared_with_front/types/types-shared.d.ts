@@ -90,6 +90,8 @@ export interface ICarCopart {
   imgsM?: string[]; // medium images
 }
 
+export type Keys = HasKeys.YES | HasKeys.NO;
+
 // Car for dealers
 export interface ICarDealer {
   id: string; 

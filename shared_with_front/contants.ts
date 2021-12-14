@@ -3,3 +3,8 @@ export enum Roles {
   DEALER = 'dealer',
   USER = 'user',
 }
+
+export enum HasKeys {
+  YES = 'YES',
+  NO = 'NO',
+}

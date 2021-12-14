@@ -1,13 +1,13 @@
 import express from 'express';
 import { validate } from 'middlewares/validate';
 import carImagesService from 'services/carImages.service';
+import carServices from 'services/cars.services';
 import { error } from 'utils/functions/responseApi';
 import { parseQueryModels } from 'utils/queryParsers/parseQueryModels';
 import { validateLotNum } from 'validation/LotNumberValidation';
+import { BaseFilterProps } from '../types';
 import { parseQueryAsArray } from '../utils/queryParsers/parseQueryAsArray';
 import { parseQueryAsNumber } from '../utils/queryParsers/parseQueryAsNumber';
-import { BaseFilterProps } from '../types';
-import carServices from 'services/cars.services';
 
 const carsRouter = express.Router();
 
@@ -40,7 +40,6 @@ carsRouter.get('/', async (req, res) => {
     transmissions: parseQueryAsArray(req.query, 'transmission'),
     keys: (req.query as any).keys,
     drives: parseQueryAsArray(req.query, 'drive'),
-    salesStatuses: parseQueryAsArray(req.query, 'sales_status'),
     fuels: parseQueryAsArray(req.query, 'fuel'),
     cylinders: parseQueryAsArray(req.query, 'cylinder'),
     conditions: parseQueryAsArray(req.query, 'condition'),

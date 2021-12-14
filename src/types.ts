@@ -1,4 +1,5 @@
 import { Types } from 'mongoose';
+import { Keys } from '../shared_with_front/types/types-shared';
 
 export interface SessionUser {
   username: string;
@@ -32,11 +33,12 @@ export interface BaseFilterProps {
   brands: string[];
   models: string[];
   types: string[];
+  price_from?: number;
+  price_to?: number;
   locations: string[];
   transmissions: string[];
-  keys: string;
+  keys: Keys;
   drives: string[];
-  salesStatuses: string[];
   fuels: string[];
   cylinders: string[];
   year_from?: number;
