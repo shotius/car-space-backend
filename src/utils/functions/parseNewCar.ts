@@ -18,7 +18,7 @@ type Fields = {
   engine: unknown;
   transmission: unknown;
   year: unknown;
-  hasKeys: unknown;
+  keys: unknown;
   fuelType: unknown;
   color: unknown;
   price: unknown;
@@ -46,9 +46,9 @@ const isKeys = (keys: unknown): keys is Keys => {
   return keys === KeysEnum.NO || keys === KeysEnum.YES;
 };
 
-const parseString = (text: unknown): string | undefined => {
+const parseString = (text: unknown): string => {
   if (!text || !isString(text)) {
-    return undefined;
+    return '';
   }
   return text;
 };
@@ -60,16 +60,16 @@ const parseNumber = (num: unknown): number => {
   return num;
 };
 
-const parseTransmission = (trans: unknown): Transmission | undefined => {
+const parseTransmission = (trans: unknown): Transmission => {
   if (!trans || !isTransmission(trans)) {
-    return undefined;
+    return '';
   }
   return trans;
 };
 
-const parseKeys = (keys: unknown): Keys | undefined => {
+const parseKeys = (keys: unknown): Keys => {
   if (!keys || !isKeys(keys)) {
-    return undefined;
+    return '';
   }
   return keys;
 };
@@ -99,7 +99,7 @@ export const parseNewCar = (
     eng: parseNumber(props.engine),
     cyl: parseNumber(props.cylinders),
     trans: parseTransmission(props.transmission)?.toUpperCase(),
-    keys: parseKeys(props.hasKeys)?.toUpperCase(),
+    keys: parseKeys(props.keys)?.toUpperCase(),
   };
   return newCar;
 };

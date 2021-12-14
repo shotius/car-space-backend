@@ -10,10 +10,16 @@ const getIndexToInsert = (url: string) => url.indexOf('upload/') + 7;
 
 export const toBlur = (imgUrl: string) => {
   const indexToInsert = getIndexToInsert(imgUrl);
-  return `${imgUrl.slice(
-    0,
-    indexToInsert
-  )}w_200,h_200,c_limit,e_blur:400,o_90,b_black/${imgUrl.slice(indexToInsert)}`;
+  if (imgUrl) {
+    return `${imgUrl.slice(
+      0,
+      indexToInsert
+    )}w_200,h_200,c_limit,e_blur:400,o_90,b_black/${imgUrl.slice(
+      indexToInsert
+    )}`;
+  } else {
+    return '';
+  }
 };
 
 /**
@@ -24,9 +30,14 @@ export const toBlur = (imgUrl: string) => {
 
 export const toThumb = (imgUrl: string) => {
   const indexToInsert = getIndexToInsert(imgUrl);
-  return `${imgUrl.slice(0, indexToInsert)}c_thumb,w_200,g_face/${imgUrl.slice(
-    indexToInsert
-  )}`;
+  if (imgUrl) {
+    return `${imgUrl.slice(
+      0,
+      indexToInsert
+    )}c_thumb,w_200,g_face/${imgUrl.slice(indexToInsert)}`;
+  } else {
+    return '';
+  }
 };
 
 /**

@@ -1,23 +1,9 @@
+import { HasKeys } from './../../shared_with_front/contants';
 import CarDealer from 'models/car-dealer.model';
 import { ICarDealer } from '../../shared_with_front/types/types-shared';
+import { BaseFilterProps } from 'types';
 
 /** Interfaces */
-interface BaseFilterProps {
-  brands: string[];
-  models: string[];
-  types: string[];
-  locations: string[];
-  transmissions: string[];
-  keys: string;
-  drives: string[];
-  fuels: string[];
-  cylinders: string[];
-  year_from?: number;
-  year_to?: number;
-  conditions: string[];
-  engine_from?: number;
-  engine_to?: number;
-}
 
 interface BaseGetCarInterface {
   filters: BaseFilterProps;
@@ -48,7 +34,9 @@ export const getAllCars = ({ filters }: BaseGetCarInterface) => {
     conditions,
     engine_from,
     engine_to,
-    // keys
+    keys,
+    price_from,
+    price_to,
   } = filters;
   const shouldGetAllcars = !!!(models.length || brands.length);
 
@@ -60,9 +48,8 @@ export const getAllCars = ({ filters }: BaseGetCarInterface) => {
   const isCylindersEmpty = !cylinders.length;
   const isConditionsEmpty = !conditions.length;
 
-  const numCylinders = cylinders.map(c => parseInt(c))
+  const numCylinders = cylinders.map((c) => parseInt(c));
 
-  console.log('filtes: ', filters);
   return CarDealer.find({
     $and: [
       {
@@ -71,10 +58,9 @@ export const getAllCars = ({ filters }: BaseGetCarInterface) => {
           { mG: { $in: models } }, // model filter
         ],
       },
-      { $expr: { $gte: [{ $toInt: '$y' }, year_from || 0] } }, // year from filter
-      { $expr: { $lte: [{ $toInt: '$y' }, year_to || 9999] } }, // year to filter
-      { $expr: { $gte: [{ $toDouble: '$eng' }, engine_from || 0] } }, // engine from filter
-      { $expr: { $lte: [{ $toDouble: '$eng' }, engine_to || 9999] } }, // engine to filter
+      { y: { $gte: year_from || 0, $lte: year_to || 9999 } }, // year range filter
+      { eng: { $gte: engine_from || 0, $lte: engine_to || 9999 } }, // engine range filter
+      { price: { $gte: price_from || 0, $lte: price_to || 9999999 } }, // price range filter
       { bSt: !isTypesEmpty ? { $in: types } : { $exists: true } },
       { lC: !isLocationsEmpty ? { $in: locations } : { $exists: true } },
       {
@@ -86,7 +72,7 @@ export const getAllCars = ({ filters }: BaseGetCarInterface) => {
       { fuel: !isFuelsEmpty ? { $in: fuels } : { $exists: true } },
       { cyl: !isCylindersEmpty ? { $in: numCylinders } : { $exists: true } },
       { dmg: !isConditionsEmpty ? { $in: conditions } : { $exists: true } },
-      // {keys: 'YES'}
+      { keys: keys === HasKeys.YES ? { $eq: keys } : { $exists: true } },
     ],
   });
 };

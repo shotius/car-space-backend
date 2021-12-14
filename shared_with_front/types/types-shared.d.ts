@@ -99,21 +99,21 @@ export interface ICarDealer {
   bSt?: string; // Body Style
   dmg?: string; // Damage Description
   lC?: string; // Location country
-  od: number; // Odometer
-  cyl: number; // Cylinders
+  desc?: string;
   dr?: string; // Drive
   mG?: string; // Model Group
   mD?: string; // Model Detail
-  eng: number; // Engine
   trans?: Transmission; // Transmission
   imgT: string; // Image Thumbnail
   imgUrls: string[]; // Image URL
-  y: number; // Year
   fuel?: string; // Fuel Type
   keys?: Keys; // Has Keys-Yes or No
   c?: string; // Color
+  eng: number; // Engine
+  y: number; // Year
+  od: number; // Odometer
+  cyl: number; // Cylinders
   price: number; // Price
-  desc?: string;
 }
 
 // response from cloudinary
@@ -151,7 +151,7 @@ export interface AddCarValues {
   engine: number;
   transmission: Transmission | '';
   year: string;
-  hasKeys: Keys | '';
+  keys: Keys | '';
   fuelType: string;
   color: string;
   price: number;

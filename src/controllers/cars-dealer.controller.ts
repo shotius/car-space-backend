@@ -56,6 +56,20 @@ const getDealerCars = asyncHandler(
   }
 );
 
+const getSingleDealerCar = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const car = await dealerCarService.getSingleCar(req.params.carId);
+    if (!car) {
+      return next(new ApiError(httpStatus.NOT_FOUND, 'Single car not found'));
+    }
+    return res.send(
+      success({
+        results: car,
+      })
+    );
+  }
+);
+
 // -- Add car to the db
 const addDealerCar = asyncHandler(async (req: Request, res: Response) => {
   const files = req.files;
@@ -115,5 +129,6 @@ const dealerController = {
   getDealerCars,
   addDealerCar,
   removeAllCars,
+  getSingleDealerCar,
 };
 export default dealerController;

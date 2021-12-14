@@ -6,5 +6,5 @@ export const parseQueryAsNumber = (
   if (Number(q)) {
     return Number(q)
   }
-  return undefined;
+  return 0;
 };

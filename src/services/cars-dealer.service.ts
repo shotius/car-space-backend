@@ -1,15 +1,19 @@
 import { ICarDealer } from '../../shared_with_front/types/types-shared';
-import  CarDealer from '../models/car-dealer.model';
+import CarDealer from '../models/car-dealer.model';
 
 /** Interfaces */
 interface AddCarProps {
-  car: Omit<ICarDealer, "imgT" | "imgUrls" | "id">;
+  car: Omit<ICarDealer, 'imgT' | 'imgUrls' | 'id'>;
   blur: string;
   imgUrls: string[];
 }
 
 const getAllCars = async () => {
   return await CarDealer.find({});
+};
+
+const getSingleCar = async (carId: string) => {
+  return await CarDealer.findById(carId);
 };
 
 /**
@@ -19,12 +23,13 @@ const getAllCars = async () => {
  * @returns true if everything is ok
  */
 const addCar = async ({ car, blur, imgUrls }: AddCarProps) => {
-  const carObj: Partial<ICarDealer> = car
+  const carObj: Partial<ICarDealer> = car;
 
-  carObj['imgUrls'] = imgUrls
-  carObj['imgT'] = blur
+  carObj['imgUrls'] = imgUrls;
+  carObj['imgT'] = blur;
 
   const newCar = new CarDealer(carObj);
+  console.log('carObj', carObj);
 
   return await newCar.save();
 };
@@ -32,14 +37,15 @@ const addCar = async ({ car, blur, imgUrls }: AddCarProps) => {
 /**
  * Function removes car from the db
  * @param id id of the car
- * @returns 
+ * @returns
  */
 const removeSingleCar = async (id: string) => {
-  return await CarDealer.findByIdAndDelete(id)
-}
+  return await CarDealer.findByIdAndDelete(id);
+};
 const dealerCarService = {
-  removeSingleCar, 
+  removeSingleCar,
   addCar,
   getAllCars,
+  getSingleCar
 };
 export default dealerCarService;

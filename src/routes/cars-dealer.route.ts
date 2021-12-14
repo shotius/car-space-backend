@@ -11,6 +11,7 @@ export const dealerCarsRouter = express.Router();
 dealerCarsRouter.use(express.urlencoded({ extended: true }));
 
 dealerCarsRouter.get('/', dealerController.getDealerCars);
+dealerCarsRouter.get('/:carId', dealerController.getSingleDealerCar);
 dealerCarsRouter.post(
   '/',
   multerMemoryUpload.array('photo[]'),
