@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status';
+import cloudinaryServices from 'services/cloudinary.service';
 import userService from 'services/user.service';
-import { uploadStreamCloudinary } from 'utils/cloudinary/cloudinary';
 import { asyncHandler } from 'utils/functions/asyncHandler';
 import { toWebp } from 'utils/functions/imageTranformsFuncts';
 import { success } from 'utils/functions/responseApi';
@@ -9,7 +9,7 @@ import { isAuth } from 'utils/midlewares';
 import { upload } from 'utils/multer';
 import {
   ApiSuccessResponse,
-  CloudinaryResponse
+  CloudinaryResponse,
 } from '../../shared_with_front/types/types-shared';
 import { ApiError } from './../utils/functions/ApiError';
 import { multerMemoryUpload } from './../utils/multer';
@@ -62,7 +62,7 @@ usersRouter.get(
     }
     return res.send(
       success({
-        results: carIds 
+        results: carIds,
       })
     );
   })
@@ -76,10 +76,12 @@ usersRouter.get(
   isAuth,
   asyncHandler(async (req: Request, res: Response) => {
     const id = req.session.user!.id;
-    const user = await userService.getUserWithFavouriteCars(id.toString())
-    return res.send(success({
-      results: user?.favourites
-    }));
+    const user = await userService.getUserWithFavouriteCars(id.toString());
+    return res.send(
+      success({
+        results: user?.favourites,
+      })
+    );
   })
 );
 
@@ -109,9 +111,9 @@ usersRouter.post(
     }
 
     // compress the image and converto webp format
-    const sharpBuffer = await toWebp(buffer);
+    const sharpBuffer = await toWebp({ buffer });
     // upload image to the cloudinary
-    const result = await uploadStreamCloudinary(sharpBuffer, `users/avatars`);
+    const result = await cloudinaryServices.uploadStream(sharpBuffer, `users/avatars`);
 
     if (result.message === 'Fail') {
       return next(

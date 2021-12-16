@@ -45,7 +45,12 @@ export const toThumb = (imgUrl: string) => {
  * @param buffer file buffer
  * @returns Buffer of the converted image
  */
-
-export const toWebp = async (buffer: Buffer) => {
-  return await sharp(buffer).webp({ quality: 10 }).toBuffer();
+export const toWebp = async ({
+  buffer,
+  quality = 10,
+}: {
+  buffer: Buffer;
+  quality?: number;
+}) => {
+  return await sharp(buffer).webp({ quality }).toBuffer();
 };

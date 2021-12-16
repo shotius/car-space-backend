@@ -1,14 +1,14 @@
 import { removeExtension } from './../utils/functions/removeExtension';
-import { deleteOnCloudinary } from 'utils/cloudinary/cloudinary';
 import { IUser } from '../../shared_with_front/types/types-shared';
 import User from '../models/user.model';
 import { Types } from 'mongoose';
+import cloudinaryServices from './cloudinary.service';
 
 /**
  * @returns : list of users
  */
 const getUsers = async (): Promise<IUser[]> => {
-  const users = await User.find({}).populate('favourites');
+  const users = await User.find({});
   return users;
 };
 
@@ -97,7 +97,7 @@ const changeProfilePicture = async (userId: number, avatar: string) => {
     const public_id = removeExtension(user.avatar).slice(
       user.avatar.indexOf('car-space/')
     );
-    const isDeleted = await deleteOnCloudinary(public_id);
+    const isDeleted = await cloudinaryServices.deleteSingle(public_id);
     if (isDeleted.message === 'Fail') {
       throw new Error(isDeleted.error);
     }

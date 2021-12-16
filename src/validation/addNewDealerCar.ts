@@ -1,6 +1,6 @@
 import {body} from 'express-validator'
 
-export const addNewDealerCar = [
+export const newDealerCar = [
   body('manufacturer')
     .exists()
     .withMessage('Manufacturer is missing')

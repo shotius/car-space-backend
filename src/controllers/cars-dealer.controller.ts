@@ -3,12 +3,12 @@ import httpStatus from 'http-status';
 import CarDealer from 'models/car-dealer.model';
 import dealerCarService from 'services/cars-dealer.service';
 import carServices from 'services/cars.services';
+import cloudinaryServices from 'services/cloudinary.service';
 import { asyncHandler } from 'utils/functions/asyncHandler';
 // import { success } from 'utils/functions/responseApi';
 import { toBlur, toWebp } from 'utils/functions/imageTranformsFuncts';
 import { error, success } from 'utils/functions/responseApi';
 import { parseNewCar } from '../utils/functions/parseNewCar';
-import { uploadStreamCloudinary } from './../utils/cloudinary/cloudinary';
 import { ApiError } from './../utils/functions/ApiError';
 import { extractFilters } from './../utils/functions/extractFilters';
 // import dealerCarService from '../services/cars-dealer.service';
@@ -80,8 +80,8 @@ const addDealerCar = asyncHandler(async (req: Request, res: Response) => {
   if (Array.isArray(files) && files.length) {
     const requests = files.map(async (file) => {
       const { buffer } = file;
-      const convertedBuffer = await toWebp(buffer);
-      return uploadStreamCloudinary(convertedBuffer, 'cars/medium-sized-cars');
+      const convertedBuffer = await toWebp({buffer});
+      return cloudinaryServices.uploadStream(convertedBuffer, 'cars/medium-sized-cars');
     });
     const cloudResponses = await Promise.allSettled(requests);
     imgUrls = cloudResponses.map((res) => {

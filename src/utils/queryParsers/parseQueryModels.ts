@@ -1,4 +1,4 @@
-import { isString } from 'utils/functions/isString';
+import typeChecker from 'utils/functions/typeCheckers';
 import { SelectedCarModel } from '../../../shared_with_front/types/types-shared';
 
 export const parseQueryModels = (
@@ -10,7 +10,7 @@ export const parseQueryModels = (
 
     brands.map((brand) => {
       const model = models[brand];
-      if (isString(model)) {
+      if (typeChecker.isString(model)) {
         formatedModels.push({
           brand,
           models: [model],

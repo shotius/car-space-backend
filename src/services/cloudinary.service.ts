@@ -2,7 +2,7 @@ import { v2 as cloudinary } from 'cloudinary';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import { bufferStream } from 'utils/functions/bufferStream';
-import { CloudinaryResponse } from '../../../shared_with_front/types/types-shared';
+import { CloudinaryResponse } from '../../shared_with_front/types/types-shared';
 dotenv.config();
 
 // this is base url on the cloud
@@ -21,7 +21,7 @@ cloudinary.config({
  * @param fileFolder : this is sub folder in the cloud
  * @returns : error message or success message with images url
  */
-export const uploadToCloudinary = async (
+const uploadPhoto = async (
   localFilePath: string,
   fileFolder: string
 ): Promise<CloudinaryResponse> => {
@@ -54,7 +54,7 @@ export const uploadToCloudinary = async (
  * @param folder : this is a folder under main folder on the cloud
  * @returns : {message: success | Fail, url?: result url, error?: error}
  */
-export const uploadStreamCloudinary = async (
+const uploadStream = async (
   buffer: Buffer,
   folder: string
 ) => {
@@ -89,7 +89,7 @@ export const uploadStreamCloudinary = async (
  * @param public_id : image uri
  * @returns {CloudinaryResponse}
  */
-export const deleteOnCloudinary = async (
+const deleteSingle = async (
   public_id: string
 ): Promise<CloudinaryResponse> => {
   try {
@@ -110,3 +110,13 @@ export const deleteOnCloudinary = async (
     };
   }
 };
+
+
+
+const cloudinaryServices = {
+  deleteSingle, 
+  uploadStream, 
+  uploadPhoto
+};
+
+export default cloudinaryServices;

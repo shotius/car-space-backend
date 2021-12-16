@@ -164,3 +164,10 @@ export interface ICustomerReview {
   review: string; 
   photos: string[]
 }
+
+
+export interface INewReview {
+  text: string;
+  images: string[]
+  userId: string;
+}

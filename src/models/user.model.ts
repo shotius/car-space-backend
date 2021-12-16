@@ -26,4 +26,4 @@ userSchema.set('toJSON', {
   },
 });
 
-export default model<IUser>('user', userSchema);
+export default model<IUser>('User', userSchema);

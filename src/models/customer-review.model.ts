@@ -1,4 +1,4 @@
-import { model, Schema } from 'mongoose';
+import { model, Schema, Model } from 'mongoose';
 import { ICustomerReview } from '../../shared_with_front/types/types-shared';
 
 const schema = new Schema<ICustomerReview>({
@@ -18,5 +18,5 @@ schema.set('toJSON', {
   },
 });
 
-export default model<ICustomerReview>('CustomerReview', schema);
-
+const CustomerReview: Model<ICustomerReview> =  model<ICustomerReview>('CustomerReview', schema);
+export default CustomerReview

@@ -1,6 +1,6 @@
 import { isAdmin } from './../utils/midlewares';
 import { isAuth } from 'utils/midlewares';
-import { addNewDealerCar } from './../validation/addNewDealerCar';
+import { newDealerCar } from './../validation/addNewDealerCar';
 import dealerController from 'controllers/cars-dealer.controller';
 import express from 'express';
 import { validate } from 'middlewares/validate';
@@ -14,8 +14,8 @@ dealerCarsRouter.get('/', dealerController.getDealerCars);
 dealerCarsRouter.get('/:carId', dealerController.getSingleDealerCar);
 dealerCarsRouter.post(
   '/',
-  multerMemoryUpload.array('photo[]'),
-  validate(addNewDealerCar),
+  multerMemoryUpload.array('photo[]', 12),
+  validate(newDealerCar),
   dealerController.addDealerCar
 );
 dealerCarsRouter.delete('/', isAuth, isAdmin, dealerController.removeSingleCar);
