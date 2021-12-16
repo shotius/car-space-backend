@@ -26,6 +26,7 @@ export interface ApiDefaultError extends ApiBaseResponse {
 export type RoleTypes = Roles.ADMIN | Roles.DEALER | Roles.USER;
 
 export interface IUser {
+  id: string;
   username: string;
   name: string;
   role: RoleTypes;
@@ -170,4 +171,11 @@ export interface INewReview {
   text: string;
   images: string[]
   userId: string;
+}
+
+export interface ICustomerReviewFront {
+  id: string;
+  text: string;
+  photos: string[]
+  user: IUser
 }

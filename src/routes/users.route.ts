@@ -5,6 +5,7 @@ import userService from 'services/user.service';
 import { asyncHandler } from 'utils/functions/asyncHandler';
 import imageMethods from 'utils/functions/imageTranformsFuncts';
 import { success } from 'utils/functions/responseApi';
+import typeParser from 'utils/functions/typeParsers';
 import { isAuth } from 'utils/midlewares';
 import { upload } from 'utils/multer';
 import {
@@ -21,9 +22,21 @@ usersRouter.use(express.urlencoded({ extended: true }));
 usersRouter.use('/uploads', express.static('dist/uploads'));
 
 // get all users
-usersRouter.get('/', async (_req, res) => {
-  res.json(await userService.getUsers());
-});
+usersRouter.get(
+  '/',
+  asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+    const searchWord = typeParser.parseString(req.query.s)
+    const users = await userService.getUsers(searchWord);
+    if (!users) {
+      return next(new ApiError(httpStatus.NOT_FOUND, 'Could not get users'));
+    }
+    return res.send(
+      success({
+        results: users,
+      })
+    );
+  })
+);
 
 // user likes a vehicle
 usersRouter.post(
@@ -113,7 +126,10 @@ usersRouter.post(
     // compress the image and converto webp format
     const sharpBuffer = await imageMethods.toWebp({ buffer });
     // upload image to the cloudinary
-    const result = await cloudinaryServices.uploadStream(sharpBuffer, `users/avatars`);
+    const result = await cloudinaryServices.uploadStream(
+      sharpBuffer,
+      `users/avatars`
+    );
 
     if (result.message === 'Fail') {
       return next(

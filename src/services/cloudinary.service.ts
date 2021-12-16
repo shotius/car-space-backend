@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import fs from 'fs';
 import { bufferStream } from 'utils/functions/bufferStream';
 import imageMethods from 'utils/functions/imageTranformsFuncts';
+import { removeExtension } from 'utils/functions/removeExtension';
 import { CloudinaryResponse } from '../../shared_with_front/types/types-shared';
 dotenv.config();
 
@@ -108,6 +109,27 @@ const deleteSingle = async (public_id: string): Promise<CloudinaryResponse> => {
 };
 
 /**
+ * Function removes list of urls from the cloudinbary
+ * @param urls list of cloudinary urls
+ * @returns
+ */
+const deleteMultiple = async (urls: string[]): Promise<CloudinaryResponse> => {
+  try {
+    urls.map(async (url) => {
+       await deleteSingle(url);
+    });
+    return {
+      message: 'Success',
+    };
+  } catch (error) {
+    return {
+      message: 'Fail',
+      error: '' + error,
+    };
+  }
+};
+
+/**
  * Function uploads multy file to the cloudinary
  * @param files in memory files, created by multer
  * @param path file path on cloudinary
@@ -135,14 +157,22 @@ const uploadMultyStream = async (
     }
   });
 
+  console.log('cloudinary: ', cloudResponses);
+
   return imgUrls;
 };
 
+const getPublicPath = (url: string) => {
+  return removeExtension(url).slice(url.indexOf('car-space/'));
+};
+
 const cloudinaryServices = {
+  getPublicPath, 
   deleteSingle,
   uploadStream,
   uploadPhoto,
   uploadMultyStream,
+  deleteMultiple,
 };
 
 export default cloudinaryServices;

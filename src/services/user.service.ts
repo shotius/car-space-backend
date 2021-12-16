@@ -1,4 +1,3 @@
-import { removeExtension } from './../utils/functions/removeExtension';
 import { IUser } from '../../shared_with_front/types/types-shared';
 import User from '../models/user.model';
 import { Types } from 'mongoose';
@@ -7,8 +6,10 @@ import cloudinaryServices from './cloudinary.service';
 /**
  * @returns : list of users
  */
-const getUsers = async (): Promise<IUser[]> => {
-  const users = await User.find({});
+const getUsers = async (searchWord: string): Promise<IUser[]> => {
+  const users = await User.find({
+    name: { $regex: searchWord, $options: 'i' },
+  }).limit(20);
   return users;
 };
 
@@ -94,9 +95,7 @@ const changeProfilePicture = async (userId: number, avatar: string) => {
   // remove existing avatar from cloudinary
   if (user.avatar) {
     // get public id from the url
-    const public_id = removeExtension(user.avatar).slice(
-      user.avatar.indexOf('car-space/')
-    );
+    const public_id = cloudinaryServices.getPublicPath(user.avatar);
     const isDeleted = await cloudinaryServices.deleteSingle(public_id);
     if (isDeleted.message === 'Fail') {
       throw new Error(isDeleted.error);

@@ -1,5 +1,8 @@
+import httpStatus from 'http-status';
+import { ApiError } from 'utils/functions/ApiError';
 import { ICarDealer } from '../../shared_with_front/types/types-shared';
 import CarDealer from '../models/car-dealer.model';
+import cloudinaryServices from './cloudinary.service';
 
 /** Interfaces */
 interface AddCarProps {
@@ -40,12 +43,22 @@ const addCar = async ({ car, blur, imgUrls }: AddCarProps) => {
  * @returns
  */
 const removeSingleCar = async (id: string) => {
-  return await CarDealer.findByIdAndDelete(id);
+  const car = await CarDealer.findByIdAndDelete(id);
+  if (car) {
+    const paths = car.imgUrls.map((url) =>
+      cloudinaryServices.getPublicPath(url)
+    );
+    const response = await cloudinaryServices.deleteMultiple(paths);
+    if (response.message === 'Fail' && response.error) {
+      throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, response.error);
+    }
+  }
+  return car;
 };
 const dealerCarService = {
   removeSingleCar,
   addCar,
   getAllCars,
-  getSingleCar
+  getSingleCar,
 };
 export default dealerCarService;
