@@ -158,3 +158,9 @@ export interface AddCarValues {
   description: string;
   photos: FileList | null;
 }
+
+export interface ICustomerReview {
+  user: Types.ObjectId,
+  review: string; 
+  photos: string[]
+}

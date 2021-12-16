@@ -8,7 +8,7 @@ import { Types } from 'mongoose';
  * @returns : list of users
  */
 const getUsers = async (): Promise<IUser[]> => {
-  const users = await User.find({});
+  const users = await User.find({}).populate('favourites');
   return users;
 };
 

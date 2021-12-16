@@ -1,4 +1,4 @@
-import { Schema, model, Model } from 'mongoose';
+import { model, Schema } from 'mongoose';
 import { IUser } from '../../shared_with_front/types/types-shared';
 
 const userSchema: Schema = new Schema({
@@ -26,6 +26,4 @@ userSchema.set('toJSON', {
   },
 });
 
-const User: Model<IUser> = model<IUser>('User', userSchema);
-
-export default User;
+export default model<IUser>('user', userSchema);

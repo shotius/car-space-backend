@@ -32,5 +32,4 @@ schemaCarDealer.set('toJSON', {
   },
 });
 
-const CarDealer = model<ICarDealer>('carDealer', schemaCarDealer);
-export default CarDealer;
+export default model<ICarDealer>('carDealer', schemaCarDealer);

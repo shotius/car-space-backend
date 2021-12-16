@@ -10,6 +10,7 @@ import authRouter from './routes/auth.route';
 import carsRouter from './routes/cars-copart.route';
 import usersRouter from './routes/users.route';
 import dealerCarsRouter from './routes/cars-dealer.route';
+import customerReviewRouter from 'routes/customer-review.route';
 import { MONGODB_URI } from './utils/config';
 import { __prod__ } from './utils/constants';
 import logger from './utils/logger';
@@ -110,6 +111,7 @@ app.use('/api/users', usersRouter);
 app.use('/api/cars', carsRouter);
 app.use('/api/dealers/cars', dealerCarsRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/customer-reviews', customerReviewRouter)
 
 app.use(errorConverter);
 app.use(defaultErrorHander);
