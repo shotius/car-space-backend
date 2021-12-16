@@ -1,0 +1,1 @@
+const c=a=>{const r=a.toLocaleLowerCase().split(" ").map(e=>e.trim()).filter(e=>e.length),t=[];return r.forEach(e=>{const s=e[0].toUpperCase()+e.slice(1);t.push(s)}),t.join(" ")};var n;(function(a){a.ADMIN="admin",a.DEALER="dealer",a.USER="user"})(n||(n={}));var o;(function(a){a.YES="YES",a.NO="NO"})(o||(o={}));export{o as H,n as R,c};
