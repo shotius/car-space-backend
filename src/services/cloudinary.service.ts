@@ -2,6 +2,7 @@ import { v2 as cloudinary } from 'cloudinary';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import { bufferStream } from 'utils/functions/bufferStream';
+import imageMethods from 'utils/functions/imageTranformsFuncts';
 import { CloudinaryResponse } from '../../shared_with_front/types/types-shared';
 dotenv.config();
 
@@ -54,10 +55,7 @@ const uploadPhoto = async (
  * @param folder : this is a folder under main folder on the cloud
  * @returns : {message: success | Fail, url?: result url, error?: error}
  */
-const uploadStream = async (
-  buffer: Buffer,
-  folder: string
-) => {
+const uploadStream = async (buffer: Buffer, folder: string) => {
   return new Promise<CloudinaryResponse>((resolve, reject) => {
     const path = `${baseFolderonCloudinary}/${folder}`;
 
@@ -89,9 +87,7 @@ const uploadStream = async (
  * @param public_id : image uri
  * @returns {CloudinaryResponse}
  */
-const deleteSingle = async (
-  public_id: string
-): Promise<CloudinaryResponse> => {
+const deleteSingle = async (public_id: string): Promise<CloudinaryResponse> => {
   try {
     const result = await cloudinary.uploader.destroy(public_id);
     if (result.result === 'not found') {
@@ -111,12 +107,33 @@ const deleteSingle = async (
   }
 };
 
+const uploadMultyStream = async (files: Express.Multer.File[]) => {
+  let imgUrls: string[] = [];
+  const requests = files.map(async (file) => {
+    const { buffer } = file;
+    const convertedBuffer = await imageMethods.toWebp({ buffer });
+    return cloudinaryServices.uploadStream(
+      convertedBuffer,
+      'cars/medium-sized-cars'
+    );
+  });
+  const cloudResponses = await Promise.allSettled(requests);
+  imgUrls = cloudResponses.map((res) => {
+    if (res.status === 'fulfilled') {
+      return res.value.url || '';
+    } else {
+      return '';
+    }
+  });
 
+  return imgUrls;
+};
 
 const cloudinaryServices = {
-  deleteSingle, 
-  uploadStream, 
-  uploadPhoto
+  deleteSingle,
+  uploadStream,
+  uploadPhoto,
+  uploadMultyStream
 };
 
 export default cloudinaryServices;

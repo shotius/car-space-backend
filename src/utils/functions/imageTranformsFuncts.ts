@@ -7,8 +7,7 @@ const getIndexToInsert = (url: string) => url.indexOf('upload/') + 7;
  * @param imgUrl
  * @returns blured img
  */
-
-export const toBlur = (imgUrl: string) => {
+const toBlur = (imgUrl: string) => {
   const indexToInsert = getIndexToInsert(imgUrl);
   if (imgUrl) {
     return `${imgUrl.slice(
@@ -28,7 +27,7 @@ export const toBlur = (imgUrl: string) => {
  * @returns thumbnail
  */
 
-export const toThumb = (imgUrl: string) => {
+const toThumb = (imgUrl: string) => {
   const indexToInsert = getIndexToInsert(imgUrl);
   if (imgUrl) {
     return `${imgUrl.slice(
@@ -45,7 +44,7 @@ export const toThumb = (imgUrl: string) => {
  * @param buffer file buffer
  * @returns Buffer of the converted image
  */
-export const toWebp = async ({
+const toWebp = async ({
   buffer,
   quality = 10,
 }: {
@@ -54,3 +53,11 @@ export const toWebp = async ({
 }) => {
   return await sharp(buffer).webp({ quality }).toBuffer();
 };
+
+const imageMethods = {
+  toWebp,
+  toThumb,
+  toBlur,
+};
+
+export default imageMethods;

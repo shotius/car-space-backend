@@ -5,8 +5,8 @@ import dealerCarService from 'services/cars-dealer.service';
 import carServices from 'services/cars.services';
 import cloudinaryServices from 'services/cloudinary.service';
 import { asyncHandler } from 'utils/functions/asyncHandler';
+import imageMethods from 'utils/functions/imageTranformsFuncts';
 // import { success } from 'utils/functions/responseApi';
-import { toBlur, toWebp } from 'utils/functions/imageTranformsFuncts';
 import { error, success } from 'utils/functions/responseApi';
 import { parseNewCar } from '../utils/functions/parseNewCar';
 import { ApiError } from './../utils/functions/ApiError';
@@ -78,22 +78,10 @@ const addDealerCar = asyncHandler(async (req: Request, res: Response) => {
 
   // upload images to the cloudinary and get urls
   if (Array.isArray(files) && files.length) {
-    const requests = files.map(async (file) => {
-      const { buffer } = file;
-      const convertedBuffer = await toWebp({buffer});
-      return cloudinaryServices.uploadStream(convertedBuffer, 'cars/medium-sized-cars');
-    });
-    const cloudResponses = await Promise.allSettled(requests);
-    imgUrls = cloudResponses.map((res) => {
-      if (res.status === 'fulfilled') {
-        return res.value.url || '';
-      } else {
-        return '';
-      }
-    });
+    imgUrls = await cloudinaryServices.uploadMultyStream(files);
   }
 
-  const blur = toBlur(imgUrls[0] || '');
+  const blur = imageMethods.toBlur(imgUrls[0] || '');
   const addedCar = await dealerCarService.addCar({ car, blur, imgUrls });
 
   res.send(addedCar);

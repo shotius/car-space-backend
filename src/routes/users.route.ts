@@ -3,7 +3,7 @@ import httpStatus from 'http-status';
 import cloudinaryServices from 'services/cloudinary.service';
 import userService from 'services/user.service';
 import { asyncHandler } from 'utils/functions/asyncHandler';
-import { toWebp } from 'utils/functions/imageTranformsFuncts';
+import imageMethods from 'utils/functions/imageTranformsFuncts';
 import { success } from 'utils/functions/responseApi';
 import { isAuth } from 'utils/midlewares';
 import { upload } from 'utils/multer';
@@ -111,7 +111,7 @@ usersRouter.post(
     }
 
     // compress the image and converto webp format
-    const sharpBuffer = await toWebp({ buffer });
+    const sharpBuffer = await imageMethods.toWebp({ buffer });
     // upload image to the cloudinary
     const result = await cloudinaryServices.uploadStream(sharpBuffer, `users/avatars`);
 
