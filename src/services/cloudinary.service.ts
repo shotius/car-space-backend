@@ -107,17 +107,26 @@ const deleteSingle = async (public_id: string): Promise<CloudinaryResponse> => {
   }
 };
 
-const uploadMultyStream = async (files: Express.Multer.File[]) => {
+/**
+ * Function uploads multy file to the cloudinary
+ * @param files in memory files, created by multer
+ * @param path file path on cloudinary
+ * @returns image urls
+ */
+const uploadMultyStream = async (
+  files: Express.Multer.File[],
+  path: string
+) => {
   let imgUrls: string[] = [];
+
   const requests = files.map(async (file) => {
     const { buffer } = file;
     const convertedBuffer = await imageMethods.toWebp({ buffer });
-    return cloudinaryServices.uploadStream(
-      convertedBuffer,
-      'cars/medium-sized-cars'
-    );
+    return cloudinaryServices.uploadStream(convertedBuffer, path);
   });
+
   const cloudResponses = await Promise.allSettled(requests);
+
   imgUrls = cloudResponses.map((res) => {
     if (res.status === 'fulfilled') {
       return res.value.url || '';
@@ -133,7 +142,7 @@ const cloudinaryServices = {
   deleteSingle,
   uploadStream,
   uploadPhoto,
-  uploadMultyStream
+  uploadMultyStream,
 };
 
 export default cloudinaryServices;

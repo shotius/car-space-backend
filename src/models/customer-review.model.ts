@@ -2,7 +2,7 @@ import { model, Schema, Model } from 'mongoose';
 import { ICustomerReview } from '../../shared_with_front/types/types-shared';
 
 const schema = new Schema<ICustomerReview>({
-  review: String,
+  text: String,
   photos: [String],
   user: {
     type: 'ObjectId', 

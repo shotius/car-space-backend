@@ -13,9 +13,11 @@ interface SuccessProps<Type> {
 
 export function success<Type>({
   results,
+  message,
 }: SuccessProps<Type>): ApiSuccessResponse<Type> {
   return {
     success: true,
+    message,
     results,
   };
 }
@@ -23,14 +25,14 @@ export function success<Type>({
 /** Error */
 type ErrorProps = {
   message: string;
-  status?: number
+  status?: number;
 };
 
 export const error = ({ message, status }: ErrorProps): ApiDefaultError => {
   return {
     success: false,
     error: message,
-    status
+    status,
   };
 };
 

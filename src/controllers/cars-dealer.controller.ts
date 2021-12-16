@@ -78,7 +78,7 @@ const addDealerCar = asyncHandler(async (req: Request, res: Response) => {
 
   // upload images to the cloudinary and get urls
   if (Array.isArray(files) && files.length) {
-    imgUrls = await cloudinaryServices.uploadMultyStream(files);
+    imgUrls = await cloudinaryServices.uploadMultyStream(files, 'cars/medium-sized-cars');
   }
 
   const blur = imageMethods.toBlur(imgUrls[0] || '');
