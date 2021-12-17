@@ -11,10 +11,13 @@ import { parseNewCustomerReview } from './../utils/functions/parseNewCustomerRev
 // -- Returns all the customer reviews
 const getAllReviews = asyncHandler(
   async (_req: Request, res: Response, next: NextFunction) => {
+    
     const reviews = await customerReviewService.getAllReviews();
+    
     if (!reviews) {
       return next(new ApiError(httpStatus.NOT_FOUND, 'Reviews not found'));
     }
+
     return res.send(
       success({
         results: reviews,
@@ -66,7 +69,9 @@ const clearSingleReview = asyncHandler(
         new ApiError(httpStatus.BAD_REQUEST, 'review Id not provided')
       );
     }
+
     await customerReviewService.clearSingleReview(reviewId);
+
 
     return res.send(
       success({
