@@ -1,5 +1,7 @@
+import { isAdmin } from './../utils/midlewares';
 import express, { NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status';
+import User from 'models/user.model';
 import cloudinaryServices from 'services/cloudinary.service';
 import userService from 'services/user.service';
 import { asyncHandler } from 'utils/functions/asyncHandler';
@@ -9,7 +11,7 @@ import typeParser from 'utils/functions/typeParsers';
 import { isAuth } from 'utils/midlewares';
 import {
   ApiSuccessResponse,
-  CloudinaryResponse
+  CloudinaryResponse,
 } from '../../shared_with_front/types/types-shared';
 import { ApiError } from './../utils/functions/ApiError';
 import { multerMemoryUpload } from './../utils/multer';
@@ -156,11 +158,11 @@ usersRouter.post(
   })
 );
 
-// usersRouter.get('/reset', isAuth, async (_req, res) => {
-//   const user = await User.findByIdAndDelete('61bdc2173690ae3a6d3c2329');
-//   return res.json({
-//     user,
-//   });
-// });
+usersRouter.get('/reset/reset-all-users', isAuth, isAdmin, async (_req, res) => {
+  const user = await User.deleteMany({});
+  return res.json({
+    user,
+  });
+});
 
 export default usersRouter;

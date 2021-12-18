@@ -21,6 +21,7 @@ const getAllReviews = async () => {
  */
 const addReview = async ({ text, images, userId }: INewReview) => {
   const user = await User.findById(userId);
+
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
   }
@@ -28,7 +29,10 @@ const addReview = async ({ text, images, userId }: INewReview) => {
   const newReview = new CustomerReview({
     photos: images,
     text: text,
-    user: user.id,
+    user: {
+      fullName: user.fullName,
+      avatar: user.avatar,
+    },
   });
 
   const addedReview = await newReview.save();

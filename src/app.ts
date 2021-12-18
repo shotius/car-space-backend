@@ -17,6 +17,7 @@ import logger from './utils/logger';
 import { defaultErrorHander, errorConverter } from './utils/midlewares';
 import compression from 'compression';
 import { SessionUser } from '../shared_with_front/types/types-shared';
+import orderedCarRoute from 'routes/ordered-car.routes';
 
 // -- declare session
 declare module 'express-session' {
@@ -112,6 +113,7 @@ app.use('/api/cars', carsRouter);
 app.use('/api/dealers/cars', dealerCarsRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/customer-reviews', customerReviewRouter)
+app.use('/api/ordered-cars/', orderedCarRoute)
 
 app.use(errorConverter);
 app.use(defaultErrorHander);

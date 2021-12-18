@@ -179,7 +179,10 @@ export interface AddCarValues {
 }
 
 export interface ICustomerReview {
-  user: Types.ObjectId;
+  user: {
+    fullName: string, 
+    avatar?: string 
+  };
   review: string;
   photos: string[];
 }
@@ -204,4 +207,16 @@ export interface MeResponse {
   phone: string;
   role: RoleTypes;
   avatar: string;
+}
+
+
+export interface ICarOrder {
+  id: string, 
+  userId: string, 
+  carName: string; 
+  createdAt: Date; 
+  deliveryAt: Date; 
+  location: string;
+  price: number; 
+  status: string;
 }
