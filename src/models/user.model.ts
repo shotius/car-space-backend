@@ -2,13 +2,14 @@ import { Schema, model, Model } from 'mongoose';
 import { IUser } from '../../shared_with_front/types/types-shared';
 
 const userSchema: Schema = new Schema({
-  username: {
+  fullName: String,
+  email: {
     type: String,
     unique: true,
   },
-  name: String,
-  role: String,
   passwordHash: String,
+  phone: String, 
+  role: String,
   avatar: String, 
   favourites: [{
     type: "ObjectId", 

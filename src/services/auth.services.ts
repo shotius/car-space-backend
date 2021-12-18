@@ -9,19 +9,24 @@ import {
 import argon2 from 'argon2';
 import { Document } from 'mongoose';
 
-// login user
+/**
+ * Function logs in a user
+ * @param email
+ * @param password
+ * @returns
+ */
 const loginUser = async ({
-  username,
+  email,
   password,
 }: LoginParams): Promise<UserResponse> => {
-  const user = await User.findOne({ username: username });
+  const user = await User.findOne({ email: email });
 
   if (!user) {
     return {
       errors: [
         {
-          param: 'username',
-          msg: 'username does not exist',
+          param: 'email',
+          msg: 'email does not exist',
         },
       ],
     };
@@ -44,17 +49,22 @@ const loginUser = async ({
   return { user };
 };
 
-// add user session
+/**
+ * Function puts info in user session
+ * @param req
+ * @param user
+ * @returns {SessionUser}
+ */
 const addUserSession = (
   req: Request,
   user: IUser & Document<any, any, IUser>
 ): SessionUser => {
   const sessionUser: SessionUser = {
-    username: user.username,
+    fullName: user.fullName,
     isAuthenticated: true,
     role: user.role,
     id: user._id,
-    avatar: user.avatar
+    avatar: user.avatar,
   };
 
   req.session.user = sessionUser;

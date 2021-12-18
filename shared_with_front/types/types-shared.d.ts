@@ -27,16 +27,17 @@ export type RoleTypes = Roles.ADMIN | Roles.DEALER | Roles.USER;
 
 export interface IUser {
   id: string;
-  username: string;
-  name: string;
-  role: RoleTypes;
+  fullName: string;
+  email: string;
   passwordHash: string;
+  phone: string;
+  role: RoleTypes;
   avatar: string;
   favourites: Types.ObjectId[];
 }
 
 export interface SessionUser {
-  username: string;
+  fullName: string;
   isAuthenticated: boolean;
   role: RoleTypes;
   id: number;
@@ -44,7 +45,7 @@ export interface SessionUser {
 }
 
 export interface LoginParams {
-  username: string;
+  email: string;
   password: string;
 }
 
