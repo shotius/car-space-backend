@@ -1,5 +1,10 @@
-import { KeysEnum, TransmissionEnum } from "utils/constants";
-import { Keys, Transmission } from "../../../shared_with_front/types/types-shared";
+import { RoleTypes } from './../../../shared_with_front/types/types-shared.d';
+import { KeysEnum, TransmissionEnum } from 'utils/constants';
+import {
+  Keys,
+  Transmission,
+} from '../../../shared_with_front/types/types-shared';
+import { Roles } from '../../../shared_with_front/contants';
 
 const isString = (text: unknown): text is string => {
   return typeof text === 'string' || text instanceof String;
@@ -8,7 +13,6 @@ const isString = (text: unknown): text is string => {
 const isNumber = (num: unknown): num is number => {
   return !!Number(num) || num instanceof Number;
 };
-
 
 const isTransmission = (trans: unknown): trans is Transmission => {
   return (
@@ -22,12 +26,15 @@ const isKeys = (keys: unknown): keys is Keys => {
   return keys === KeysEnum.NO || keys === KeysEnum.YES;
 };
 
+const isRole = (role: unknown): role is RoleTypes => {
+  return role === Roles.DEALER || role === Roles.USER;
+};
 
-
-const typeChecker =  {
-  isString, 
-  isNumber, 
-  isTransmission, 
-  isKeys
-}
-export default typeChecker
+const typeChecker = {
+  isString,
+  isNumber,
+  isTransmission,
+  isKeys,
+  isRole,
+};
+export default typeChecker;

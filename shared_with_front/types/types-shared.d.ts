@@ -1,3 +1,4 @@
+import { RoleTypes, RegisterParams } from './types-shared.d';
 import { Document, Types } from 'mongoose';
 
 import { ValidationError } from 'express-validator';
@@ -15,7 +16,7 @@ export interface ApiValidationError extends ApiBaseResponse {
 }
 
 export interface ApiSuccessResponse<Type> extends ApiBaseResponse {
-  results: Type
+  results: Type;
 }
 
 export interface ApiDefaultError extends ApiBaseResponse {
@@ -37,17 +38,32 @@ export interface IUser {
 }
 
 export interface SessionUser {
-  fullName: string;
-  isAuthenticated: boolean;
-  role: RoleTypes;
   id: number;
-  avatar: string;
+  fN: string; // full name
+  r: RoleTypes; //role
 }
 
 export interface LoginParams {
   email: string;
   password: string;
 }
+
+export interface LoginResponse {
+  role: RoleTypes;
+  isAuthenticated: boolean;
+  fullName: string;
+  phone: string;
+}
+
+export interface RegisterParams {
+  fullName: string;
+  email: string;
+  password: string;
+  phone: string;
+  role: RoleTypes;
+}
+
+export type RegisterResponse = Omit<RegisterParams, 'password'>
 
 export interface MyValidationErrors {
   param: ValidationError['param'];
@@ -59,7 +75,7 @@ export interface UserResponse {
   user?: IUser & Document<any, any, IUser>;
 }
 
-// Car Copart 
+// Car Copart
 export interface ICarCopart {
   id: string;
   lN: string; // Lot number
@@ -75,7 +91,7 @@ export interface ICarCopart {
   dr: string; // Drive
   curB: string; // High Bid =non-vix,Sealed=Vix
   mG: string; // Model Group
-  eng: string; // 
+  eng: string; //
   mD: string; // Model Detail
   trans: string; // Transmission
   imgT: string; // Image Thumbnail
@@ -96,7 +112,7 @@ export type Keys = HasKeys.YES | HasKeys.NO;
 
 // Car for dealers
 export interface ICarDealer {
-  id: string; 
+  id: string;
   m?: string; // Manufacturer
   bSt?: string; // Body Style
   dmg?: string; // Damage Description
@@ -162,21 +178,29 @@ export interface AddCarValues {
 }
 
 export interface ICustomerReview {
-  user: Types.ObjectId,
-  review: string; 
-  photos: string[]
+  user: Types.ObjectId;
+  review: string;
+  photos: string[];
 }
-
 
 export interface INewReview {
   text: string;
-  images: string[]
+  images: string[];
   userId: string;
 }
 
 export interface ICustomerReviewFront {
   id: string;
   text: string;
-  photos: string[]
-  user: IUser
+  photos: string[];
+  user: IUser;
+}
+
+export interface MeResponse {
+  id: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  role: RoleTypes;
+  avatar: string;
 }

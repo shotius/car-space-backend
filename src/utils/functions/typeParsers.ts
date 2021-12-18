@@ -1,5 +1,7 @@
+import { RoleTypes } from './../../../shared_with_front/types/types-shared.d';
 import { Keys, Transmission } from "../../../shared_with_front/types/types-shared";
 import typeChecker from "./typeCheckers";
+import { Roles } from '../../../shared_with_front/contants';
 
 const parseString = (text: unknown): string => {
   if (!text || !typeChecker.isString(text)) {
@@ -29,11 +31,19 @@ const parseKeys = (keys: unknown): Keys => {
   return keys;
 };
 
+const parseRole = (role: unknown): RoleTypes => {
+  if (!role || !typeChecker.isRole(role)) {
+    return Roles.USER
+  }
+  return role
+} 
+
 const typeParser = {
   parseString, 
   parseNumber, 
   parseTransmission, 
-  parseKeys
+  parseKeys, 
+  parseRole
 }
 
 export default typeParser

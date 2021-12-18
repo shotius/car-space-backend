@@ -8,7 +8,7 @@ import cloudinaryServices from './cloudinary.service';
  */
 const getUsers = async (searchWord: string): Promise<IUser[]> => {
   const users = await User.find({
-    name: { $regex: searchWord, $options: 'i' },
+    fullName: { $regex: searchWord, $options: 'i' },
   }).limit(20);
   return users;
 };
@@ -112,7 +112,8 @@ const changeProfilePicture = async (userId: number, avatar: string) => {
   }
 };
 
-export default {
+
+const userService = {
   getUsers,
   likeCar,
   getFavouriteCarIds,
@@ -120,3 +121,5 @@ export default {
   changeProfilePicture,
   getUserWithFavouriteCars,
 };
+
+export default userService

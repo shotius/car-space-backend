@@ -49,11 +49,11 @@ const clearReviews = async () => {
     const paths = rev.photos.map((photo) =>
       cloudinaryServices.getPublicPath(photo)
     );
-    const response = await cloudinaryServices.deleteMultiple(paths)
-    if (response.message === "Success") {
-      await rev.delete()
+    const response = await cloudinaryServices.deleteMultiple(paths);
+    if (response.message === 'Success') {
+      await rev.delete();
     } else {
-      throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "" + response.error)
+      throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, '' + response.error);
     }
   });
 

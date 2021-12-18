@@ -1,13 +1,6 @@
 import { Types } from 'mongoose';
 import { Keys } from '../shared_with_front/types/types-shared';
 
-export interface SessionUser {
-  username: string;
-  isAuthenticated: boolean;
-  role: string;
-  id: number;
-}
-
 export interface INote {
   content: string;
   date: Date;

@@ -9,4 +9,4 @@ export const newDealerCar = [
     .withMessage('Manufacturer is missing')
     .isString()
     .withMessage('Manufacturer must be text')
-]
+] 

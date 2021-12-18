@@ -7,10 +7,9 @@ import imageMethods from 'utils/functions/imageTranformsFuncts';
 import { success } from 'utils/functions/responseApi';
 import typeParser from 'utils/functions/typeParsers';
 import { isAuth } from 'utils/midlewares';
-import { upload } from 'utils/multer';
 import {
   ApiSuccessResponse,
-  CloudinaryResponse,
+  CloudinaryResponse
 } from '../../shared_with_front/types/types-shared';
 import { ApiError } from './../utils/functions/ApiError';
 import { multerMemoryUpload } from './../utils/multer';
@@ -25,7 +24,7 @@ usersRouter.use('/uploads', express.static('dist/uploads'));
 usersRouter.get(
   '/',
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-    const searchWord = typeParser.parseString(req.query.s)
+    const searchWord = typeParser.parseString(req.query.s);
     const users = await userService.getUsers(searchWord);
     if (!users) {
       return next(new ApiError(httpStatus.NOT_FOUND, 'Could not get users'));
@@ -157,30 +156,11 @@ usersRouter.post(
   })
 );
 
-usersRouter.post('/upload-multi', upload.array('images', 10), (req, res) => {
-  var response = '<a href="/">Home</a><br>';
-  response += 'Files uploaded successfully.<br>';
-  if (!req.files || !req.files.length) {
-    return res.send('failed');
-  }
-  for (var i = 0; i < req.files?.length; i++) {
-    //@ts-ignore
-    response += `<img src="${req.files[i].path}" /><br>`;
-  }
-
-  return res.send(response);
-});
-
-// usersRouter.get('/reset', isAuth, async  (req, res) => {
-//   const id = req.session.user!.id
-//   const user = await User.findById(id)
-//   if (user) {
-//     user.favourites = []
-//     await user.save()
-//   }
+// usersRouter.get('/reset', isAuth, async (_req, res) => {
+//   const user = await User.findByIdAndDelete('61bdc2173690ae3a6d3c2329');
 //   return res.json({
-//     id, user
-//   })
-// })
+//     user,
+//   });
+// });
 
 export default usersRouter;

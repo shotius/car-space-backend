@@ -1,11 +1,18 @@
+import userService from 'services/user.service';
+import {
+  LoginResponse,
+  MeResponse,
+  RegisterResponse,
+  RoleTypes,
+} from './../../shared_with_front/types/types-shared.d';
 import argon2 from 'argon2';
 import { NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status';
-import User from 'models/user.model';
 import authServices from 'services/auth.services';
 import { ApiError } from 'utils/functions/ApiError';
 import { asyncHandler } from 'utils/functions/asyncHandler';
 import { error, success, validation } from 'utils/functions/responseApi';
+import { parserRegisterParams } from 'utils/functions/parseRegisterParams';
 
 // -- Login
 const login = asyncHandler(async (req: Request, res: Response) => {
@@ -37,25 +44,29 @@ const login = asyncHandler(async (req: Request, res: Response) => {
   // set session
   authServices.addUserSession(req, user);
 
+  const results: LoginResponse = {
+    role: user.role.toLowerCase() as RoleTypes,
+    isAuthenticated: true,
+    fullName: user.fullName,
+    phone: user.phone,
+  };
+
   return res.send(
     success({
-      results: {
-        role: user.role.toLowerCase(),
-        isAuthenticated: true,
-        fullName: user.fullName,
-      },
+      results,
     })
   );
 });
 
-// -- Register
+// -- Register an user
 const register = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const body = req.body;
+    const { password, ...registerParams } = parserRegisterParams(req.body);
 
     let passwordHash;
+    // hash provided password
     try {
-      passwordHash = await argon2.hash(body.password);
+      passwordHash = await argon2.hash(password);
     } catch (err) {
       return next(
         new ApiError(
@@ -65,18 +76,41 @@ const register = asyncHandler(
       );
     }
 
-    const user = new User({
-      fullName: body.fullName,
-      email: body.email,
-      passwordHash,
-      phone: body.phone,
-      role: body.role,
+    // register user in a service
+    const { errors, user } = await authServices.register({
+      password: passwordHash,
+      ...registerParams,
     });
 
-    let savedUser;
-    savedUser = await user.save();
+    // if there are any valudation errors during registration
+    if (errors) {
+      return res.send(
+        validation({
+          errors,
+        })
+      );
+    }
 
-    return res.json(savedUser);
+    // if for some reason user is not returned from service
+    if (!user) {
+      return next(
+        new ApiError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          'User is not created or it is not retured from servied'
+        )
+      );
+    }
+
+    const registeredUser: RegisterResponse = {
+      fullName: user.fullName,
+      email: user.email,
+      phone: user.phone,
+      role: user.role,
+    };
+
+    return res.send(
+      success({ results: registeredUser, message: 'User registered' })
+    );
   }
 );
 
@@ -98,15 +132,36 @@ const logout = asyncHandler(
 );
 
 // -- Me
-const me = asyncHandler(async (req: Request, res: Response) => {
-  const user = req.session.user!;
-  const { id: _id, ...response } = user;
-  res.send(
-    success({
-      results: response,
-    })
-  );
-});
+const me = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user = req.session.user!;
+    const foundUser = await userService.getUser(user.id.toString());
+
+    if (!foundUser) {
+      return next(
+        new ApiError(
+          httpStatus.NETWORK_AUTHENTICATION_REQUIRED,
+          'not authenticated'
+        )
+      );
+    }
+
+    const response: MeResponse = {
+      id: foundUser.id,
+      fullName: foundUser.fullName,
+      email: foundUser.email,
+      phone: foundUser.phone,
+      role: foundUser.role,
+      avatar: foundUser.avatar,
+    };
+
+    res.send(
+      success({
+        results: response,
+      })
+    );
+  }
+);
 
 const authController = {
   login,
