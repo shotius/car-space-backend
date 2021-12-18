@@ -5,6 +5,9 @@ import { Roles } from '../../../shared_with_front/contants';
 
 const parseString = (text: unknown): string => {
   if (!text || !typeChecker.isString(text)) {
+    if (typeChecker.isNumber(text)) {
+      return text.toString()
+    }
     return '';
   }
   return text;

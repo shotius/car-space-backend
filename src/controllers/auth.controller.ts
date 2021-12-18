@@ -84,7 +84,7 @@ const register = asyncHandler(
 
     // if there are any valudation errors during registration
     if (errors) {
-      return res.send(
+      return res.status(422).send(
         validation({
           errors,
         })
@@ -109,7 +109,10 @@ const register = asyncHandler(
     };
 
     return res.send(
-      success({ results: registeredUser, message: 'User registered' })
+      success({
+        results: registeredUser,
+        message: 'User registered successfully',
+      })
     );
   }
 );
@@ -137,6 +140,7 @@ const me = asyncHandler(
     const user = req.session.user!;
     const foundUser = await userService.getUser(user.id.toString());
 
+    // user of provieded id not found
     if (!foundUser) {
       return next(
         new ApiError(
@@ -146,6 +150,7 @@ const me = asyncHandler(
       );
     }
 
+    // constucr response
     const response: MeResponse = {
       id: foundUser.id,
       fullName: foundUser.fullName,
@@ -155,7 +160,7 @@ const me = asyncHandler(
       avatar: foundUser.avatar,
     };
 
-    res.send(
+    return res.send(
       success({
         results: response,
       })

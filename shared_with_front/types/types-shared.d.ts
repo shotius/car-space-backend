@@ -61,9 +61,10 @@ export interface RegisterParams {
   password: string;
   phone: string;
   role: RoleTypes;
+  privacy: boolean;
 }
 
-export type RegisterResponse = Omit<RegisterParams, 'password'>
+export type RegisterResponse = Omit<RegisterParams, 'password' | 'privacy'>;
 
 export interface MyValidationErrors {
   param: ValidationError['param'];

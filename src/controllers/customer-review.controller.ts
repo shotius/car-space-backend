@@ -75,7 +75,7 @@ const clearSingleReview = asyncHandler(
 
     return res.send(
       success({
-        message: `customer with id ${reviewId} is deleted`,
+        message: `Review with id ${reviewId} is deleted`,
         results: [],
       })
     );

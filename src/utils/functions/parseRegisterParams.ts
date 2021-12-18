@@ -22,6 +22,7 @@ export const parserRegisterParams = ({
     password: typeParser.parseString(password),
     phone: typeParser.parseString(phone),
     role: typeParser.parseRole(role),
+    privacy: true,
   };
   return returnObj;
 };
