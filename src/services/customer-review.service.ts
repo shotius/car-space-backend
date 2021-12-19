@@ -79,10 +79,22 @@ const clearSingleReview = async (id: string) => {
   return review;
 };
 
+const undelete = async (id: string) => {
+  return await CustomerReview.updateOne({_id: id}, {
+    $set: { expireAt: new Date('9999-05-18T16:00:00Z') },
+  });
+};
+
+const singleReview = async (id: string) => {
+  return await CustomerReview.findOne({_id: id});
+};
+
 const customerReviewService = {
   getAllReviews,
   addReview,
   clearReviews,
   clearSingleReview,
+  undelete,
+  singleReview,
 };
 export default customerReviewService;

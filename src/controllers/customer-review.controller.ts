@@ -91,11 +91,49 @@ const clearReviews = asyncHandler(async (_req: Request, res: Response) => {
   }));
 });
 
+
+
+const test = asyncHandler(
+  async (req: Request, res: Response) => {
+    const id = req.params.id
+    const review = await customerReviewService.undelete(id)
+
+    if (!review) {
+      return res.send('not found')
+    }
+
+    return res.send(
+      success({
+        results: review,
+      })
+    );
+  }
+);
+
+
+const singleReview = asyncHandler(
+  async (req: Request, res: Response) => {
+    const id = req.params.id
+    const review = await customerReviewService.singleReview(id)
+
+    if (!review) {
+      return res.send('not found')
+    }
+
+    return res.send(
+      success({
+        results: review,
+      })
+    );
+  }
+);
 const customerReviewController = {
   getAllReviews,
+  test, 
   addReview,
   clearReviews,
-  clearSingleReview
+  clearSingleReview, 
+  singleReview
 };
 
 export default customerReviewController;

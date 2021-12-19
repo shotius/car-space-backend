@@ -15,6 +15,7 @@ const userSchema: Schema = new Schema({
     type: "ObjectId", 
     ref: "carDealer"
   }],
+  expiresAt: {type: Date, default: Date.now(), expires: 10}
 });
 
 userSchema.set('toJSON', {

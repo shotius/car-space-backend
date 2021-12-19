@@ -8,6 +8,8 @@ import { newReview } from 'validation/newReview';
 const customerReviewRouter = express.Router();
 
 customerReviewRouter.get('/', customerReviewController.getAllReviews);
+customerReviewRouter.get('/test/:id', customerReviewController.test);
+customerReviewRouter.get('/:id', customerReviewController.singleReview);
 customerReviewRouter.post(
   '/',
   multerMemoryUpload.array('photo[]', 4),
@@ -20,5 +22,7 @@ customerReviewRouter.delete(
   validate(mongoId),
   customerReviewController.clearSingleReview
 );
+
+
 
 export default customerReviewRouter;

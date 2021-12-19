@@ -5,7 +5,7 @@ const schema = new Schema<ICustomerReview>({
   text: String,
   photos: [String],
   user: {
-    fullName: String, 
+    fullName: String,
     avatar: String,
   },
 });
@@ -18,5 +18,8 @@ schema.set('toJSON', {
   },
 });
 
-const CustomerReview: Model<ICustomerReview> =  model<ICustomerReview>('CustomerReview', schema);
-export default CustomerReview
+const CustomerReview: Model<ICustomerReview> = model<ICustomerReview>(
+  'CustomerReview',
+  schema
+);
+export default CustomerReview;
