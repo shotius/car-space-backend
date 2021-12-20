@@ -55,6 +55,7 @@ export interface LoginResponse {
   isAuthenticated: boolean;
   fullName: string;
   phone: string;
+  avatar: string;
 }
 
 export interface RegisterParams {
@@ -67,8 +68,8 @@ export interface RegisterParams {
 }
 
 export type RegisterResponse = {
-  email: string; 
-  fullName: string; 
+  email: string;
+  fullName: string;
 };
 
 export interface MyValidationErrors {
@@ -185,8 +186,8 @@ export interface AddCarValues {
 
 export interface ICustomerReview {
   user: {
-    fullName: string, 
-    avatar?: string 
+    fullName: string;
+    avatar?: string;
   };
   review: string;
   photos: string[];
@@ -214,14 +215,13 @@ export interface MeResponse {
   avatar: string;
 }
 
-
 export interface ICarOrder {
-  id: string, 
-  userId: string, 
-  carName: string; 
-  createdAt: Date; 
-  deliveryAt: Date; 
+  id: string;
+  userId: string;
+  carName: string;
+  createdAt: Date;
+  deliveryAt: Date;
   location: string;
-  price: number; 
+  price: number;
   status: string;
 }

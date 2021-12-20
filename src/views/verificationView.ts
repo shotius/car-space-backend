@@ -1,4 +1,5 @@
-import { capitalizeEach } from './../utils/functions/capitalizeEach';
+import { DOMAIN } from "utils/constants";
+
 interface Props {
   hash: string;
   fullName: string;
@@ -108,12 +109,10 @@ export const verificationView = ({ hash, fullName }: Props) => `
     <div class="wrapper">
       <div class="wrapper__content">
         <h1 class="t__header">Car Space</h1>
-        <p class="t__paragraph--greeting">Hello ${capitalizeEach(
-          fullName
-        )}, </p>
+        <p class="t__paragraph--greeting">Hello ${fullName}, </p>
         <p class="t__paragraph">Verify your account to complete the registration, link is valid for 2 hours</p>
         <div class="wrapper__verfy">
-          <a style={{color: '#fff'}} href="http://localhost:3001/api/user-verification/${hash}" class="btn btn__verify">
+          <a style={{color: '#fff'}} href="${DOMAIN}/api/user-verification/${hash}" class="btn btn__verify">
             Verify Account
           </a>
         </div>

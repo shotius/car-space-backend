@@ -49,6 +49,7 @@ const login = asyncHandler(async (req: Request, res: Response) => {
     isAuthenticated: true,
     fullName: user.fullName,
     phone: user.phone,
+    avatar: user.avatar
   };
 
   return res.send(
