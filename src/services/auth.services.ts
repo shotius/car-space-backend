@@ -1,6 +1,11 @@
-import { ApiError } from 'utils/functions/ApiError';
-import User from 'models/user.model';
+import argon2 from 'argon2';
 import { Request } from 'express';
+import httpStatus from 'http-status';
+import User from 'models/user.model';
+import { Document } from 'mongoose';
+import { randomString } from 'utils/functions/randomString';
+import { sendEmail } from 'utils/functions/sendMail';
+import { verificationView } from 'views/verificationView';
 import {
   IUser,
   LoginParams,
@@ -8,9 +13,8 @@ import {
   SessionUser,
   UserResponse,
 } from '../../shared_with_front/types/types-shared';
-import argon2 from 'argon2';
-import { Document } from 'mongoose';
-import httpStatus from 'http-status';
+import { ApiError } from './../utils/functions/ApiError';
+import verificationService from './user-verification.service';
 
 /**
  * Function logs in a user
@@ -33,6 +37,10 @@ const loginUser = async ({
         },
       ],
     };
+  }
+
+  if (!user.verified) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'not verified');
   }
 
   const passwordIsCorrect =
@@ -76,6 +84,7 @@ const register = async ({
     const savedUser = await newUser.save();
     return { user: savedUser };
   } catch (error: any) {
+    console.log('here: ', error);
     // if mongo complains about unique email
     if (error.code === 11000) {
       return {
@@ -89,6 +98,33 @@ const register = async ({
     } else {
       throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, '' + error);
     }
+  }
+};
+
+/**
+ * Function sends email for verification
+ * @param user newly created user
+ * @returns hash document
+ */
+const sendVerificationEmail = async (user: IUser) => {
+  // create hash for verification
+  const hash = randomString(24);
+  await verificationService.addHash({
+    hash,
+    userId: user.id,
+  });
+
+  // send varifictation email
+  try {
+    await sendEmail({
+      to: user.email,
+      email: verificationView({ fullName: user.fullName, hash }),
+    });
+  } catch (error) {
+    throw new ApiError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Cound not sent the verification email ' + error
+    );
   }
 };
 
@@ -116,4 +152,5 @@ export default {
   loginUser,
   addUserSession,
   register,
+  sendVerificationEmail,
 };

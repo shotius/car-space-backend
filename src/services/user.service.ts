@@ -113,8 +113,8 @@ const changeProfilePicture = async (userId: number, avatar: string) => {
 };
 
 const undelete = async (id: string) => {
-  return await User.updateOne({_id: id}, {
-    $set: { expiresAt: new Date('9999-05-18T16:00:00Z') },
+  return await User.findByIdAndUpdate(id, {
+    $set: { expiresAt: new Date('9999-05-18T16:00:00Z'), verified: true },
   });
   // return await User.findOne({_id: id})
   // return await User.findById(id)
@@ -127,7 +127,7 @@ const userService = {
   getUser,
   changeProfilePicture,
   getUserWithFavouriteCars,
-  undelete
+  undelete,
 };
 
 export default userService;

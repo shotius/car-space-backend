@@ -7,7 +7,6 @@ export const registerParams = [
     .notEmpty()
     .withMessage('Email is Required')
     .isEmail()
-    .normalizeEmail()
     .withMessage('Invalid Email'),
   body('fullName').exists().notEmpty().withMessage('fullname is required'),
   body('password')

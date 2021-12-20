@@ -1,3 +1,4 @@
+import { ApiError } from './../utils/functions/ApiError';
 import userService from 'services/user.service';
 import {
   LoginResponse,
@@ -9,7 +10,6 @@ import argon2 from 'argon2';
 import { NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status';
 import authServices from 'services/auth.services';
-import { ApiError } from 'utils/functions/ApiError';
 import { asyncHandler } from 'utils/functions/asyncHandler';
 import { error, success, validation } from 'utils/functions/responseApi';
 import { parserRegisterParams } from 'utils/functions/parseRegisterParams';
@@ -101,11 +101,13 @@ const register = asyncHandler(
       );
     }
 
+    // send verification email
+    await authServices.sendVerificationEmail(user);
+
+    // response
     const registeredUser: RegisterResponse = {
       fullName: user.fullName,
       email: user.email,
-      phone: user.phone,
-      role: user.role,
     };
 
     return res.send(

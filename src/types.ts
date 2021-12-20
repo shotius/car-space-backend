@@ -40,3 +40,9 @@ export interface BaseFilterProps {
   engine_from?: number;
   engine_to?: number;
 }
+
+
+export interface IUserVerification {
+  hash: string; 
+  userId: string
+}

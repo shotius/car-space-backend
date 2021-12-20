@@ -1,5 +1,4 @@
 import { ApiError } from './functions/ApiError';
-import { error } from 'utils/functions/responseApi';
 import logger from './logger';
 import HttpException from 'exceptions/HttpException';
 import express, { Request, Response, NextFunction } from 'express';
@@ -7,6 +6,7 @@ import { ApiDefaultError } from '../../shared_with_front/types/types-shared';
 import mongoose from 'mongoose';
 import httpStatus from 'http-status';
 import { Roles } from '../../shared_with_front/contants';
+import { error } from 'utils/functions/responseApi';
 
 /**
  * Function will convert errors into the standard ApiError type
@@ -67,6 +67,9 @@ export const defaultErrorHander = (
   } else if (error.name === 'not authenticated') {
     defaultResponse.error = error.message;
     return response.status(401).send(defaultResponse);
+  } else if (error.message === 'not verified') {
+    defaultResponse.error = error.message
+    return response.status(400).send(defaultResponse)
   }
 
   // ------

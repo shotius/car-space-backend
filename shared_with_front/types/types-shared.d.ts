@@ -35,6 +35,8 @@ export interface IUser {
   role: RoleTypes;
   avatar: string;
   favourites: Types.ObjectId[];
+  // expiresAt: Date;
+  verified: boolean;
 }
 
 export interface SessionUser {
@@ -64,7 +66,10 @@ export interface RegisterParams {
   privacy: boolean;
 }
 
-export type RegisterResponse = Omit<RegisterParams, 'password' | 'privacy'>;
+export type RegisterResponse = {
+  email: string; 
+  fullName: string; 
+};
 
 export interface MyValidationErrors {
   param: ValidationError['param'];

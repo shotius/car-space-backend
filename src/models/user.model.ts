@@ -8,14 +8,17 @@ const userSchema: Schema = new Schema({
     unique: true,
   },
   passwordHash: String,
-  phone: String, 
+  phone: String,
   role: String,
-  avatar: String, 
-  favourites: [{
-    type: "ObjectId", 
-    ref: "carDealer"
-  }],
-  expiresAt: {type: Date, default: Date.now(), expires: 10}
+  avatar: String,
+  favourites: [
+    {
+      type: 'ObjectId',
+      ref: 'carDealer',
+    },
+  ],
+  expiresAt: { type: Date, default: Date.now(), expires: 7200 }, // document will be deleted after 2 hours if not activated
+  verified: { type: Boolean, default: false },
 });
 
 userSchema.set('toJSON', {
