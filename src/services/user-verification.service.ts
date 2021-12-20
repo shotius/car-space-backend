@@ -4,11 +4,15 @@ import { ApiError } from './../utils/functions/ApiError';
 import UserVerification from 'models/user-verification.model';
 import User from 'models/user.model';
 
+const deleteHash = async (hashId: string) => {
+  return await UserVerification.findByIdAndDelete(hashId);
+};
+
 const verify = async (hash: string) => {
   const foundHash = await UserVerification.findOne({ hash });
 
   if (!foundHash) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'prived hash does not exist');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Provided hash does not exist');
   }
 
   const user = await User.findById(foundHash.userId);
@@ -16,11 +20,15 @@ const verify = async (hash: string) => {
   if (!user) {
     throw new ApiError(
       httpStatus.NOT_FOUND,
-      'User with provied hash does not exists'
+      'Failed to activate!'
     );
   }
 
   const verifiedUser = await userService.undelete(user.id);
+
+  if (verifiedUser) {
+    await deleteHash(foundHash.id);
+  }
 
   return verifiedUser;
 };
@@ -42,5 +50,6 @@ const verificationService = {
   verify,
   getAll,
   addHash,
+  deleteHash
 };
 export default verificationService;

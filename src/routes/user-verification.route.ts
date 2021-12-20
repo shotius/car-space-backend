@@ -1,6 +1,9 @@
-import express, { Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import verificationService from 'services/user-verification.service';
 import { asyncHandler } from 'utils/functions/asyncHandler';
+import { verificationErrorHtml } from 'views/verificationErrorHtml';
+import { ApiError } from './../utils/functions/ApiError';
+import { verificationSuccessHtml } from './../views/verificationSuccessHtml';
 
 const verificationRouter = express.Router();
 
@@ -23,12 +26,21 @@ verificationRouter.post('/', async (req, res) => {
 // -- Verify hash
 verificationRouter.get(
   '/:hash',
-  asyncHandler(async (req: Request, res: Response) => {
+  asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const hash = req.params.hash;
 
-    const verify = await verificationService.verify(hash);
-
-    res.send(verify);
+    try {
+      await verificationService.verify(hash);
+      return res.send(
+        verificationSuccessHtml('Account activated successfully!')
+      );
+    } catch (error) {
+      if (ApiError.isApiError(error)) {
+        return res.send(verificationErrorHtml(error.message));
+      } else {
+        return next(error);
+      }
+    }
   })
 );
 

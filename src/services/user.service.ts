@@ -116,8 +116,6 @@ const undelete = async (id: string) => {
   return await User.findByIdAndUpdate(id, {
     $set: { expiresAt: new Date('9999-05-18T16:00:00Z'), verified: true },
   });
-  // return await User.findOne({_id: id})
-  // return await User.findById(id)
 };
 
 const userService = {

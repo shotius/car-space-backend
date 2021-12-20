@@ -18,7 +18,7 @@ authRouter.post('/register', validate(registerParams), authController.register);
 authRouter.get('/logout', authController.logout);
 
 /** isAuth */
-authRouter.get('/isAuth');
+authRouter.get('/isAuth')
 
 authRouter.get('/test', (req, res) => {
   console.log(req.headers.host)

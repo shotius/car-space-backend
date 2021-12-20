@@ -3,8 +3,11 @@ import { model, Schema } from 'mongoose';
 
 const schema = new Schema({
   hash: String,
-  userId: String
+  userId: String,
 });
 
-const UserVerification = model<IUserVerification>('UserVarification', schema);
+export const UserVerification = model<IUserVerification>(
+  'UserVerificationHashes',
+  schema
+);
 export default UserVerification;
