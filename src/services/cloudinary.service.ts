@@ -1,3 +1,4 @@
+import { logger } from 'utils/logger';
 import { v2 as cloudinary } from 'cloudinary';
 import dotenv from 'dotenv';
 import fs from 'fs';
@@ -157,7 +158,7 @@ const uploadMultyStream = async (
     }
   });
 
-  console.log('cloudinary: ', cloudResponses);
+  logger.info('cloudinary: ', cloudResponses);
 
   return imgUrls;
 };

@@ -1,11 +1,19 @@
-const info = (...params: any ) => {
-    console.log(...params)
-}
+import { __prod__ } from './constants';
+
+const info = (...params: any) => {
+  if (!__prod__) {
+    console.log(...params);
+  }
+};
 
 const error = (...params: any) => {
-    console.log(...params)
-}
+  if (!__prod__) {
+    console.log(...params);
+  }
+};
 
-export default {
-    error, info
-}
+export const logger = {
+  error,
+  info,
+};
+export default logger;

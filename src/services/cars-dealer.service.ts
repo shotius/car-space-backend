@@ -32,7 +32,6 @@ const addCar = async ({ car, blur, imgUrls }: AddCarProps) => {
   carObj['imgT'] = blur;
 
   const newCar = new CarDealer(carObj);
-  console.log('carObj', carObj);
 
   return await newCar.save();
 };

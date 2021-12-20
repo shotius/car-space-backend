@@ -84,7 +84,6 @@ const register = async ({
     const savedUser = await newUser.save();
     return { user: savedUser };
   } catch (error: any) {
-    console.log('here: ', error);
     // if mongo complains about unique email
     if (error.code === 11000) {
       return {

@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import logger from 'utils/logger';
 
 export async function sendEmail({
   to,
@@ -17,8 +18,6 @@ export async function sendEmail({
     },
   });
 
-  console.log('emal', email)
-
   let info = await transporter.sendMail({
     from: '"Car Space" carspace77@gmail.com', // sender address
     to,
@@ -26,6 +25,6 @@ export async function sendEmail({
     html: email,
   });
 
-  console.log('Message sent: %s', info.messageId);
-  console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+  logger.info('Message sent: %s', info.messageId);
+  logger.info('Preview URL: %s', nodemailer.getTestMessageUrl(info));
 }

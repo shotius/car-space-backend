@@ -1,4 +1,5 @@
 import { DOMAIN } from './../utils/constants';
+
 export const verificationErrorHtml = (message: string) => `<!DOCTYPE html>
 <html lang="en">
 
@@ -44,7 +45,7 @@ export const verificationErrorHtml = (message: string) => `<!DOCTYPE html>
   <div>
     <h1 class="t__heading--error">${message}</h1>
     <h1 class="t__heading--error">Link was active for 2 hours after you registered</h1>
-    <a href="${DOMAIN}" class="t__paragraph">go to home page</a>
+    <a href="${DOMAIN}" target="_blank" class="t__paragraph">go to home page</a>
   </div>
 </body>
 </html>`;
