@@ -81,8 +81,6 @@ app.use(
 );
 app.use(express.json());
 
-console.log('keyasdf' === process.env.REDIS_SECRET);
-
 // -- when server is behing of reverse proxy
 app.set('trust proxy', 1);
 
@@ -99,7 +97,7 @@ app.use(
       secure: __prod__,
       path: '/',
     },
-    secret: 'keyasdf',
+    secret: process.env.REDIS_SECRET!,
     resave: false,
   })
 );
