@@ -26,7 +26,7 @@ const loginUser = async ({
   email,
   password,
 }: LoginParams): Promise<UserResponse> => {
-  const user = await User.findOne({ email: email });
+  const user = await User.findOne({ email: email.toLowerCase() });
 
   if (!user) {
     return {
@@ -40,7 +40,7 @@ const loginUser = async ({
   }
 
   if (!user.verified) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'not verified');
+    throw new ApiError(httpStatus.BAD_REQUEST, `Email: ${user.email} is not verified` );
   }
 
   const passwordIsCorrect =

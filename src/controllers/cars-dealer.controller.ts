@@ -60,7 +60,12 @@ const getSingleDealerCar = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const car = await dealerCarService.getSingleCar(req.params.carId);
     if (!car) {
-      return next(new ApiError(httpStatus.NOT_FOUND, 'Single car not found'));
+      return next(
+        new ApiError(
+          httpStatus.NOT_FOUND,
+          `Car, you are searching for,  not found...`
+        )
+      );
     }
     return res.send(
       success({
@@ -78,7 +83,10 @@ const addDealerCar = asyncHandler(async (req: Request, res: Response) => {
 
   // upload images to the cloudinary and get urls
   if (Array.isArray(files) && files.length) {
-    imgUrls = await cloudinaryServices.uploadMultyStream(files, 'cars/medium-sized-cars');
+    imgUrls = await cloudinaryServices.uploadMultyStream(
+      files,
+      'cars/medium-sized-cars'
+    );
   }
 
   const blur = imageMethods.toBlur(imgUrls[0] || '');

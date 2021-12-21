@@ -81,6 +81,8 @@ app.use(
 );
 app.use(express.json());
 
+console.log('keyasdf' === process.env.REDIS_SECRET);
+
 // -- when server is behing of reverse proxy
 app.set('trust proxy', 1);
 
@@ -113,9 +115,9 @@ app.use('/api/users', usersRouter);
 app.use('/api/cars', carsRouter);
 app.use('/api/dealers/cars', dealerCarsRouter);
 app.use('/api/auth', authRouter);
-app.use('/api/customer-reviews', customerReviewRouter)
-app.use('/api/ordered-cars/', orderedCarRoute)
-app.use('/api/user-verification/', verificationRouter)
+app.use('/api/customer-reviews', customerReviewRouter);
+app.use('/api/ordered-cars/', orderedCarRoute);
+app.use('/api/user-verification/', verificationRouter);
 
 app.use(errorConverter);
 app.use(defaultErrorHander);

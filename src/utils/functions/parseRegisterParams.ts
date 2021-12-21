@@ -18,7 +18,7 @@ export const parserRegisterParams = ({
 }: Fields): RegisterParams => {
   const returnObj: RegisterParams = {
     fullName: typeParser.parseString(fullName),
-    email: typeParser.parseString(email),
+    email: typeParser.parseString(email).trim().toLowerCase(),
     password: typeParser.parseString(password),
     phone: typeParser.parseString(phone),
     role: typeParser.parseRole(role),
