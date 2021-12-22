@@ -13,6 +13,8 @@ import authServices from 'services/auth.services';
 import { asyncHandler } from 'utils/functions/asyncHandler';
 import { error, success, validation } from 'utils/functions/responseApi';
 import { parserRegisterParams } from 'utils/functions/parseRegisterParams';
+import typeParser from 'utils/functions/typeParsers';
+import logger from 'utils/logger';
 
 // -- Login
 const login = asyncHandler(async (req: Request, res: Response) => {
@@ -49,7 +51,7 @@ const login = asyncHandler(async (req: Request, res: Response) => {
     isAuthenticated: true,
     fullName: user.fullName,
     phone: user.phone,
-    avatar: user.avatar
+    avatar: user.avatar,
   };
 
   return res.send(
@@ -120,6 +122,16 @@ const register = asyncHandler(
   }
 );
 
+// -- Forgot Password
+const forgtoPassword = asyncHandler(async (req: Request, res: Response) => {
+  const email = typeParser.parseString(req.body.email);
+
+  logger.info(email)
+
+  res.send(email)
+
+});
+
 // -- Logout
 const logout = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -176,5 +188,6 @@ const authController = {
   register,
   logout,
   me,
+  forgtoPassword,
 };
 export default authController;

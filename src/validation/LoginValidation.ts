@@ -7,6 +7,8 @@ export const loginValidations = [
     .not()
     .isEmpty()
     .withMessage('email is required')
+    .trim()
+    .toLowerCase()
     .isEmail()
     .withMessage("Invalid email"), 
   body('password')

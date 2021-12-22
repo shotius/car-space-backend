@@ -26,7 +26,7 @@ const loginUser = async ({
   email,
   password,
 }: LoginParams): Promise<UserResponse> => {
-  const user = await User.findOne({ email: email.toLowerCase() });
+  const user = await User.findOne({ email });
 
   if (!user) {
     return {
@@ -40,7 +40,10 @@ const loginUser = async ({
   }
 
   if (!user.verified) {
-    throw new ApiError(httpStatus.BAD_REQUEST, `Email: ${user.email} is not verified` );
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      `Email: ${user.email} is not verified`
+    );
   }
 
   const passwordIsCorrect =
@@ -100,6 +103,23 @@ const register = async ({
   }
 };
 
+const forgetPassword = async (email: string): Promise<UserResponse> => {
+  const user = await User.findOne({ email });
+  if (!user) {
+    return {
+      errors: [
+        {
+          param: 'email',
+          msg: 'Email does not exists',
+        },
+      ],
+    };
+  }
+
+
+  return { user };
+};
+
 /**
  * Function sends email for verification
  * @param user newly created user
@@ -152,4 +172,5 @@ export default {
   addUserSession,
   register,
   sendVerificationEmail,
+  forgetPassword
 };
