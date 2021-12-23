@@ -1,11 +1,11 @@
 import Redis from 'ioredis';
 import url from 'url';
-import mongooseConfig from './mongoose.config';
+import mongooseConfig, { MongoConfig } from './mongoose.config';
 
 // This is singleton class for server
 class ServerGlobal {
   private static _instance: ServerGlobal;
-  private readonly _redis: Redis.Redis;
+  private _redis: Redis.Redis;
 
   private constructor() {
     // Redis instantiation
@@ -24,13 +24,10 @@ class ServerGlobal {
     } else {
       this._redis = new Redis();
     }
-
-    // -- MongoDB connection
-    mongooseConfig.connectWithRetry();
   }
 
   // Get single ton instance of the class
-  static getInstance() {
+  static get getInstance() {
     if (this._instance) {
       return this._instance;
     }
@@ -39,10 +36,23 @@ class ServerGlobal {
     return this._instance;
   }
 
-  // Get Redis from singleton
+  // -- MongoDB connection
+  connectDB() {
+    mongooseConfig.connectWithRetry();
+  }
+
+  // Get Redis from singleton (usefull)
   get redis() {
     return this._redis;
   }
+
+  // not very usefull
+  get mongoose() {
+    const mongoose = new MongoConfig();
+    return mongoose;
+  }
+
+
 }
 
 export default ServerGlobal;

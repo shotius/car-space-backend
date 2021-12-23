@@ -1,12 +1,12 @@
 import { body } from 'express-validator';
 
 export const newPassword = [
-  body('hash')
+  body('token')
     .exists()
     .notEmpty()
-    .withMessage('hash is not provided')
+    .withMessage('token is not provided')
     .isLength({ min: 24, max: 24 })
-    .withMessage('Invalid hash'),
+    .withMessage('Invalid token'),
   body('password')
     .exists()
     .notEmpty()

@@ -49,7 +49,8 @@ export const defaultErrorHander = (
   response: express.Response,
   next: express.NextFunction
 ) => {
-  logger.error(error.message);
+
+  logger.error(error);
 
   // default error response
   let defaultResponse: ApiDefaultError = {

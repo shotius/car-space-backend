@@ -1,10 +1,10 @@
 export class ApiError extends Error {
-  public statusCode: number;
+  public status: number;
   public message: string;
 
   constructor(statusCode: number, message: string, stack = '') {
     super(message);
-    this.statusCode = statusCode;
+    this.status = statusCode;
     this.message = message;
     if (stack) {
       this.stack = stack;
@@ -16,7 +16,7 @@ export class ApiError extends Error {
   static isApiError(error: unknown): error is ApiError {
     return (
       !!error &&
-      (error as ApiError).statusCode !== undefined &&
+      (error as ApiError).status !== undefined &&
       typeof (error as ApiError).message === 'string'
     );
   }

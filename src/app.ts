@@ -24,12 +24,12 @@ declare module 'express-session' {
 }
 
 const app = express();
+const globalConfig = ServerGlobal.getInstance;
 
 // -- Get Redis Store
 const redisStore = connectRedis(session);
 
-// -- DB and Redis Instantiation
-ServerGlobal.getInstance();
+globalConfig.connectDB()
 
 // -- cors
 const whiteList = [
@@ -53,7 +53,7 @@ app.use(
   session({
     name: COOKIE_NAME,
     store: new redisStore({
-      client: ServerGlobal.getInstance().redis,
+      client: globalConfig.redis,
       disableTouch: true,
     }),
     saveUninitialized: false,

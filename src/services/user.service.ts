@@ -1,8 +1,8 @@
-import { ChangePasswordProps } from './types';
-import { IUser } from '../../shared_with_front/types/types-shared';
-import User from '../models/user.model';
 import { Types } from 'mongoose';
+import { IUser} from '../../shared_with_front/types/types-shared';
+import User from '../models/user.model';
 import cloudinaryServices from './cloudinary.service';
+import { ChangePasswordProps } from './types';
 
 /**
  * @returns : list of users

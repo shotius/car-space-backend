@@ -1,9 +1,10 @@
 import { logger } from 'utils/logger';
-import mongoose from 'mongoose';
+import mongoose, { Mongoose } from 'mongoose';
 import { MONGODB_URI } from 'utils/config';
 
 // Mongo Configuration with retry connect
-class MongoConfig {
+export class MongoConfig {
+  private static _mongoInstance: Mongoose;
   private count = 0;
   private mongooseOptions = {
     useNewUrlParser: true,
@@ -12,14 +13,18 @@ class MongoConfig {
     useCreateIndex: true,
   };
 
-  constructor() {
-    this.connectWithRetry()
+  constructor() {}
+
+  // get mongoose instance
+  static get getMongoose() {
+    if (this._mongoInstance) {
+      return this._mongoInstance;
+    }
+    this._mongoInstance = mongoose;
+    return this._mongoInstance;
   }
 
-  getMongoose() {
-    return mongoose
-  }
-
+  // connect to the database
   connectWithRetry = () => {
     logger.info('Attempting MongoDB connection (will retry if needed)');
     mongoose

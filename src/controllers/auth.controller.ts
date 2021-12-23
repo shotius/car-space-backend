@@ -21,7 +21,7 @@ import { randomString } from 'utils/functions/randomString';
 import { FORGET_PASSWORD_PREFIX } from 'utils/constants';
 import { sendEmail } from 'utils/functions/sendMail';
 
-const redis = ServerGlobal.getInstance().redis;
+const redis = ServerGlobal.getInstance.redis;
 
 // -- Login
 const login = asyncHandler(async (req: Request, res: Response) => {
@@ -130,58 +130,62 @@ const register = asyncHandler(
 );
 
 // -- Forgot Password
-const forgtoPassword = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const email = typeParser.parseString(req.body.email);
+const forgtoPassword = asyncHandler(async (req: Request, res: Response) => {
+  const email = typeParser.parseString(req.body.email);
 
-    logger.info(email);
+  logger.info(email);
 
-    const user = await userService.getUserByEmail(email);
+  const user = await userService.getUserByEmail(email);
 
-    if (!user) {
-      return next(
-        new ApiError(
-          httpStatus.NOT_FOUND,
-          'User with provided email does not exists'
-        )
-      );
-    }
-
-    // I save hash and user imail in the redis for 2 hours
-    // when request come of the change password I will validate user
-    // by his/her id and hash I gave
-    const hash = randomString(24);
-
-    // save userid with hash
-    await redis.set(FORGET_PASSWORD_PREFIX + hash, user.id, 'ex', 60 * 60 * 2); // valid for 2 hours.
-
-    // send mail to the user
-    await sendEmail({
-      to: email,
-      subject: 'Password Recovery',
-      text: `
-      <a href="${DOMAIN}/change-password/${hash}">Change your password here</a>
-    `,
-    });
-
-    return res.send(
-      success({
-        message: 'Password recovery link is sent on your email',
-        results: email,
+  if (!user) {
+    return res.status(422).send(
+      validation({
+        errors: [
+          {
+            param: 'email',
+            msg: 'User with provied email does not exist',
+          },
+        ],
       })
     );
   }
-);
+
+  // I save hash and user imail in the redis for 2 hours
+  // when request comes for the change password I will validate it
+  // with provied token (toke === hash)
+  const hash = randomString(24);
+
+  // save userid with hash
+  await redis.set(FORGET_PASSWORD_PREFIX + hash, user.id, 'ex', 60 * 60 * 2); // valid for 2 hours.
+
+  // send mail to the user
+  await sendEmail({
+    to: email,
+    subject: 'Password Recovery',
+    text: `
+      <a href="${DOMAIN}/change-password/${hash}">Change your password here</a>
+    `,
+  });
+
+  return res.send(
+    success({
+      message: 'Password recovery link is sent on your email',
+      results: email,
+    })
+  );
+});
 
 // -- Change password
 const changePassword = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { hash, password } = req.body;
+    const { token, password } = req.body;
+    const redisKey = FORGET_PASSWORD_PREFIX + token;
 
-    const userId = await redis.get(FORGET_PASSWORD_PREFIX + hash);
+    // get user id from redis (if it is still there)
+    const userId = await redis.get(redisKey);
 
     if (!userId) {
-      return next(new ApiError(httpStatus.BAD_REQUEST, 'token is outdated'));
+      return next(new ApiError(httpStatus.BAD_REQUEST, 'Token is outdated'));
     }
 
     // hash the password
@@ -198,6 +202,9 @@ const changePassword = asyncHandler(
         )
       );
     }
+
+    // if password change successfully delete hash from redis
+    await redis.del(redisKey);
 
     res.send(
       success({
@@ -218,7 +225,6 @@ const logout = asyncHandler(
           new ApiError(httpStatus.INTERNAL_SERVER_ERROR, err.message)
         );
       } else {
-        // return res.send('removed session information');
         return res.clearCookie('uid', { path: '/' }).status(200).send('Ok.');
       }
     });

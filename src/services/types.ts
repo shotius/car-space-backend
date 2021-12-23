@@ -8,6 +8,7 @@ export interface ParsedLogin {
   errors?: MyValidationErrors[];
 }
 
+
 export interface ChangePasswordProps {
   userId: string;
   passwordHash: string;
