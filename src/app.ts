@@ -53,7 +53,7 @@ app.use(
   session({
     name: COOKIE_NAME,
     store: new redisStore({
-      client: ServerGlobal.getInstance().redisClient,
+      client: ServerGlobal.getInstance().redis,
       disableTouch: true,
     }),
     saveUninitialized: false,

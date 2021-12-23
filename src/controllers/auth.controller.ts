@@ -1,3 +1,4 @@
+import { DOMAIN } from './../utils/constants';
 import { ApiError } from './../utils/functions/ApiError';
 import userService from 'services/user.service';
 import {
@@ -15,6 +16,12 @@ import { error, success, validation } from 'utils/functions/responseApi';
 import { parserRegisterParams } from 'utils/functions/parseRegisterParams';
 import typeParser from 'utils/functions/typeParsers';
 import logger from 'utils/logger';
+import ServerGlobal from 'config/ServerGlobal';
+import { randomString } from 'utils/functions/randomString';
+import { FORGET_PASSWORD_PREFIX } from 'utils/constants';
+import { sendEmail } from 'utils/functions/sendMail';
+
+const redis = ServerGlobal.getInstance().redis;
 
 // -- Login
 const login = asyncHandler(async (req: Request, res: Response) => {
@@ -123,14 +130,83 @@ const register = asyncHandler(
 );
 
 // -- Forgot Password
-const forgtoPassword = asyncHandler(async (req: Request, res: Response) => {
-  const email = typeParser.parseString(req.body.email);
+const forgtoPassword = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const email = typeParser.parseString(req.body.email);
 
-  logger.info(email)
+    logger.info(email);
 
-  res.send(email)
+    const user = await userService.getUserByEmail(email);
 
-});
+    if (!user) {
+      return next(
+        new ApiError(
+          httpStatus.NOT_FOUND,
+          'User with provided email does not exists'
+        )
+      );
+    }
+
+    // I save hash and user imail in the redis for 2 hours
+    // when request come of the change password I will validate user
+    // by his/her id and hash I gave
+    const hash = randomString(24);
+
+    // save userid with hash
+    await redis.set(FORGET_PASSWORD_PREFIX + hash, user.id, 'ex', 60 * 60 * 2); // valid for 2 hours.
+
+    // send mail to the user
+    await sendEmail({
+      to: email,
+      subject: 'Password Recovery',
+      text: `
+      <a href="${DOMAIN}/change-password/${hash}">Change your password here</a>
+    `,
+    });
+
+    return res.send(
+      success({
+        message: 'Password recovery link is sent on your email',
+        results: email,
+      })
+    );
+  }
+);
+
+// -- Change password
+const changePassword = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { hash, password } = req.body;
+
+    const userId = await redis.get(FORGET_PASSWORD_PREFIX + hash);
+
+    if (!userId) {
+      return next(new ApiError(httpStatus.BAD_REQUEST, 'token is outdated'));
+    }
+
+    // hash the password
+    const passwordHash = await argon2.hash(password);
+
+    // change user document in database
+    const user = await userService.changePassword({ userId, passwordHash });
+
+    if (!user) {
+      return next(
+        new ApiError(
+          httpStatus.INTERNAL_SERVER_ERROR,
+          'Somethind went wrong. Could not update the user passwrod'
+        )
+      );
+    }
+
+    res.send(
+      success({
+        message: `Password is changed for ${user.fullName}`,
+        results: user,
+      })
+    );
+  }
+);
 
 // -- Logout
 const logout = asyncHandler(
@@ -189,5 +265,6 @@ const authController = {
   logout,
   me,
   forgtoPassword,
+  changePassword,
 };
 export default authController;

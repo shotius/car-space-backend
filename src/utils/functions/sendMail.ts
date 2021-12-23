@@ -3,11 +3,11 @@ import logger from 'utils/logger';
 
 export async function sendEmail({
   to,
-  email,
+  text,
   subject = 'Verification',
 }: {
   to: string;
-  email: string;
+  text: string;
   subject?: string;
 }) {
   const transporter = nodemailer.createTransport({
@@ -22,7 +22,7 @@ export async function sendEmail({
     from: '"Car Space" carspace77@gmail.com', // sender address
     to,
     subject,
-    html: email,
+    html: text,
   });
 
   logger.info('Message sent: %s', info.messageId);

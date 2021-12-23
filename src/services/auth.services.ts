@@ -105,6 +105,7 @@ const register = async ({
 
 const forgetPassword = async (email: string): Promise<UserResponse> => {
   const user = await User.findOne({ email });
+  
   if (!user) {
     return {
       errors: [
@@ -115,7 +116,6 @@ const forgetPassword = async (email: string): Promise<UserResponse> => {
       ],
     };
   }
-
 
   return { user };
 };
@@ -137,7 +137,7 @@ const sendVerificationEmail = async (user: IUser) => {
   try {
     await sendEmail({
       to: user.email,
-      email: verificationView({ fullName: user.fullName, hash }),
+      text: verificationView({ fullName: user.fullName, hash }),
     });
   } catch (error) {
     throw new ApiError(

@@ -1,3 +1,4 @@
+import { ChangePasswordProps } from './types';
 import { IUser } from '../../shared_with_front/types/types-shared';
 import User from '../models/user.model';
 import { Types } from 'mongoose';
@@ -25,6 +26,10 @@ interface likeCarProps {
 const getUser = async (id: string): Promise<IUser | null> => {
   const user = await User.findById(id);
   return user;
+};
+
+const getUserByEmail = async (email: string) => {
+  return await User.findOne({ email });
 };
 
 /**
@@ -118,8 +123,24 @@ const undelete = async (id: string) => {
   });
 };
 
+/**
+ * Function changes user password
+ * @param id
+ * @param password
+ * @returns updated user
+ */
+const changePassword = async ({
+  userId,
+  passwordHash,
+}: ChangePasswordProps) => {
+  return await User.findByIdAndUpdate(userId, { passwordHash }, { new: true });
+};
+
+//** exports */
 const userService = {
   getUsers,
+  changePassword,
+  getUserByEmail,
   likeCar,
   getFavouriteCarIds,
   getUser,

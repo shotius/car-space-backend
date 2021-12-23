@@ -40,7 +40,7 @@ class ServerGlobal {
   }
 
   // Get Redis from singleton
-  get redisClient() {
+  get redis() {
     return this._redis;
   }
 }
