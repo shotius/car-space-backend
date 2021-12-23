@@ -6,7 +6,7 @@ export const newPassword = [
     .notEmpty()
     .withMessage('token is not provided')
     .isLength({ min: 24, max: 24 })
-    .withMessage('Invalid token'),
+    .withMessage('Token is invalid'),
   body('password')
     .exists()
     .notEmpty()
