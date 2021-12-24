@@ -1,12 +1,15 @@
 import { RoleTypes } from './../../../shared_with_front/types/types-shared.d';
-import { Keys, Transmission } from "../../../shared_with_front/types/types-shared";
-import typeChecker from "./typeCheckers";
+import {
+  Keys,
+  Transmission,
+} from '../../../shared_with_front/types/types-shared';
+import typeChecker from './typeCheckers';
 import { Roles } from '../../../shared_with_front/contants';
 
 const parseString = (text: unknown): string => {
   if (!text || !typeChecker.isString(text)) {
     if (typeChecker.isNumber(text)) {
-      return text.toString()
+      return text.toString();
     }
     return '';
   }
@@ -36,17 +39,25 @@ const parseKeys = (keys: unknown): Keys => {
 
 const parseRole = (role: unknown): RoleTypes => {
   if (!role || !typeChecker.isRole(role)) {
-    return Roles.USER
+    return Roles.USER;
   }
-  return role
-} 
+  return role;
+};
+
+const parseDate = (date: unknown): Date | undefined => {
+  if (!date || !typeChecker.isDate(date)) {
+    return undefined;
+  }
+  return date;
+};
 
 const typeParser = {
-  parseString, 
-  parseNumber, 
-  parseTransmission, 
-  parseKeys, 
-  parseRole
-}
+  parseString,
+  parseNumber,
+  parseTransmission,
+  parseKeys,
+  parseRole,
+  parseDate,
+};
 
-export default typeParser
+export default typeParser;

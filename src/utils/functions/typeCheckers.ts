@@ -30,11 +30,17 @@ const isRole = (role: unknown): role is RoleTypes => {
   return role === Roles.DEALER || role === Roles.USER;
 };
 
+const isDate = (date: unknown): date is Date => {
+  return typeof date === 'string' && !!Date.parse(date);
+  // "deliveryAt": "2012-04-23T18:25:43.511Z",
+};
+
 const typeChecker = {
   isString,
   isNumber,
   isTransmission,
   isKeys,
   isRole,
+  isDate,
 };
 export default typeChecker;

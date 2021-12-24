@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { IUser} from '../../shared_with_front/types/types-shared';
+import { IUser } from '../../shared_with_front/types/types-shared';
 import User from '../models/user.model';
 import cloudinaryServices from './cloudinary.service';
 import { ChangePasswordProps } from './types';
@@ -10,7 +10,9 @@ import { ChangePasswordProps } from './types';
 const getUsers = async (searchWord: string): Promise<IUser[]> => {
   const users = await User.find({
     fullName: { $regex: searchWord, $options: 'i' },
-  }).limit(20);
+  })
+    .populate('orderedCars')
+    .limit(20);
   return users;
 };
 

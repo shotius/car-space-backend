@@ -1,4 +1,4 @@
-import { ICarOrder } from '../../shared_with_front/types/types-shared';
+import { IOrderedCar } from '../../shared_with_front/types/types-shared';
 import { model, Model, Schema } from 'mongoose';
 
 const schema = new Schema(
@@ -9,7 +9,6 @@ const schema = new Schema(
     location: String,
     price: Number,
     status: String,
-    userId: String,
   },
   { timestamps: true }
 );
@@ -22,5 +21,5 @@ schema.set('toJSON', {
   },
 });
 
-const CarOrder: Model<ICarOrder> = model<ICarOrder>('CarOrder', schema);
-export default CarOrder;
+const OrderedCar: Model<IOrderedCar> = model<IOrderedCar>('orderedcars', schema);
+export default OrderedCar;

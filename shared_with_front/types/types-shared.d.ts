@@ -35,7 +35,7 @@ export interface IUser {
   role: RoleTypes;
   avatar: string;
   favourites: Types.ObjectId[];
-  // expiresAt: Date;
+  orderedCars: Types.ObjectId[]
   verified: boolean;
 }
 
@@ -215,12 +215,11 @@ export interface MeResponse {
   avatar: string;
 }
 
-export interface ICarOrder {
+export interface IOrderedCar {
   id: string;
-  userId: string;
   carName: string;
-  createdAt: Date;
-  deliveryAt: Date;
+  createdAt?: Date;
+  deliveryAt?: Date;
   location: string;
   price: number;
   status: string;

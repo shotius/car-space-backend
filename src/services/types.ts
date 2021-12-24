@@ -8,6 +8,15 @@ export interface ParsedLogin {
   errors?: MyValidationErrors[];
 }
 
+export interface INewOrderCar {
+  userId: string;
+  carName: string;
+  deliveryAt?: Date;
+  createdAt?: Date;
+  location: string;
+  price: number;
+  status: string;
+}
 
 export interface ChangePasswordProps {
   userId: string;
