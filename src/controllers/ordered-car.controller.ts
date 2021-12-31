@@ -1,3 +1,4 @@
+import userService from 'services/user.service';
 import { NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status';
 import orderedCarService from 'services/ordered-car.service';
@@ -75,7 +76,49 @@ const updateCar = asyncHandler(
   }
 );
 
+// -- Get user orderedCars
+const getUserOrders = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user = await userService.getUserWithOrders(req.params.userId);
+
+    if (!user) {
+      return next(new ApiError(httpStatus.NOT_FOUND, 'User not found '));
+    }
+
+    return res.send(
+      success({
+        message: 'User orders found ',
+        results: user.orderedCars,
+      })
+    );
+  }
+);
+
+// -- Delete car by id
+const deleteCar = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const carId = req.params.carId;
+
+    const isDeleted = await orderedCarService.deleteCar(carId);
+
+    if (!isDeleted) {
+      return next(
+        new ApiError(httpStatus.BAD_REQUEST, 'Car is already deleted')
+      );
+    }
+
+    return res.send(
+      success({
+        message: 'Success',
+        results: true,
+      })
+    );
+  }
+);
+
 const orderedCarController = {
+  deleteCar,
+  getUserOrders,
   getOrderedCars,
   addCar,
   getSingleCar,

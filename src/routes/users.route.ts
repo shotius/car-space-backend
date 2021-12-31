@@ -159,19 +159,24 @@ usersRouter.post(
 );
 
 usersRouter.get('/undelete/:userid', async (req, res) => {
-  const id = req.params.userid
+  const id = req.params.userid;
   const user = await userService.undelete(id);
   return res.json({
     user,
   });
 });
 
+usersRouter.get(
+  '/reset/reset-all-users',
+  isAuth,
+  isAdmin,
+  async (_req, res) => {
+    const user = await User.deleteMany({});
+    return res.json({
+      user,
+    });
+  }
+);
 
-usersRouter.get('/reset/reset-all-users', isAuth, isAdmin, async (_req, res) => {
-  const user = await User.deleteMany({});
-  return res.json({
-    user,
-  });
-});
 
 export default usersRouter;

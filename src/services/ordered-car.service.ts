@@ -1,9 +1,11 @@
 import httpStatus from 'http-status';
 import OrderedCar from 'models/ordered-car.model';
 import User from 'models/user.model';
-import { IOrderedCar } from '../../shared_with_front/types/types-shared';
+import {
+  INewOrderCar,
+  IOrderedCar,
+} from '../../shared_with_front/types/types-shared';
 import { ApiError } from './../utils/functions/ApiError';
-import { INewOrderCar } from './types';
 
 const getOrderCars = async () => {
   return await OrderedCar.find({});
@@ -39,7 +41,12 @@ const updateCar = async (props: IOrderedCar) => {
   return await OrderedCar.findByIdAndUpdate(props.id, props, { new: true });
 };
 
+const deleteCar = async (carId: string) => {
+  return await OrderedCar.findByIdAndRemove(carId);
+};
+
 const orderedCarService = {
+  deleteCar,
   getOrderCars,
   getOrderedCar,
   addCar,

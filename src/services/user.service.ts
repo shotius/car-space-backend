@@ -138,8 +138,18 @@ const changePassword = async ({
   return await User.findByIdAndUpdate(userId, { passwordHash }, { new: true });
 };
 
+/**
+ * 
+ * @param userId 
+ * @returns {Promise<IUser>} with order list
+ */
+const getUserWithOrders = async (userId: string) => {
+  return await User.findById(userId).populate('orderedCars');
+};
+
 //** exports */
 const userService = {
+  getUserWithOrders,
   getUsers,
   changePassword,
   getUserByEmail,

@@ -1,4 +1,4 @@
-import { INewOrderCar } from './../../services/types';
+import { INewOrderCar } from '../../../shared_with_front/types/types-shared';
 import typeParser from './typeParsers';
 interface Fields {
   userId: unknown;
