@@ -5,10 +5,12 @@ export async function sendEmail({
   to,
   text,
   subject = 'Verification',
+  from = 'carspace77@gmail.com',
 }: {
   to: string;
   text: string;
   subject?: string;
+  from?: string;
 }) {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -19,8 +21,8 @@ export async function sendEmail({
   });
 
   let info = await transporter.sendMail({
-    from: '"Car Space" carspace77@gmail.com', // sender address
-    to,
+    from: `"Car Space" ${from}`, // sender address
+    to, 
     subject,
     html: text,
   });

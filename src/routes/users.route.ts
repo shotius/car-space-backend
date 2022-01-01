@@ -1,12 +1,12 @@
-import { isAdmin } from './../utils/midlewares';
 import express, { NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status';
-import User from 'models/user.model';
+import { validate } from 'middlewares/validate';
 import cloudinaryServices from 'services/cloudinary.service';
 import userService from 'services/user.service';
 import { asyncHandler } from 'utils/functions/asyncHandler';
 import imageMethods from 'utils/functions/imageTranformsFuncts';
 import { success } from 'utils/functions/responseApi';
+import { sendEmail } from 'utils/functions/sendMail';
 import typeParser from 'utils/functions/typeParsers';
 import { isAuth } from 'utils/midlewares';
 import {
@@ -15,6 +15,7 @@ import {
 } from '../../shared_with_front/types/types-shared';
 import { ApiError } from './../utils/functions/ApiError';
 import { multerMemoryUpload } from './../utils/multer';
+import { userMessage } from './../validation/userMessage';
 
 const usersRouter = express.Router();
 
@@ -166,17 +167,41 @@ usersRouter.get('/undelete/:userid', async (req, res) => {
   });
 });
 
-usersRouter.get(
-  '/reset/reset-all-users',
-  isAuth,
-  isAdmin,
-  async (_req, res) => {
-    const user = await User.deleteMany({});
-    return res.json({
-      user,
-    });
-  }
-);
+usersRouter.post('/sendMessage', validate(userMessage), async (req, res) => {
+  const { message, phone, name, email } = req.body;
 
+  const text = `
+  <p>${message}</p>
+
+  <p style={{padding: 0}}><b> from:  ${name} </b></p>
+  <p style={{padding: 0}}><b> phone: ${phone}  </b></p>
+  <p style={{padding: 0}}><b> email: ${email}  </b></p>
+  `;
+  await sendEmail({
+    to: 'carspace77@gmail.com',
+    text,
+    from: email,
+    subject: 'Message',
+  });
+
+  res.send(
+    success({
+      message: 'Success',
+      results: true,
+    })
+  );
+});
+
+// usersRouter.get(
+//   '/reset/reset-all-users',
+//   isAuth,
+//   isAdmin,
+//   async (_req, res) => {
+//     const user = await User.deleteMany({});
+//     return res.json({
+//       user,
+//     });
+//   }
+// );
 
 export default usersRouter;

@@ -42,7 +42,7 @@ const addCar = asyncHandler(
   }
 );
 
-// -- Get a single car
+// -- Get a single care
 const getSingleCar = asyncHandler(async (req: Request, res: Response) => {
   const { carId } = req.params;
 

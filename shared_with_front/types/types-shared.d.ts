@@ -50,12 +50,14 @@ export interface LoginParams {
   password: string;
 }
 
-export interface LoginResponse {
+export interface IUserInfo {
+  id: string;
   role: RoleTypes;
   isAuthenticated: boolean;
   fullName: string;
   phone: string;
   avatar: string;
+  email: string
 }
 
 export interface RegisterParams {
@@ -231,4 +233,14 @@ export interface IOrderedCar extends IOrderCarBase {
 
 export interface INewOrderCar extends IOrderCarBase {
   userId: string;
+}
+
+
+
+//** Message */
+export interface IMessageBody {
+  name: string; 
+  phone: string; 
+  email: string; 
+  message: string; 
 }

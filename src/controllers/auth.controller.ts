@@ -2,8 +2,7 @@ import { DOMAIN } from './../utils/constants';
 import { ApiError } from './../utils/functions/ApiError';
 import userService from 'services/user.service';
 import {
-  LoginResponse,
-  MeResponse,
+  IUserInfo,
   RegisterResponse,
   RoleTypes,
 } from './../../shared_with_front/types/types-shared.d';
@@ -53,12 +52,14 @@ const login = asyncHandler(async (req: Request, res: Response) => {
   // set session
   authServices.addUserSession(req, user);
 
-  const results: LoginResponse = {
+  const results: IUserInfo = {
+    id: user.id,
     role: user.role.toLowerCase() as RoleTypes,
     isAuthenticated: true,
     fullName: user.fullName,
     phone: user.phone,
     avatar: user.avatar,
+    email: user.email,
   };
 
   return res.send(
@@ -248,8 +249,9 @@ const me = asyncHandler(
     }
 
     // constucr response
-    const response: MeResponse = {
+    const response: IUserInfo = {
       id: foundUser.id,
+      isAuthenticated: true,
       fullName: foundUser.fullName,
       email: foundUser.email,
       phone: foundUser.phone,
