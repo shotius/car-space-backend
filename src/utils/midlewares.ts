@@ -99,6 +99,8 @@ export const defaultErrorHander = (
  */
 export const isAuth = (req: Request, res: Response, next: NextFunction) => {
   const { user } = req.session;
+
+  console.log('user: ', user)
   const id = user?.id;
   if (!id) {
     return res.status(401).send(

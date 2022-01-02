@@ -12,7 +12,7 @@ const verify = async (hash: string) => {
   const foundHash = await UserVerification.findOne({ hash });
 
   if (!foundHash) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Provided hash does not exist');
+    throw new ApiError(httpStatus.NOT_FOUND, 'Provided token is outdated');
   }
 
   const user = await User.findById(foundHash.userId);

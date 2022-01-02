@@ -1,24 +1,24 @@
-import { DOMAIN } from './../utils/constants';
-import { ApiError } from './../utils/functions/ApiError';
-import userService from 'services/user.service';
-import {
-  IUserInfo,
-  RegisterResponse,
-  RoleTypes,
-} from './../../shared_with_front/types/types-shared.d';
 import argon2 from 'argon2';
+import ServerGlobal from 'config/ServerGlobal';
 import { NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status';
 import authServices from 'services/auth.services';
+import userService from 'services/user.service';
+import { FORGET_PASSWORD_PREFIX } from 'utils/constants';
 import { asyncHandler } from 'utils/functions/asyncHandler';
-import { error, success, validation } from 'utils/functions/responseApi';
 import { parserRegisterParams } from 'utils/functions/parseRegisterParams';
+import { randomString } from 'utils/functions/randomString';
+import { error, success, validation } from 'utils/functions/responseApi';
+import { sendEmail } from 'utils/functions/sendMail';
 import typeParser from 'utils/functions/typeParsers';
 import logger from 'utils/logger';
-import ServerGlobal from 'config/ServerGlobal';
-import { randomString } from 'utils/functions/randomString';
-import { FORGET_PASSWORD_PREFIX } from 'utils/constants';
-import { sendEmail } from 'utils/functions/sendMail';
+import {
+  IUserInfo,
+  RegisterResponse,
+  RoleTypes
+} from './../../shared_with_front/types/types-shared.d';
+import { DOMAIN } from './../utils/constants';
+import { ApiError } from './../utils/functions/ApiError';
 
 const redis = ServerGlobal.getInstance.redis;
 
@@ -236,16 +236,12 @@ const logout = asyncHandler(
 const me = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const user = req.session.user!;
+
     const foundUser = await userService.getUser(user.id.toString());
 
     // user of provieded id not found
     if (!foundUser) {
-      return next(
-        new ApiError(
-          httpStatus.NETWORK_AUTHENTICATION_REQUIRED,
-          'not authenticated'
-        )
-      );
+      return next(new ApiError(401, 'not authenticated'));
     }
 
     // constucr response

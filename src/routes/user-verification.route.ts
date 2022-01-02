@@ -1,9 +1,14 @@
+import {
+  IUserInfo,
+  RoleTypes,
+} from './../../shared_with_front/types/types-shared.d';
+import authServices from 'services/auth.services';
 import express, { NextFunction, Request, Response } from 'express';
+import httpStatus from 'http-status';
 import verificationService from 'services/user-verification.service';
 import { asyncHandler } from 'utils/functions/asyncHandler';
-import { verificationErrorHtml } from 'views/verificationErrorHtml';
+import { success } from 'utils/functions/responseApi';
 import { ApiError } from './../utils/functions/ApiError';
-import { verificationSuccessHtml } from './../views/verificationSuccessHtml';
 
 const verificationRouter = express.Router();
 
@@ -29,18 +34,29 @@ verificationRouter.get(
   asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
     const hash = req.params.hash;
 
-    try {
-      await verificationService.verify(hash);
-      return res.send(
-        verificationSuccessHtml('Account activated successfully!')
-      );
-    } catch (error) {
-      if (ApiError.isApiError(error)) {
-        return res.send(verificationErrorHtml(error.message));
-      } else {
-        return next(error);
-      }
+    const user = await verificationService.verify(hash);
+    
+    if (!user) {
+      return next(new ApiError(httpStatus.NOT_FOUND, 'User not found'));
     }
+
+    authServices.addUserSession(req, user);
+
+    const response: IUserInfo = {
+      id: user.id,
+      role: user.role.toLowerCase() as RoleTypes,
+      isAuthenticated: true,
+      fullName: user.fullName,
+      phone: user.phone,
+      avatar: user.avatar,
+      email: user.email,
+    };
+
+    return res.send(
+      success({
+        results: response,
+      })
+    );
   })
 );
 

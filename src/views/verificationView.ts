@@ -60,7 +60,7 @@ export const verificationView = ({ hash, fullName }: Props) => `
 
     .btn {
       display: inline-block;
-      color: white;
+      color: white !important;
       border-radius: 8px;
       background-color: #FB5607;
       padding: 12px 16px;
@@ -112,7 +112,7 @@ export const verificationView = ({ hash, fullName }: Props) => `
         <p class="t__paragraph--greeting">Hello ${fullName}, </p>
         <p class="t__paragraph">Verify your account to complete the registration, link is valid for 2 hours</p>
         <div class="wrapper__verfy">
-          <a style={{color: '#fff'}} href="${DOMAIN}/api/user-verification/${hash}" class="btn btn__verify">
+          <a style={{color: '#fff'}} href="${DOMAIN}/account-activation/${hash}" class="btn btn__verify">
             Verify Account
           </a>
         </div>
