@@ -11,13 +11,16 @@ export const dealerCarsRouter = express.Router();
 dealerCarsRouter.use(express.urlencoded({ extended: true }));
 
 dealerCarsRouter.get('/', dealerController.getDealerCars);
+dealerCarsRouter.get('/recents', dealerController.getRecentDealerCars);
 dealerCarsRouter.get('/:carId', dealerController.getSingleDealerCar);
+
 dealerCarsRouter.post(
   '/',
   multerMemoryUpload.array('photo[]', 12),
   validate(newDealerCar),
   dealerController.addDealerCar
 );
+
 dealerCarsRouter.delete('/', isAuth, isAdmin, dealerController.removeSingleCar);
 dealerCarsRouter.get('/reset', dealerController.removeAllCars);
 

@@ -77,6 +77,11 @@ export const getAllCars = ({ filters }: BaseGetCarInterface) => {
   });
 };
 
+/**Get last 8 cars */
+const getRecentCars = async () => {
+  return (await CarDealer.find().sort({ _id: -1 }).limit(4));
+};
+
 /**
  * GetPaginated Card */
 const getCarsPaginated = async ({
@@ -225,6 +230,7 @@ const carServices = {
   getSalesStatus,
   getPageCount,
   getTransmissions,
+  getRecentCars,
   // getCarsFromLotNumbers,
 };
 
