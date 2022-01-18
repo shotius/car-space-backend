@@ -10,7 +10,6 @@ import verificationRouter from 'routes/user-verification.route';
 import ServerGlobal from 'config/ServerGlobal';
 import { SessionUser } from '../shared_with_front/types/types-shared';
 import authRouter from './routes/auth.route';
-import carsRouter from './routes/cars-copart.route';
 import dealerCarsRouter from './routes/cars-dealer.route';
 import usersRouter from './routes/users.route';
 import { COOKIE_NAME, __prod__ } from './utils/constants';
@@ -77,7 +76,6 @@ app.use(express.static('build'));
 app.use('/api/status', (_req, res) => res.send('ok'));
 
 app.use('/api/users', usersRouter);
-app.use('/api/cars', carsRouter);
 app.use('/api/dealers/cars', dealerCarsRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/customer-reviews', customerReviewRouter);

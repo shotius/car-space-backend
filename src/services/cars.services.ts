@@ -101,13 +101,6 @@ const getCarsPaginated = async ({
   return cars;
 };
 
-// const getCarsFromLotNumbers = async (
-//   lotNumbers: string[]
-// ): Promise<ICarCopart[]> => {
-//   const cars = await CarCopart.find({ lN: { $in: lotNumbers } });
-//   return cars;
-// };
-
 /**
  * Get total pages count */
 const getPageCount = async ({ filters, limit }: GetPageCountProps) => {
@@ -231,7 +224,6 @@ const carServices = {
   getPageCount,
   getTransmissions,
   getRecentCars,
-  // getCarsFromLotNumbers,
 };
 
 export default carServices;
