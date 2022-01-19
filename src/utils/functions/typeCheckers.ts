@@ -35,12 +35,22 @@ const isDate = (date: unknown): date is Date => {
   // "deliveryAt": "2012-04-23T18:25:43.511Z",
 };
 
+const isBoolean = (val: unknown): val is boolean => {
+  return typeof val === 'boolean';
+};
+
+const isStringifiedBoolean = (val: unknown): val is boolean => {
+  return val === 'false' || val === 'true';
+};
+
 const typeChecker = {
   isString,
   isNumber,
   isTransmission,
+  isStringifiedBoolean, 
   isKeys,
   isRole,
   isDate,
+  isBoolean,
 };
 export default typeChecker;

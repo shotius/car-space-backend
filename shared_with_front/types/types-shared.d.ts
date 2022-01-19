@@ -57,7 +57,7 @@ export interface IUserInfo {
   fullName: string;
   phone: string;
   avatar: string;
-  email: string
+  email: string;
 }
 
 export interface RegisterParams {
@@ -141,6 +141,8 @@ export interface ICarDealer {
   od: number; // Odometer
   cyl: number; // Cylinders
   price: number; // Price
+  mostDemand: boolean;
+  dealername: string;
 }
 
 // response from cloudinary
@@ -184,6 +186,8 @@ export interface AddCarValues {
   price: number;
   description: string;
   photos: FileList | null;
+  mostDemand: boolean;
+  dealerName: string;
 }
 
 export interface ICustomerReview {
@@ -235,12 +239,10 @@ export interface INewOrderCar extends IOrderCarBase {
   userId: string;
 }
 
-
-
 //** Message */
 export interface IMessageBody {
-  name: string; 
-  phone: string; 
-  email: string; 
-  message: string; 
+  name: string;
+  phone: string;
+  message: string;
+  link: string;
 }

@@ -163,7 +163,9 @@ const getModels = asyncHandler(async (req: Request, res: Response) => {
 const getConditions = asyncHandler(async (_req: Request, res: Response) => {
   try {
     const conditions = await carServices.getConditions();
+    
     return res.send(conditions);
+
   } catch (err) {
     return res.status(500).send(
       error({

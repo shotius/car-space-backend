@@ -11,11 +11,12 @@ import typeParser from 'utils/functions/typeParsers';
 import { isAuth } from 'utils/midlewares';
 import {
   ApiSuccessResponse,
-  CloudinaryResponse,
+  CloudinaryResponse
 } from '../../shared_with_front/types/types-shared';
 import { ApiError } from './../utils/functions/ApiError';
 import { multerMemoryUpload } from './../utils/multer';
 import { userMessage } from './../validation/userMessage';
+import { getCallMePleaseView } from './../views/callMePleaseView';
 
 const usersRouter = express.Router();
 
@@ -168,20 +169,14 @@ usersRouter.get('/undelete/:userid', async (req, res) => {
 });
 
 usersRouter.post('/sendMessage', validate(userMessage), async (req, res) => {
-  const { message, phone, name, email } = req.body;
+  const { message, phone, name, link } = req.body;
 
-  const text = `
-  <p>${message}</p>
+  const text = getCallMePleaseView({ message, phone, name, link });
 
-  <p style={{padding: 0}}><b> from:  ${name} </b></p>
-  <p style={{padding: 0}}><b> phone: ${phone}  </b></p>
-  <p style={{padding: 0}}><b> email: ${email}  </b></p>
-  `;
   await sendEmail({
     to: 'carspace77@gmail.com',
     text,
-    from: email,
-    subject: 'Message',
+    subject: 'Message From Customer',
   });
 
   res.send(

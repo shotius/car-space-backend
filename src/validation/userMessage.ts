@@ -14,5 +14,4 @@ export const userMessage = [
     .withMessage('message is not provieded')
     .isLength({ min: 1 })
     .withMessage('message is required'),
-  body('email').exists().notEmpty().withMessage('email is Requireed'),
 ];

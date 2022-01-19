@@ -1,6 +1,12 @@
 import { ICarDealer } from '../../../shared_with_front/types/types-shared';
 import typeParser from './typeParsers';
-const { parseKeys, parseString, parseNumber, parseTransmission } = typeParser;
+const {
+  parseKeys,
+  parseString,
+  parseNumber,
+  parseTransmission,
+  parseStringifiedBoolean,
+} = typeParser;
 
 type Fields = {
   manufacturer: unknown;
@@ -21,6 +27,8 @@ type Fields = {
   price: unknown;
   description: unknown;
   photos: unknown;
+  mostDemand: unknown;
+  dealerName: unknown;
 };
 
 /**
@@ -32,23 +40,25 @@ export const parseNewCar = (
   props: Fields
 ): Omit<ICarDealer, 'imgT' | 'imgUrls' | 'id'> => {
   const newCar: Omit<ICarDealer, 'imgT' | 'imgUrls' | 'id'> = {
-    m: parseString(props.manufacturer)?.toUpperCase(),
-    bSt: parseString(props.bodyStyle)?.toUpperCase(),
-    c: parseString(props.color)?.toUpperCase(),
-    dmg: parseString(props.damage)?.toUpperCase(),
-    dr: parseString(props.drive)?.toUpperCase(),
-    fuel: parseString(props.fuelType)?.toUpperCase(),
-    lC: parseString(props.location)?.toUpperCase(),
-    mD: parseString(props.modelDetail)?.toUpperCase(),
-    mG: parseString(props.modelGroup)?.toUpperCase(),
-    desc: parseString(props.description)?.toUpperCase(),
+    m: parseString(props.manufacturer)?.toUpperCase().trim(),
+    bSt: parseString(props.bodyStyle)?.toUpperCase().trim(),
+    c: parseString(props.color)?.toUpperCase().trim(),
+    dmg: parseString(props.damage)?.toUpperCase().trim(),
+    dr: parseString(props.drive)?.toUpperCase().trim(),
+    fuel: parseString(props.fuelType)?.toUpperCase().trim(),
+    lC: parseString(props.location)?.toUpperCase().trim(),
+    mD: parseString(props.modelDetail)?.toUpperCase().trim(),
+    mG: parseString(props.modelGroup)?.toUpperCase().trim(),
+    desc: parseString(props.description)?.toUpperCase().trim(),
     price: parseNumber(props.price),
     y: parseNumber(props.year),
     od: parseNumber(props.odometer),
     eng: parseNumber(props.engine),
     cyl: parseNumber(props.cylinders),
-    trans: parseTransmission(props.transmission)?.toUpperCase(),
-    keys: parseKeys(props.keys)?.toUpperCase(),
+    trans: parseTransmission(props.transmission)?.toUpperCase().trim(),
+    keys: parseKeys(props.keys)?.toUpperCase().trim(),
+    mostDemand: parseStringifiedBoolean(props.mostDemand),
+    dealername: parseString(props.dealerName).toUpperCase().trim(),
   };
   return newCar;
 };
