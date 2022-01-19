@@ -1,7 +1,8 @@
-import { BaseFilterProps } from "types";
-import { parseQueryAsArray } from "utils/queryParsers/parseQueryAsArray";
-import { parseQueryAsNumber } from "utils/queryParsers/parseQueryAsNumber";
-import { parseQueryModels } from "utils/queryParsers/parseQueryModels";
+import { BaseFilterProps } from 'types';
+import { parseQueryAsArray } from 'utils/queryParsers/parseQueryAsArray';
+import { parseQueryAsNumber } from 'utils/queryParsers/parseQueryAsNumber';
+import { parseQueryModels } from 'utils/queryParsers/parseQueryModels';
+import queryParser from 'utils/queryParsers/queryParser';
 
 export const extractFilters = (query: any) => {
   const allBrands = parseQueryAsArray(query, 'brand');
@@ -19,8 +20,8 @@ export const extractFilters = (query: any) => {
     brands: allBrands.filter((brand) => !brandsWithModels.includes(brand)),
     year_from: parseQueryAsNumber(query, 'year_from'),
     year_to: parseQueryAsNumber(query, 'year_to'),
-    price_from: parseQueryAsNumber(query, 'price_from'), 
-    price_to: parseQueryAsNumber(query, 'price_to'), 
+    price_from: parseQueryAsNumber(query, 'price_from'),
+    price_to: parseQueryAsNumber(query, 'price_to'),
     engine_from: parseQueryAsNumber(query, 'engine_from'),
     engine_to: parseQueryAsNumber(query, 'engine_to'),
     types: parseQueryAsArray(query, 'type'),
@@ -31,7 +32,8 @@ export const extractFilters = (query: any) => {
     fuels: parseQueryAsArray(query, 'fuel'),
     cylinders: parseQueryAsArray(query, 'cylinder'),
     conditions: parseQueryAsArray(query, 'condition'),
+    mostDemand: queryParser.Bool(query, 'mostdemand'),
   };
 
   return filters;
-}
+};

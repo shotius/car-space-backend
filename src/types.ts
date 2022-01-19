@@ -39,6 +39,7 @@ export interface BaseFilterProps {
   conditions: string[]
   engine_from?: number;
   engine_to?: number;
+  mostDemand?: boolean; 
 }
 
 

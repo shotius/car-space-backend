@@ -1,7 +1,7 @@
-import { HasKeys } from './../../shared_with_front/contants';
 import CarDealer from 'models/car-dealer.model';
-import { ICarDealer } from '../../shared_with_front/types/types-shared';
 import { BaseFilterProps } from 'types';
+import { ICarDealer } from '../../shared_with_front/types/types-shared';
+import { HasKeys } from './../../shared_with_front/contants';
 
 /** Interfaces */
 
@@ -37,6 +37,7 @@ export const getAllCars = ({ filters }: BaseGetCarInterface) => {
     keys,
     price_from,
     price_to,
+    mostDemand,
   } = filters;
   const shouldGetAllcars = !!!(models.length || brands.length);
 
@@ -73,13 +74,19 @@ export const getAllCars = ({ filters }: BaseGetCarInterface) => {
       { cyl: !isCylindersEmpty ? { $in: numCylinders } : { $exists: true } },
       { dmg: !isConditionsEmpty ? { $in: conditions } : { $exists: true } },
       { keys: keys === HasKeys.YES ? { $eq: keys } : { $exists: true } },
+      {
+        $or: [
+          { mostDemand: { $exists: true } },
+          { mostDemand: mostDemand ? { $exists: true } : { $exists: false } },
+        ],
+      },
     ],
   });
 };
 
 /**Get last 8 cars */
 const getRecentCars = async () => {
-  return (await CarDealer.find().sort({ _id: -1 }).limit(4));
+  return await CarDealer.find().sort({ _id: -1 }).limit(4);
 };
 
 /**
@@ -101,18 +108,13 @@ const getCarsPaginated = async ({
   return cars;
 };
 
-/**
- * Get total pages count */
+/**Get total pages count */
 const getPageCount = async ({ filters, limit }: GetPageCountProps) => {
   const carsTotal = await getAllCars({
     filters,
   }).countDocuments();
-  // const carsTotal = 10
-  // total cars in the db
-  // total pages for pagination
-  const pagesTotal = Math.ceil(carsTotal / limit);
 
-  return pagesTotal;
+  return Math.ceil(carsTotal / limit);
 };
 
 // get all distinct brands
