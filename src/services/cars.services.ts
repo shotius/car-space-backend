@@ -38,6 +38,7 @@ export const getAllCars = ({ filters }: BaseGetCarInterface) => {
     price_from,
     price_to,
     mostDemand,
+    currencyPrice,
   } = filters;
   const shouldGetAllcars = !!!(models.length || brands.length);
 
@@ -51,6 +52,12 @@ export const getAllCars = ({ filters }: BaseGetCarInterface) => {
 
   const numCylinders = cylinders.map((c) => parseInt(c));
 
+  // converted prices
+  const priceFrom =
+    price_from && currencyPrice ? price_from / currencyPrice : 0;
+  const priceTo =
+    price_to && currencyPrice ? price_to / currencyPrice : 9999999;
+
   return CarDealer.find({
     $and: [
       {
@@ -61,7 +68,7 @@ export const getAllCars = ({ filters }: BaseGetCarInterface) => {
       },
       { y: { $gte: year_from || 0, $lte: year_to || 9999 } }, // year range filter
       { eng: { $gte: engine_from || 0, $lte: engine_to || 9999 } }, // engine range filter
-      { price: { $gte: price_from || 0, $lte: price_to || 9999999 } }, // price range filter
+      { price: { $gte: priceFrom, $lte: priceTo } }, // price range filter
       { bSt: !isTypesEmpty ? { $in: types } : { $exists: true } },
       { lC: !isLocationsEmpty ? { $in: locations } : { $exists: true } },
       {

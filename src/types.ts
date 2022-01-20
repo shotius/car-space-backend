@@ -40,6 +40,7 @@ export interface BaseFilterProps {
   engine_from?: number;
   engine_to?: number;
   mostDemand?: boolean; 
+  currencyPrice?: number; 
 }
 
 
