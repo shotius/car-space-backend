@@ -58,7 +58,7 @@ const getDealerCars = asyncHandler(
 const getSingleDealerCar = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const car = await dealerCarService.getSingleCar(req.params.carId);
-    
+
     if (!car) {
       return next(
         new ApiError(
@@ -89,6 +89,15 @@ const getRecentDealerCars = asyncHandler(
     );
   }
 );
+
+/** Get car Count for specific filters */
+const getCarCount = asyncHandler(async (req: Request, res: Response) => {
+  const filters = extractFilters(req.query);
+
+  const carsCount = await carServices.getAllCars({ filters }).countDocuments();
+
+  res.send(success({ message: 'success', results: carsCount }));
+});
 
 // -- Add car to the db
 const addDealerCar = asyncHandler(async (req: Request, res: Response) => {
@@ -163,9 +172,8 @@ const getModels = asyncHandler(async (req: Request, res: Response) => {
 const getConditions = asyncHandler(async (_req: Request, res: Response) => {
   try {
     const conditions = await carServices.getConditions();
-    
-    return res.send(conditions);
 
+    return res.send(conditions);
   } catch (err) {
     return res.status(500).send(
       error({
@@ -213,7 +221,6 @@ const getDrives = asyncHandler(async (_req: Request, res: Response) => {
     );
   }
 });
-
 
 const getFuels = asyncHandler(async (_req: Request, res: Response) => {
   try {
@@ -267,10 +274,11 @@ const dealerController = {
   getConditions,
   getTypes,
   getLocations,
-  getDrives, 
-  getFuels, 
-  getCylinders, 
-  getTransmissions
+  getDrives,
+  getFuels,
+  getCylinders,
+  getTransmissions,
+  getCarCount,
 };
 
 export default dealerController;

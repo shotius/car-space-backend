@@ -19,7 +19,7 @@ interface GetPageCountProps extends BaseGetCarInterface {
 }
 
 /** Get All cars */
-export const getAllCars = ({ filters }: BaseGetCarInterface) => {
+const getAllCars = ({ filters }: BaseGetCarInterface) => {
   const {
     brands,
     models,
@@ -233,6 +233,7 @@ const carServices = {
   getPageCount,
   getTransmissions,
   getRecentCars,
+  getAllCars
 };
 
 export default carServices;

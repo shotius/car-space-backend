@@ -147,6 +147,11 @@ const getUserWithOrders = async (userId: string) => {
   return await User.findById(userId).populate('orderedCars');
 };
 
+/** Danger remove all user from the database */
+const resetUsers = async () => {
+  return await User.deleteMany({});
+}
+
 //** exports */
 const userService = {
   getUserWithOrders,
@@ -159,6 +164,7 @@ const userService = {
   changeProfilePicture,
   getUserWithFavouriteCars,
   undelete,
+  resetUsers
 };
 
 export default userService;

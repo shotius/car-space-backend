@@ -12,6 +12,8 @@ dealerCarsRouter.use(express.urlencoded({ extended: true }));
 
 // get all cars and search 
 dealerCarsRouter.get('/', dealerController.getDealerCars);
+dealerCarsRouter.get('/count', dealerController.getCarCount);
+
 
 // filters
 dealerCarsRouter.get('/brands', dealerController.getBrands);
