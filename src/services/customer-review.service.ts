@@ -41,6 +41,7 @@ const addReview = async ({ text, images, userId }: INewReview) => {
 
 const clearReviews = async () => {
   const reviews = await CustomerReview.find({});
+  
   if (!reviews) {
     throw new ApiError(
       httpStatus.INTERNAL_SERVER_ERROR,
@@ -50,12 +51,11 @@ const clearReviews = async () => {
 
   // remove revies and remove images
   reviews.map(async (rev) => {
-    const paths = rev.photos.map((photo) =>
-      cloudinaryServices.getPublicPath(photo)
-    );
-    const response = await cloudinaryServices.deleteMultiple(paths);
+    const response = await cloudinaryServices.deleteMultiple(rev.photos);
+
     if (response.message === 'Success') {
       await rev.delete();
+
     } else {
       throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, '' + response.error);
     }
@@ -66,27 +66,29 @@ const clearReviews = async () => {
 
 const clearSingleReview = async (id: string) => {
   const review = await CustomerReview.findByIdAndDelete(id);
+  
   if (review) {
-    const paths = review.photos.map((photo) =>
-      cloudinaryServices.getPublicPath(photo)
-    );
+    const response = await cloudinaryServices.deleteMultiple(review.photos);
 
-    const response = await cloudinaryServices.deleteMultiple(paths);
     if (response.message === 'Fail' && response.error) {
       throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, response.error);
     }
   }
+
   return review;
 };
 
 const undelete = async (id: string) => {
-  return await CustomerReview.updateOne({_id: id}, {
-    $set: { expireAt: new Date('9999-05-18T16:00:00Z') },
-  });
+  return await CustomerReview.updateOne(
+    { _id: id },
+    {
+      $set: { expireAt: new Date('9999-05-18T16:00:00Z') },
+    }
+  );
 };
 
 const singleReview = async (id: string) => {
-  return await CustomerReview.findOne({_id: id});
+  return await CustomerReview.findOne({ _id: id });
 };
 
 const customerReviewService = {

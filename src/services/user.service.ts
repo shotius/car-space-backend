@@ -120,8 +120,7 @@ const changeProfilePicture = async (userId: number, avatar: string) => {
   // remove existing avatar from cloudinary
   if (user.avatar) {
     // get public id from the url
-    const public_id = cloudinaryServices.getPublicPath(user.avatar);
-    const isDeleted = await cloudinaryServices.deleteSingle(public_id);
+    const isDeleted = await cloudinaryServices.deleteSingle(user.avatar);
     if (isDeleted.message === 'Fail') {
       throw new Error(isDeleted.error);
     }

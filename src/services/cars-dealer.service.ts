@@ -44,10 +44,7 @@ const addCar = async ({ car, blur, imgUrls }: AddCarProps) => {
 const removeSingleCar = async (id: string) => {
   const car = await CarDealer.findByIdAndDelete(id);
   if (car) {
-    const paths = car.imgUrls.map((url) =>
-      cloudinaryServices.getPublicPath(url)
-    );
-    const response = await cloudinaryServices.deleteMultiple(paths);
+    const response = await cloudinaryServices.deleteMultiple(car.imgUrls);
     if (response.message === 'Fail' && response.error) {
       throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, response.error);
     }
