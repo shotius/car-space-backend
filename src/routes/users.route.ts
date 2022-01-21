@@ -1,7 +1,7 @@
-import userController from 'controllers/user.controllers';
+import userController from 'controllers/user.controller';
 import express from 'express';
 import { validate } from 'middlewares/validate';
-import { isAuth } from 'utils/midlewares';
+import { isAdmin, isAuth } from './../utils/midlewares';
 import { multerMemoryUpload } from './../utils/multer';
 import { userMessage } from './../validation/userMessage';
 
@@ -11,8 +11,11 @@ const usersRouter = express.Router();
 usersRouter.use(express.urlencoded({ extended: true }));
 usersRouter.use('/uploads', express.static('dist/uploads'));
 
+/** Get user  */
+usersRouter.get('/', isAuth, isAdmin, userController.getUserPaginated);
+
 /** Get all users */
-usersRouter.get('/', userController.getAllUsers);
+usersRouter.get('/search', userController.searchUsers);
 
 /** User likes a vehicle */
 usersRouter.post('/like', isAuth, userController.likeCar);

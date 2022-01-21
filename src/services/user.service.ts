@@ -5,9 +5,27 @@ import cloudinaryServices from './cloudinary.service';
 import { ChangePasswordProps } from './types';
 
 /**
+ * @description Function returns paginated user list
+ * @param page
+ * @param limit
+ * @returns list of users
+ */
+const getUsers = async (page: number, limit: number) => {
+  const startFrom = (page - 1) * limit;
+  return await User.find({}, { favourites: 0, orderedCars: 0, expiresAt: 0 })
+    .skip(startFrom)
+    .limit(limit);
+};
+
+const getUserCount = async () => {
+  return await User.find().countDocuments();
+};
+
+/**
+ * @description funtion uses search word to search users
  * @returns : list of users
  */
-const getUsers = async (searchWord: string): Promise<IUser[]> => {
+const searchUsers = async (searchWord: string): Promise<IUser[]> => {
   const users = await User.find({
     fullName: { $regex: searchWord, $options: 'i' },
   })
@@ -139,8 +157,8 @@ const changePassword = async ({
 };
 
 /**
- * 
- * @param userId 
+ *
+ * @param userId
  * @returns {Promise<IUser>} with order list
  */
 const getUserWithOrders = async (userId: string) => {
@@ -150,21 +168,23 @@ const getUserWithOrders = async (userId: string) => {
 /** Danger remove all user from the database */
 const resetUsers = async () => {
   return await User.deleteMany({});
-}
+};
 
 //** exports */
 const userService = {
   getUserWithOrders,
-  getUsers,
+  searchUsers,
   changePassword,
   getUserByEmail,
   likeCar,
+  getUsers,
   getFavouriteCarIds,
   getUser,
   changeProfilePicture,
   getUserWithFavouriteCars,
   undelete,
-  resetUsers
+  resetUsers,
+  getUserCount,
 };
 
 export default userService;

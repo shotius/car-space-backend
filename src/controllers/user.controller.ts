@@ -7,18 +7,19 @@ import imageMethods from 'utils/functions/imageTranformsFuncts';
 import { success } from 'utils/functions/responseApi';
 import { sendEmail } from 'utils/functions/sendMail';
 import typeParser from 'utils/functions/typeParsers';
+import queryParser from 'utils/queryParsers/queryParser';
 import { getCallMePleaseView } from 'views/callMePleaseView';
 import {
   ApiSuccessResponse,
   CloudinaryResponse,
 } from '../../shared_with_front/types/types-shared';
-import { ApiError } from './../utils/functions/ApiError';
+import { ApiError } from '../utils/functions/ApiError';
 
 /** Get all users */
-const getAllUsers = asyncHandler(
+const searchUsers = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const searchWord = typeParser.parseString(req.query.s);
-    const users = await userService.getUsers(searchWord);
+    const users = await userService.searchUsers(searchWord);
     if (!users) {
       return next(new ApiError(httpStatus.NOT_FOUND, 'Could not get users'));
     }
@@ -29,6 +30,18 @@ const getAllUsers = asyncHandler(
     );
   }
 );
+
+const getUserPaginated = asyncHandler(async (req: Request, res: Response) => {
+  const page = queryParser.asNumber(req.query, 'page') || 1;
+  const limit = queryParser.asNumber(req.query, 'limit') || 30;
+
+  const users = await userService.getUsers(page, limit);
+  const totalUsers = await userService.getUserCount();
+
+  const totalPages = Math.ceil(totalUsers / limit);
+
+  res.send(success({ results: { users, totalPages } }));
+});
 
 /** Like car */
 const likeCar = asyncHandler(async (req: Request, res: Response) => {
@@ -74,7 +87,6 @@ const getFavouriteCars = asyncHandler(async (req: Request, res: Response) => {
   );
 });
 
-
 /** Set User avatar */
 const setUserAvatar = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -83,6 +95,7 @@ const setUserAvatar = asyncHandler(
     }
 
     const { buffer } = req.file;
+
 
     // get user from the session
     const userid = req.session.user!.id;
@@ -168,7 +181,7 @@ const resetUsers = asyncHandler(async (_req: Request, res: Response) => {
 
 /**Exports */
 const userController = {
-  getAllUsers,
+  searchUsers,
   likeCar,
   getFavouriteIds,
   getFavouriteCars,
@@ -176,6 +189,7 @@ const userController = {
   undeleteUser,
   sendContactEmail,
   resetUsers,
+  getUserPaginated,
 };
 
 export default userController;

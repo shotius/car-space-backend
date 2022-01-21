@@ -246,3 +246,9 @@ export interface IMessageBody {
   message: string;
   link: string;
 }
+
+//**Banner */
+interface IBanner {
+  img: string;
+  place: number;
+}

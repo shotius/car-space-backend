@@ -12,6 +12,8 @@ import { SessionUser } from '../shared_with_front/types/types-shared';
 import authRouter from './routes/auth.route';
 import dealerCarsRouter from './routes/cars-dealer.route';
 import usersRouter from './routes/users.route';
+import bannerRouter from 'routes/big-banner.route';
+
 import { COOKIE_NAME, __prod__ } from './utils/constants';
 import { defaultErrorHander, errorConverter } from './utils/midlewares';
 
@@ -28,7 +30,7 @@ const globalConfig = ServerGlobal.getInstance;
 // -- Get Redis Store
 const redisStore = connectRedis(session);
 
-globalConfig.connectDB()
+globalConfig.connectDB();
 
 // -- cors
 const whiteList = [
@@ -81,6 +83,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/customer-reviews', customerReviewRouter);
 app.use('/api/ordered-cars/', orderedCarRoute);
 app.use('/api/user-verification/', verificationRouter);
+app.use('/api/big-banner', bannerRouter);
 
 app.use(errorConverter);
 app.use(defaultErrorHander);

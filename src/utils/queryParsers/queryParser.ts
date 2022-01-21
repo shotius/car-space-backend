@@ -9,6 +9,18 @@ const Bool = (query: any, queryName: string): boolean => {
   return false;
 };
 
-const queryParser = { Bool };
+const asNumber = (
+  query: any,
+  queryKey: string
+): number | undefined => {
+  const q = query[queryKey];
+  if (Number(q)) {
+    return Number(q)
+  }
+  return 0;
+};
+
+
+const queryParser = { Bool, asNumber };
 
 export default queryParser;
