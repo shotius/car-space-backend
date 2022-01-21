@@ -1,6 +1,7 @@
 import Redis from 'ioredis';
 import url from 'url';
 import mongooseConfig, { MongoConfig } from './mongoose.config';
+var http = require('http');
 
 // This is singleton class for server
 class ServerGlobal {
@@ -24,6 +25,7 @@ class ServerGlobal {
     } else {
       this._redis = new Redis();
     }
+    this.keepDynoAlive();
   }
 
   // Get single ton instance of the class
@@ -36,11 +38,6 @@ class ServerGlobal {
     return this._instance;
   }
 
-  // -- MongoDB connection
-  connectDB() {
-    mongooseConfig.connectWithRetry();
-  }
-
   // Get Redis from singleton (usefull)
   get redis() {
     return this._redis;
@@ -51,8 +48,18 @@ class ServerGlobal {
     const mongoose = new MongoConfig();
     return mongoose;
   }
+  
+  // ping the server every 30 hour to keep dyno alive
+  keepDynoAlive() {
+    setInterval(function () {
+      http.get('http://whispering-atoll-93096.herokuapp.com/home');
+    }, 1000 * 60 * 30); // 30 min
+  }
 
-
+  // -- MongoDB connection
+  connectDB() {
+    mongooseConfig.connectWithRetry();
+  }
 }
 
 export default ServerGlobal;
