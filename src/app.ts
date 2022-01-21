@@ -83,7 +83,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/customer-reviews', customerReviewRouter);
 app.use('/api/ordered-cars/', orderedCarRoute);
 app.use('/api/user-verification/', verificationRouter);
-app.use('/api/big-banner', bannerRouter);
+app.use('/api/banners', bannerRouter);
 
 app.use(errorConverter);
 app.use(defaultErrorHander);

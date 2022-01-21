@@ -1,3 +1,4 @@
+import { logger } from './../utils/logger';
 import { NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status';
 import bigBannerService from 'services/big-banner.service';
@@ -16,6 +17,7 @@ const getBanners = asyncHandler(async (_req: Request, res: Response) => {
 /** Add a banner */
 const addBanner = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    logger.info(req.file)
     if (!req.file) {
       return next(new ApiError(httpStatus.BAD_REQUEST, 'banner not provided'));
     }

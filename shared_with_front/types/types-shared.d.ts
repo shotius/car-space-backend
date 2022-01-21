@@ -249,6 +249,7 @@ export interface IMessageBody {
 
 //**Banner */
 interface IBanner {
+  id: string; 
   img: string;
   place: number;
 }
