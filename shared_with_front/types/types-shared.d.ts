@@ -67,7 +67,8 @@ export interface RegisterParams {
   password: string;
   phone: string;
   role: RoleTypes;
-  privacy: boolean;
+  // role: boolean; 
+  // privacy: boolean;
 }
 
 export type RegisterResponse = {
@@ -190,6 +191,7 @@ export interface AddCarValues {
   photos: FileList | null;
   mostDemand: boolean;
   dealerName: string;
+  dealerId?: string
 }
 
 export interface ICustomerReview {

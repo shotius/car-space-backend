@@ -165,8 +165,13 @@ const getUserWithOrders = async (userId: string) => {
   return await User.findById(userId).populate('orderedCars');
 };
 
-const getDealers = async () => {
-  return await User.find({ role: Roles.DEALER }).populate('addedCars');
+const getDealers = async (withCars: boolean) => {
+  return await User.find({
+    role: Roles.DEALER,
+    addedCars: withCars
+      ? { $exists: true, $not: { $size: 0 } }
+      : { $exists: true },
+  }).populate('addedCars');
 };
 
 const addCarToDealer = async ({
