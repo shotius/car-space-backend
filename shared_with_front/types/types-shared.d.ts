@@ -37,6 +37,7 @@ export interface IUser {
   favourites: Types.ObjectId[];
   orderedCars: Types.ObjectId[];
   verified: boolean;
+  addedCars: Types.ObjectId[];
 }
 
 export interface SessionUser {
@@ -143,6 +144,7 @@ export interface ICarDealer {
   price: number; // Price
   mostDemand: boolean;
   dealername: string;
+  dealerId?: string;
 }
 
 // response from cloudinary
@@ -249,7 +251,7 @@ export interface IMessageBody {
 
 //**Banner */
 interface IBanner {
-  id: string; 
+  id: string;
   img: string;
   place: number;
 }

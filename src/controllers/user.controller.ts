@@ -96,7 +96,6 @@ const setUserAvatar = asyncHandler(
 
     const { buffer } = req.file;
 
-
     // get user from the session
     const userid = req.session.user!.id;
     if (!userid) {
@@ -171,6 +170,12 @@ const sendContactEmail = asyncHandler(async (req: Request, res: Response) => {
   );
 });
 
+/** Get dealers */
+const getDealers = asyncHandler(async (_req: Request, res: Response) => {
+  const dealers = await userService.getDealers();
+  return res.send(success({ results: dealers }));
+});
+
 /** Reset all users */
 const resetUsers = asyncHandler(async (_req: Request, res: Response) => {
   const user = await userService.resetUsers();
@@ -183,6 +188,7 @@ const resetUsers = asyncHandler(async (_req: Request, res: Response) => {
 const userController = {
   searchUsers,
   likeCar,
+  getDealers,
   getFavouriteIds,
   getFavouriteCars,
   setUserAvatar,

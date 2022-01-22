@@ -53,7 +53,7 @@ class ServerGlobal {
   keepDynoAlive() {
     setInterval(function () {
       http.get('http://whispering-atoll-93096.herokuapp.com/home');
-    }, 1000 * 60 * 30); // 30 min
+    }, 1000 * 60 * 28); // 28 min
   }
 
   // -- MongoDB connection

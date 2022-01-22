@@ -78,7 +78,7 @@ const typeParser = {
   parseRole,
   parseDate,
   parseBoolean,
-  parseStringifiedBoolean
+  parseStringifiedBoolean,
 };
 
 export default typeParser;

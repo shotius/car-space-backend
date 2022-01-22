@@ -24,6 +24,7 @@ const schemaCarDealer = new Schema<ICarDealer>({
   eng: Number, // Engine
   mostDemand: Boolean,
   dealername: String,
+  dealerId: String,
 });
 
 schemaCarDealer.set('toJSON', {

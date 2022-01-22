@@ -1,4 +1,5 @@
 import { Types } from 'mongoose';
+import { Roles } from '../../shared_with_front/contants';
 import { IUser } from '../../shared_with_front/types/types-shared';
 import User from '../models/user.model';
 import cloudinaryServices from './cloudinary.service';
@@ -83,7 +84,7 @@ const likeCar = async ({ userId, carId }: likeCarProps) => {
     user.favourites = user.favourites.concat(carId);
   }
 
-  // tidy
+  // clean up
   user.favourites = user.favourites.filter((fav) => fav);
 
   const savedUser = await user.save();
@@ -164,6 +165,27 @@ const getUserWithOrders = async (userId: string) => {
   return await User.findById(userId).populate('orderedCars');
 };
 
+const getDealers = async () => {
+  return await User.find({ role: Roles.DEALER }).populate('addedCars');
+};
+
+const addCarToDealer = async ({
+  carId,
+  dealerId,
+}: {
+  carId: Types.ObjectId;
+  dealerId: string;
+}) => {
+  const dealer = await User.findById(dealerId);
+  // if dealer not found return
+  if (!dealer) {
+    return null;
+  }
+
+  dealer.addedCars.push(carId);
+  return await dealer.save();
+};
+
 /** Danger remove all user from the database */
 const resetUsers = async () => {
   return await User.deleteMany({});
@@ -172,6 +194,8 @@ const resetUsers = async () => {
 //** exports */
 const userService = {
   getUserWithOrders,
+  addCarToDealer,
+  getDealers,
   searchUsers,
   changePassword,
   getUserByEmail,

@@ -51,6 +51,7 @@ const removeSingleCar = async (id: string) => {
   }
   return car;
 };
+
 const dealerCarService = {
   removeSingleCar,
   addCar,

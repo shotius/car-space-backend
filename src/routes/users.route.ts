@@ -14,6 +14,9 @@ usersRouter.use('/uploads', express.static('dist/uploads'));
 /** Get user  */
 usersRouter.get('/', isAuth, isAdmin, userController.getUserPaginated);
 
+/** Dealers list */
+usersRouter.get('/dealers', userController.getDealers);
+
 /** Get all users */
 usersRouter.get('/search', userController.searchUsers);
 

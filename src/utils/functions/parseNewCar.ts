@@ -29,6 +29,7 @@ type Fields = {
   photos: unknown;
   mostDemand: unknown;
   dealerName: unknown;
+  dealerId: unknown;
 };
 
 /**
@@ -59,6 +60,7 @@ export const parseNewCar = (
     keys: parseKeys(props.keys)?.toUpperCase().trim(),
     mostDemand: parseStringifiedBoolean(props.mostDemand),
     dealername: parseString(props.dealerName).toUpperCase().trim(),
+    dealerId: props.dealerId ? parseString(props.dealerId) : undefined,
   };
   return newCar;
 };

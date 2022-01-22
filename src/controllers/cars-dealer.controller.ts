@@ -1,3 +1,4 @@
+import userService from 'services/user.service';
 import { NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status';
 import CarDealer from 'models/car-dealer.model';
@@ -7,6 +8,7 @@ import cloudinaryServices from 'services/cloudinary.service';
 import { asyncHandler } from 'utils/functions/asyncHandler';
 import imageMethods from 'utils/functions/imageTranformsFuncts';
 import { error, success } from 'utils/functions/responseApi';
+import logger from 'utils/logger';
 import { parseQueryAsArray } from 'utils/queryParsers/parseQueryAsArray';
 import { parseNewCar } from '../utils/functions/parseNewCar';
 import { ApiError } from './../utils/functions/ApiError';
@@ -104,6 +106,8 @@ const addDealerCar = asyncHandler(async (req: Request, res: Response) => {
   const car = parseNewCar(req.body);
   let imgUrls: string[] = [];
 
+  logger.info(car);
+
   // upload images to the cloudinary and get urls
   if (Array.isArray(files) && files.length) {
     imgUrls = await cloudinaryServices.uploadMultyStream(
@@ -114,6 +118,14 @@ const addDealerCar = asyncHandler(async (req: Request, res: Response) => {
 
   const blur = imageMethods.toBlur(imgUrls[0] || '');
   const addedCar = await dealerCarService.addCar({ car, blur, imgUrls });
+
+  // if daeler id is provided add car id in dealer document
+  if (addedCar.dealerId) {
+    await userService.addCarToDealer({
+      carId: addedCar._id,
+      dealerId: addedCar.dealerId,
+    });
+  }
 
   res.send(addedCar);
 });
