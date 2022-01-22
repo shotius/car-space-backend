@@ -1,3 +1,6 @@
+import { logger } from './../utils/logger';
+import httpStatus from 'http-status';
+import { ApiError } from './../utils/functions/ApiError';
 import { Types } from 'mongoose';
 import { Roles } from '../../shared_with_front/contants';
 import { IUser } from '../../shared_with_front/types/types-shared';
@@ -165,15 +168,24 @@ const getUserWithOrders = async (userId: string) => {
   return await User.findById(userId).populate('orderedCars');
 };
 
+/**
+ *  Get dealers
+ * @description function returns 4 dealers if query is provided else max 10 dealers
+ * @param withCars query
+ *
+ */
 const getDealers = async (withCars: boolean) => {
   return await User.find({
     role: Roles.DEALER,
     addedCars: withCars
       ? { $exists: true, $not: { $size: 0 } }
       : { $exists: true },
-  }).populate('addedCars');
+  })
+    .populate('addedCars')
+    .limit(withCars ? 4 : 100);
 };
 
+/** Function adds car in dealers' car */
 const addCarToDealer = async ({
   carId,
   dealerId,
@@ -191,6 +203,31 @@ const addCarToDealer = async ({
   return await dealer.save();
 };
 
+const removeCarFromDealer = async ({
+  carId,
+  dealerId,
+}: {
+  carId: Types.ObjectId;
+  dealerId: string;
+}) => {
+  const dealer = await User.findById(dealerId);
+
+  if (!dealer) {
+    throw new ApiError(
+      httpStatus.NOT_FOUND,
+      'Dealer not found to remove a his/her car'
+    );
+  }
+
+  dealer.addedCars = dealer.addedCars.filter(
+    (ids) => ids.toString() !== carId.toString()
+  );
+  logger.info(dealer.addedCars);
+  await dealer.save();
+
+  return dealer;
+};
+
 /** Danger remove all user from the database */
 const resetUsers = async () => {
   return await User.deleteMany({});
@@ -199,6 +236,7 @@ const resetUsers = async () => {
 //** exports */
 const userService = {
   getUserWithOrders,
+  removeCarFromDealer,
   addCarToDealer,
   getDealers,
   searchUsers,
