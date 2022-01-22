@@ -83,8 +83,8 @@ const getAllCars = ({ filters }: BaseGetCarInterface) => {
       { keys: keys === HasKeys.YES ? { $eq: keys } : { $exists: true } },
       {
         $or: [
-          { mostDemand: { $exists: true } },
-          { mostDemand: mostDemand ? { $exists: true } : { $exists: false } },
+          { mostDemand: mostDemand ? true:  { $exists: true } },
+          { mostDemand: mostDemand ? true : { $exists: false } },
         ],
       },
     ],

@@ -94,6 +94,7 @@ const getRecentDealerCars = asyncHandler(
 /** Get car Count for specific filters */
 const getCarCount = asyncHandler(async (req: Request, res: Response) => {
   const filters = extractFilters(req.query);
+
   const carsCount = await carServices.getAllCars({ filters }).countDocuments();
 
   res.send(success({ message: 'success', results: carsCount }));
@@ -140,6 +141,7 @@ const removeSingleCar = asyncHandler(async (req: Request, res: Response) => {
 
     // if car had a dealer remove it from dealer list
     if (deletedCar?.dealerId) {
+
       await userService.removeCarFromDealer({
         carId: deletedCar._id,
         dealerId: deletedCar.dealerId,
