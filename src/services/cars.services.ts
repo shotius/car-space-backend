@@ -39,6 +39,7 @@ const getAllCars = ({ filters }: BaseGetCarInterface) => {
     price_to,
     mostDemand,
     currencyPrice,
+    dealerId,
   } = filters;
   const shouldGetAllcars = !!!(models.length || brands.length);
 
@@ -83,8 +84,14 @@ const getAllCars = ({ filters }: BaseGetCarInterface) => {
       { keys: keys === HasKeys.YES ? { $eq: keys } : { $exists: true } },
       {
         $or: [
-          { mostDemand: mostDemand ? true:  { $exists: true } },
+          { mostDemand: mostDemand ? true : { $exists: true } },
           { mostDemand: mostDemand ? true : { $exists: false } },
+        ],
+      },
+      {
+        $or: [
+          { dealerId: dealerId ? dealerId : { $exists: true } },
+          { dealerId: dealerId ? dealerId : { $exists: false } },
         ],
       },
     ],
@@ -233,7 +240,7 @@ const carServices = {
   getPageCount,
   getTransmissions,
   getRecentCars,
-  getAllCars
+  getAllCars,
 };
 
 export default carServices;

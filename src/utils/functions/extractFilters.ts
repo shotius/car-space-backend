@@ -33,7 +33,8 @@ export const extractFilters = (query: any) => {
     cylinders: parseQueryAsArray(query, 'cylinder'),
     conditions: parseQueryAsArray(query, 'condition'),
     mostDemand: queryParser.Bool(query, 'mostdemand'),
-    currencyPrice: parseQueryAsNumber(query, 'CURRENCY_PRICE') || 1
+    currencyPrice: parseQueryAsNumber(query, 'CURRENCY_PRICE') || 1, 
+    dealerId: queryParser.asString(query, 'dealerId')
   };
 
   return filters;

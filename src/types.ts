@@ -41,6 +41,7 @@ export interface BaseFilterProps {
   engine_to?: number;
   mostDemand?: boolean; 
   currencyPrice: number; 
+  dealerId: string; 
 }
 
 
