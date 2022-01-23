@@ -94,9 +94,7 @@ const getRecentDealerCars = asyncHandler(
 /** Get car Count for specific filters */
 const getCarCount = asyncHandler(async (req: Request, res: Response) => {
   const filters = extractFilters(req.query);
-
   const carsCount = await carServices.getAllCars({ filters }).countDocuments();
-
   res.send(success({ message: 'success', results: carsCount }));
 });
 
