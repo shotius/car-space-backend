@@ -1,7 +1,7 @@
 import userController from 'controllers/user.controller';
 import express from 'express';
 import { validate } from 'middlewares/validate';
-import { isAdmin, isAuth } from './../utils/midlewares';
+import { isAuth } from './../utils/midlewares';
 import { multerMemoryUpload } from './../utils/multer';
 import { userMessage } from './../validation/userMessage';
 
@@ -12,7 +12,7 @@ usersRouter.use(express.urlencoded({ extended: true }));
 usersRouter.use('/uploads', express.static('dist/uploads'));
 
 /** Get user  */
-usersRouter.get('/', isAuth, isAdmin, userController.getUserPaginated);
+usersRouter.get('/',  userController.getUserPaginated);
 
 /** Dealers list */
 usersRouter.get('/dealers', userController.getDealers);
