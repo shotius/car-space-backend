@@ -6,6 +6,7 @@ export async function sendEmail({
   text,
   subject = 'Verification',
   from = 'carspace77@gmail.com',
+  
 }: {
   to: string;
   text: string;
@@ -16,6 +17,7 @@ export async function sendEmail({
     service: 'gmail',
     auth: {
       user: 'carspace77@gmail.com',
+      
       pass: process.env.MAIL_PASSWORD,
     },
   });
