@@ -16,13 +16,13 @@ export async function sendEmail({
     service: 'gmail',
     auth: {
       user: 'carspace77@gmail.com',
-      pass: 'Car-Space77!',
+      pass: process.env.MAIL_PASSWORD,
     },
   });
 
   let info = await transporter.sendMail({
     from: `"Car Space" ${from}`, // sender address
-    to, 
+    to,
     subject,
     html: text,
   });
