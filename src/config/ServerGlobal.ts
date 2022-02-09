@@ -48,7 +48,7 @@ class ServerGlobal {
     const mongoose = new MongoConfig();
     return mongoose;
   }
-  
+
   // ping the server every 30 hour to keep dyno alive
   keepDynoAlive() {
     setInterval(function () {
@@ -60,6 +60,7 @@ class ServerGlobal {
   connectDB() {
     mongooseConfig.connectWithRetry();
   }
+
 }
 
 export default ServerGlobal;
