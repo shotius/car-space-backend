@@ -157,7 +157,7 @@ const sendContactEmail = asyncHandler(async (req: Request, res: Response) => {
   const text = getCallMePleaseView({ message, phone, name, link });
 
   await sendEmail({
-    to: 'carspace77@gmail.com',
+    to: 'support@carspace.ge',
     text,
     subject: 'Message From Customer',
   });
