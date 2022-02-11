@@ -38,7 +38,7 @@ const whiteList = [
   'https://whispering-atoll-93096.herokuapp.com/',
 ];
 
-if (__prod__) {
+if (__prod__ && false) {
   app.use(redirectToHttps);
 }
 
