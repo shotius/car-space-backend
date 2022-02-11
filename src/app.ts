@@ -42,6 +42,8 @@ if (__prod__) {
   app.use(redirectToHttps);
 }
 
+app.use(require('prerender-node').set('prerenderToken', 'I2tK6WNDQhwk8clI0k4A'));
+
 app.use(
   cors({
     origin: whiteList,
