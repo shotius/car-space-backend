@@ -66,7 +66,7 @@ export interface RegisterParams {
   fullName: string;
   email: string;
   password: string;
-  phoneNum: string;
+  phone: string;
   role: RoleTypes;
 }
 
