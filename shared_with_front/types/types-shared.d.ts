@@ -61,14 +61,13 @@ export interface IUserInfo {
   email: string;
 }
 
+
 export interface RegisterParams {
   fullName: string;
   email: string;
   password: string;
-  phone: string;
+  phoneNum: string;
   role: RoleTypes;
-  // role: boolean; 
-  // privacy: boolean;
 }
 
 export type RegisterResponse = {
@@ -191,7 +190,7 @@ export interface AddCarValues {
   photos: FileList | null;
   mostDemand: boolean;
   dealerName: string;
-  dealerId?: string
+  dealerId?: string;
 }
 
 export interface ICustomerReview {
