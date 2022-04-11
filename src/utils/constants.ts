@@ -15,5 +15,5 @@ export enum KeysEnum {
 }
 
 export const DOMAIN = __prod__
-  ? 'https://whispering-atoll-93096.herokuapp.com'
+  ? 'https://carspace.ge'
   : 'http://localhost:3001';

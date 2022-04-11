@@ -1,9 +1,13 @@
 import { google } from 'googleapis';
 import Redis from 'ioredis';
 import url from 'url';
-import { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, REFRESH_TOKEN } from 'utils/config';
+import {
+  CLIENT_ID,
+  CLIENT_SECRET,
+  REDIRECT_URI,
+  REFRESH_TOKEN,
+} from 'utils/config';
 import mongooseConfig, { MongoConfig } from './mongoose.config';
-var http = require('http');
 
 // This is singleton class for server
 class ServerGlobal {
@@ -27,7 +31,6 @@ class ServerGlobal {
     } else {
       this._redis = new Redis();
     }
-    this.keepDynoAlive();
   }
 
   // Get single ton instance of the class
@@ -59,13 +62,6 @@ class ServerGlobal {
     );
     oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
     return oAuth2Client;
-  }
-
-  // ping the server every 30 hour to keep dyno alive
-  keepDynoAlive() {
-    setInterval(function () {
-      http.get('http://whispering-atoll-93096.herokuapp.com/home');
-    }, 1000 * 60 * 28); // 28 min
   }
 
   // -- MongoDB connection
