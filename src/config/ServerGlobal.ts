@@ -1,5 +1,7 @@
+import { google } from 'googleapis';
 import Redis from 'ioredis';
 import url from 'url';
+import { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, REFRESH_TOKEN } from 'utils/config';
 import mongooseConfig, { MongoConfig } from './mongoose.config';
 var http = require('http');
 
@@ -49,6 +51,16 @@ class ServerGlobal {
     return mongoose;
   }
 
+  get oAuthClient() {
+    const oAuth2Client = new google.auth.OAuth2(
+      CLIENT_ID,
+      CLIENT_SECRET,
+      REDIRECT_URI
+    );
+    oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
+    return oAuth2Client;
+  }
+
   // ping the server every 30 hour to keep dyno alive
   keepDynoAlive() {
     setInterval(function () {
@@ -60,7 +72,6 @@ class ServerGlobal {
   connectDB() {
     mongooseConfig.connectWithRetry();
   }
-
 }
 
 export default ServerGlobal;
