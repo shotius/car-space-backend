@@ -9,7 +9,7 @@ import cloudinaryServices from './cloudinary.service';
  * @returns all CustomerReviews
  */
 const getAllReviews = async () => {
-  return await CustomerReview.find({}).populate('user');
+  return await CustomerReview.find({}).populate('user', {fullName: 1, avatar: 1})
 };
 
 /**
@@ -29,10 +29,7 @@ const addReview = async ({ text, images, userId }: INewReview) => {
   const newReview = new CustomerReview({
     photos: images,
     text: text,
-    user: {
-      fullName: user.fullName,
-      avatar: user.avatar,
-    },
+    user: user._id 
   });
 
   const addedReview = await newReview.save();
