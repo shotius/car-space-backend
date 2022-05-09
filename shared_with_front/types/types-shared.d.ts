@@ -37,6 +37,7 @@ export interface IUser {
   favourites: Types.ObjectId[];
   orderedCars: Types.ObjectId[];
   verified: boolean;
+  addedCars: Types.ObjectId[];
 }
 
 export interface SessionUser {
@@ -60,13 +61,13 @@ export interface IUserInfo {
   email: string;
 }
 
+
 export interface RegisterParams {
   fullName: string;
   email: string;
   password: string;
   phone: string;
   role: RoleTypes;
-  privacy: boolean;
 }
 
 export type RegisterResponse = {
@@ -129,6 +130,9 @@ export interface ICarDealer extends BaseCar {
   imgUrls: string[]; // Image URL
   keys?: Keys; // Has Keys-Yes or No
   price: number; // Price
+  mostDemand: boolean;
+  dealername: string;
+  dealerId?: string;
 }
 
 // response from cloudinary
@@ -172,6 +176,9 @@ export interface AddCarValues {
   price: number;
   description: string;
   photos: FileList | null;
+  mostDemand: boolean;
+  dealerName: string;
+  dealerId?: string;
 }
 
 export interface ICustomerReview {
@@ -227,6 +234,18 @@ export interface INewOrderCar extends IOrderCarBase {
 export interface IMessageBody {
   name: string;
   phone: string;
+<<<<<<< HEAD
   email: string;
   message: string;
+=======
+  message: string;
+  link: string;
+}
+
+//**Banner */
+interface IBanner {
+  id: string;
+  img: string;
+  place: number;
+>>>>>>> masterCopy
 }

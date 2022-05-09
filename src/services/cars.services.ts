@@ -1,9 +1,8 @@
-import { ICarCopart } from './../../shared_with_front/types/types-shared.d';
-import { HasKeys } from './../../shared_with_front/contants';
 import CarDealer from 'models/car-dealer.model';
-import CopartCars from 'models/car-copart.model';
-import { ICarDealer } from '../../shared_with_front/types/types-shared';
 import { BaseFilterProps } from 'types';
+import { ICarDealer } from '../../shared_with_front/types/types-shared';
+import { HasKeys } from './../../shared_with_front/contants';
+import { ICarCopart } from './../../shared_with_front/types/types-shared.d';
 
 /** Interfaces */
 
@@ -37,6 +36,11 @@ const getAllCars = ({ filters }: BaseGetCarInterface) => {
     engine_from,
     engine_to,
     keys,
+    price_from,
+    price_to,
+    mostDemand,
+    currencyPrice,
+    dealerId,
   } = filters;
   const shouldGetAllcars = !!!(models.length || brands.length);
 
@@ -50,7 +54,13 @@ const getAllCars = ({ filters }: BaseGetCarInterface) => {
 
   const numCylinders = cylinders.map((c) => parseInt(c));
 
-  return CopartCars.find({
+  // converted prices
+  const priceFrom =
+    price_from && currencyPrice ? price_from / currencyPrice : 0;
+  const priceTo =
+    price_to && currencyPrice ? price_to / currencyPrice : 9999999;
+
+  return CarDealer.find({
     $and: [
       {
         $or: [
@@ -60,6 +70,7 @@ const getAllCars = ({ filters }: BaseGetCarInterface) => {
       },
       { y: { $gte: year_from || 0, $lte: year_to || 9999 } }, // year range filter
       { eng: { $gte: engine_from || 0, $lte: engine_to || 9999 } }, // engine range filter
+      { price: { $gte: priceFrom, $lte: priceTo } }, // price range filter
       { bSt: !isTypesEmpty ? { $in: types } : { $exists: true } },
       { lC: !isLocationsEmpty ? { $in: locations } : { $exists: true } },
       {
@@ -72,6 +83,18 @@ const getAllCars = ({ filters }: BaseGetCarInterface) => {
       { cyl: !isCylindersEmpty ? { $in: numCylinders } : { $exists: true } },
       { dmg: !isConditionsEmpty ? { $in: conditions } : { $exists: true } },
       { keys: keys === HasKeys.YES ? { $eq: keys } : { $exists: true } },
+      {
+        $or: [
+          { mostDemand: mostDemand ? true : { $exists: true } },
+          { mostDemand: mostDemand ? true : { $exists: false } },
+        ],
+      },
+      {
+        $or: [
+          { dealerId: dealerId ? dealerId : { $exists: true } },
+          { dealerId: dealerId ? dealerId : { $exists: false } },
+        ],
+      },
     ],
   });
 };
@@ -100,25 +123,13 @@ const getCarsPaginated = async ({
   return cars;
 };
 
-// const getCarsFromLotNumbers = async (
-//   lotNumbers: string[]
-// ): Promise<ICarCopart[]> => {
-//   const cars = await CarCopart.find({ lN: { $in: lotNumbers } });
-//   return cars;
-// };
-
-/**
- * Get total pages count */
+/**Get total pages count */
 const getPageCount = async ({ filters, limit }: GetPageCountProps) => {
   const carsTotal = await getAllCars({
     filters,
   }).countDocuments();
 
-  // total cars in the db
-  // total pages for pagination
-  const pagesTotal = Math.ceil(carsTotal / limit);
-
-  return pagesTotal;
+  return Math.ceil(carsTotal / limit);
 };
 
 // get all distinct brands
@@ -230,7 +241,7 @@ const carServices = {
   getPageCount,
   getTransmissions,
   getRecentCars,
-  // getCarsFromLotNumbers,
+  getAllCars,
 };
 
 export default carServices;

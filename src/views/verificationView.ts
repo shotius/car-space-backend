@@ -46,7 +46,7 @@ export const verificationView = ({ hash, fullName }: Props) => `
 
     .t__paragraph--greeting {
       font-size: 20px;
-      color: #FB5607;
+      color:#DC1864;
       margin-bottom: 12px;
       font-family: 'Roboto', sans-serif;
     }
@@ -62,7 +62,7 @@ export const verificationView = ({ hash, fullName }: Props) => `
       display: inline-block;
       color: white !important;
       border-radius: 8px;
-      background-color: #FB5607;
+      background-color:#DC1864;
       padding: 12px 16px;
       margin: 8px;
       font-family: 'Roboto', sans-serif;

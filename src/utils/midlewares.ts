@@ -49,7 +49,6 @@ export const defaultErrorHander = (
   response: express.Response,
   next: express.NextFunction
 ) => {
-
   logger.error(error);
 
   // default error response
@@ -69,8 +68,8 @@ export const defaultErrorHander = (
     defaultResponse.error = error.message;
     return response.status(401).send(defaultResponse);
   } else if (error.message === 'not verified') {
-    defaultResponse.error = error.message
-    return response.status(400).send(defaultResponse)
+    defaultResponse.error = error.message;
+    return response.status(400).send(defaultResponse);
   }
 
   // ------
@@ -123,6 +122,17 @@ export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
         message: 'not authenticated',
       })
     );
+  }
+  return next();
+};
+
+export const redirectToHttps = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (req.headers['x-forwarded-proto'] !== 'https') {
+    return res.redirect(['https://', req.get('Host'), req.url].join(''));
   }
   return next();
 };

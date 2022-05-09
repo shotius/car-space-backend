@@ -72,7 +72,6 @@ const clearSingleReview = asyncHandler(
 
     await customerReviewService.clearSingleReview(reviewId);
 
-
     return res.send(
       success({
         message: `Review with id ${reviewId} is deleted`,

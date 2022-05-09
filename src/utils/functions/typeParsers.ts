@@ -1,3 +1,4 @@
+import { ApiError } from 'utils/functions/ApiError';
 import { RoleTypes } from './../../../shared_with_front/types/types-shared.d';
 import {
   Keys,
@@ -5,6 +6,7 @@ import {
 } from '../../../shared_with_front/types/types-shared';
 import typeChecker from './typeCheckers';
 import { Roles } from '../../../shared_with_front/contants';
+import httpStatus from 'http-status';
 
 const parseString = (text: unknown): string => {
   if (!text || !typeChecker.isString(text)) {
@@ -51,6 +53,23 @@ const parseDate = (date: unknown): Date | undefined => {
   return date;
 };
 
+const parseBoolean = (val: unknown): boolean => {
+  if (!val || !typeChecker.isBoolean(val)) {
+    throw new ApiError(httpStatus.BAD_REQUEST, `invalid boolean value ${val}`);
+  }
+  return val;
+};
+
+const parseStringifiedBoolean = (val: unknown): boolean => {
+  if (!val || !typeChecker.isStringifiedBoolean(val)) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'Provieded boolean is not boolean ' + val
+    );
+  }
+  return val;
+};
+
 const typeParser = {
   parseString,
   parseNumber,
@@ -58,6 +77,8 @@ const typeParser = {
   parseKeys,
   parseRole,
   parseDate,
+  parseBoolean,
+  parseStringifiedBoolean,
 };
 
 export default typeParser;

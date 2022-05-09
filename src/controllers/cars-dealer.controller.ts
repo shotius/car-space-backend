@@ -4,14 +4,14 @@ import CarDealer from 'models/car-dealer.model';
 import dealerCarService from 'services/cars-dealer.service';
 import carServices from 'services/cars.services';
 import cloudinaryServices from 'services/cloudinary.service';
+import userService from 'services/user.service';
 import { asyncHandler } from 'utils/functions/asyncHandler';
 import imageMethods from 'utils/functions/imageTranformsFuncts';
-// import { success } from 'utils/functions/responseApi';
 import { error, success } from 'utils/functions/responseApi';
+import { parseQueryAsArray } from 'utils/queryParsers/parseQueryAsArray';
 import { parseNewCar } from '../utils/functions/parseNewCar';
 import { ApiError } from './../utils/functions/ApiError';
 import { extractFilters } from './../utils/functions/extractFilters';
-// import dealerCarService from '../services/cars-dealer.service';
 
 // -- Get all cars
 const getDealerCars = asyncHandler(
@@ -59,6 +59,7 @@ const getDealerCars = asyncHandler(
 const getSingleDealerCar = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const car = await dealerCarService.getSingleCar(req.params.carId);
+
     if (!car) {
       return next(
         new ApiError(
@@ -90,6 +91,13 @@ const getRecentDealerCars = asyncHandler(
   }
 );
 
+/** Get car Count for specific filters */
+const getCarCount = asyncHandler(async (req: Request, res: Response) => {
+  const filters = extractFilters(req.query);
+  const carsCount = await carServices.getAllCars({ filters }).countDocuments();
+  res.send(success({ message: 'success', results: carsCount }));
+});
+
 // -- Add car to the db
 const addDealerCar = asyncHandler(async (req: Request, res: Response) => {
   const files = req.files;
@@ -107,6 +115,14 @@ const addDealerCar = asyncHandler(async (req: Request, res: Response) => {
   const blur = imageMethods.toBlur(imgUrls[0] || '');
   const addedCar = await dealerCarService.addCar({ car, blur, imgUrls });
 
+  // if daeler id is provided add car id in dealer document
+  if (addedCar.dealerId) {
+    await userService.addCarToDealer({
+      carId: addedCar._id,
+      dealerId: addedCar.dealerId,
+    });
+  }
+
   res.send(addedCar);
 });
 
@@ -119,7 +135,17 @@ const removeAllCars = asyncHandler(async (_req: Request, res: Response) => {
 // -- Remove one car
 const removeSingleCar = asyncHandler(async (req: Request, res: Response) => {
   try {
-    await dealerCarService.removeSingleCar(req.body.id);
+    const deletedCar = await dealerCarService.removeSingleCar(req.body.id);
+
+    // if car had a dealer remove it from dealer list
+    if (deletedCar?.dealerId) {
+
+      await userService.removeCarFromDealer({
+        carId: deletedCar._id,
+        dealerId: deletedCar.dealerId,
+      });
+    }
+
     return res.send(
       success({
         results: 'Ok',
@@ -134,6 +160,124 @@ const removeSingleCar = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
+//** Filters */
+
+const getBrands = asyncHandler(async (_req: Request, res: Response) => {
+  const brands = await carServices.getAllBrands();
+  res.send(brands);
+});
+
+const getModels = asyncHandler(async (req: Request, res: Response) => {
+  const brands = parseQueryAsArray(req.query, 'brand').map((b) =>
+    b.toUpperCase()
+  );
+
+  if (!brands.length) {
+    return res.status(400).send('bad brand query');
+  }
+
+  try {
+    const models = await carServices.getModels(brands);
+    return res.send(models);
+  } catch (err) {
+    return res
+      .status(500)
+      .send(error({ message: `Could not get models ${err}` }));
+  }
+});
+
+const getConditions = asyncHandler(async (_req: Request, res: Response) => {
+  try {
+    const conditions = await carServices.getConditions();
+
+    return res.send(conditions);
+  } catch (err) {
+    return res.status(500).send(
+      error({
+        message: 'could not get conditions',
+      })
+    );
+  }
+});
+
+const getTypes = asyncHandler(async (_req: Request, res: Response) => {
+  try {
+    const types = await carServices.getTypes();
+    return res.send(types);
+  } catch (erro) {
+    return res.status(500).send(
+      error({
+        message: 'could not get types for filter',
+      })
+    );
+  }
+});
+
+const getLocations = asyncHandler(async (_req: Request, res: Response) => {
+  try {
+    const locations = await carServices.getLocation();
+    return res.send(locations);
+  } catch (err) {
+    return res.status(500).send(
+      error({
+        message: 'could not get car locations',
+      })
+    );
+  }
+});
+
+const getDrives = asyncHandler(async (_req: Request, res: Response) => {
+  try {
+    const drives = await carServices.getDrives();
+    return res.send(drives);
+  } catch (err) {
+    return res.status(500).send(
+      error({
+        message: 'could not get drives for filter',
+      })
+    );
+  }
+});
+
+const getFuels = asyncHandler(async (_req: Request, res: Response) => {
+  try {
+    const fuels = await carServices.getFuels();
+    return res.send(fuels);
+  } catch (err) {
+    return res.status(500).send(
+      error({
+        message: 'could not get Fuel types for filter',
+      })
+    );
+  }
+});
+
+const getCylinders = asyncHandler(async (_req: Request, res: Response) => {
+  try {
+    const cylinders = await carServices.getCylinders();
+    return res.send(cylinders);
+  } catch (err) {
+    return res.status(500).send(
+      error({
+        message: 'could not get Cylinder types for filter',
+      })
+    );
+  }
+});
+
+const getTransmissions = asyncHandler(async (_req: Request, res: Response) => {
+  try {
+    const transmissions = await carServices.getTransmissions();
+    return res.send(transmissions);
+  } catch (erro) {
+    return res.status(500).send(
+      error({
+        message: 'could not get Transmission types for filter',
+      })
+    );
+  }
+});
+
 // -- Exports
 const dealerController = {
   removeSingleCar,
@@ -142,6 +286,16 @@ const dealerController = {
   removeAllCars,
   getSingleDealerCar,
   getRecentDealerCars,
+  getBrands,
+  getModels,
+  getConditions,
+  getTypes,
+  getLocations,
+  getDrives,
+  getFuels,
+  getCylinders,
+  getTransmissions,
+  getCarCount,
 };
 
 export default dealerController;

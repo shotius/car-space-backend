@@ -5,8 +5,8 @@ const schema = new Schema<ICustomerReview>({
   text: String,
   photos: [String],
   user: {
-    fullName: String,
-    avatar: String,
+      type: 'ObjectId',
+      ref: "User"
   },
 });
 

@@ -1,4 +1,4 @@
-import {body} from 'express-validator'
+import { body } from 'express-validator';
 
 export const newDealerCar = [
   body('manufacturer')
@@ -9,4 +9,12 @@ export const newDealerCar = [
     .withMessage('Manufacturer is missing')
     .isString()
     .withMessage('Manufacturer must be text')
-] 
+    .trim(),
+  body('dealerName')
+    .exists()
+    .not()
+    .isEmpty()
+    .withMessage('Dealer name required')
+    .toUpperCase()
+    .trim(),
+];

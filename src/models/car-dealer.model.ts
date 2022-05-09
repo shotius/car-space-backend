@@ -22,6 +22,9 @@ const schemaCarDealer = new Schema<ICarDealer>({
   cyl: Number, // Cylinders
   price: Number, // Buy it now
   eng: Number, // Engine
+  mostDemand: Boolean,
+  dealername: String,
+  dealerId: String,
 });
 
 schemaCarDealer.set('toJSON', {

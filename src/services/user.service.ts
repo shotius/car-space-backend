@@ -1,13 +1,35 @@
+import { logger } from './../utils/logger';
+import httpStatus from 'http-status';
+import { ApiError } from './../utils/functions/ApiError';
 import { Types } from 'mongoose';
+import { Roles } from '../../shared_with_front/contants';
 import { IUser } from '../../shared_with_front/types/types-shared';
 import User from '../models/user.model';
 import cloudinaryServices from './cloudinary.service';
 import { ChangePasswordProps } from './types';
 
 /**
+ * @description Function returns paginated user list
+ * @param page
+ * @param limit
+ * @returns list of users
+ */
+const getUsers = async (page: number, limit: number) => {
+  const startFrom = (page - 1) * limit;
+  return await User.find({}, { favourites: 0, orderedCars: 0, expiresAt: 0 })
+    .skip(startFrom)
+    .limit(limit);
+};
+
+const getUserCount = async () => {
+  return await User.find().countDocuments();
+};
+
+/**
+ * @description funtion uses search word to search users
  * @returns : list of users
  */
-const getUsers = async (searchWord: string): Promise<IUser[]> => {
+const searchUsers = async (searchWord: string): Promise<IUser[]> => {
   const users = await User.find({
     fullName: { $regex: searchWord, $options: 'i' },
   })
@@ -65,7 +87,7 @@ const likeCar = async ({ userId, carId }: likeCarProps) => {
     user.favourites = user.favourites.concat(carId);
   }
 
-  // tidy
+  // clean up
   user.favourites = user.favourites.filter((fav) => fav);
 
   const savedUser = await user.save();
@@ -102,8 +124,7 @@ const changeProfilePicture = async (userId: number, avatar: string) => {
   // remove existing avatar from cloudinary
   if (user.avatar) {
     // get public id from the url
-    const public_id = cloudinaryServices.getPublicPath(user.avatar);
-    const isDeleted = await cloudinaryServices.deleteSingle(public_id);
+    const isDeleted = await cloudinaryServices.deleteSingle(user.avatar);
     if (isDeleted.message === 'Fail') {
       throw new Error(isDeleted.error);
     }
@@ -139,26 +160,97 @@ const changePassword = async ({
 };
 
 /**
- * 
- * @param userId 
+ *
+ * @param userId
  * @returns {Promise<IUser>} with order list
  */
 const getUserWithOrders = async (userId: string) => {
   return await User.findById(userId).populate('orderedCars');
 };
 
+/**
+ *  Get dealers
+ * @description function returns 4 dealers if query is provided else max 10 dealers
+ * @param withCars query
+ *
+ */
+const getDealers = async (withCars: boolean) => {
+  return await User.find({
+    role: Roles.DEALER,
+    addedCars: withCars
+      ? { $exists: true, $not: { $size: 0 } }
+      : { $exists: true },
+  })
+    .populate('addedCars')
+    .limit(withCars ? 4 : 100);
+};
+
+/** Function adds car in dealers' car */
+const addCarToDealer = async ({
+  carId,
+  dealerId,
+}: {
+  carId: Types.ObjectId;
+  dealerId: string;
+}) => {
+  const dealer = await User.findById(dealerId);
+  // if dealer not found return
+  if (!dealer) {
+    return null;
+  }
+
+  dealer.addedCars.push(carId);
+  return await dealer.save();
+};
+
+const removeCarFromDealer = async ({
+  carId,
+  dealerId,
+}: {
+  carId: Types.ObjectId;
+  dealerId: string;
+}) => {
+  const dealer = await User.findById(dealerId);
+
+  if (!dealer) {
+    throw new ApiError(
+      httpStatus.NOT_FOUND,
+      'Dealer not found to remove a his/her car'
+    );
+  }
+
+  dealer.addedCars = dealer.addedCars.filter(
+    (ids) => ids.toString() !== carId.toString()
+  );
+  logger.info(dealer.addedCars);
+  await dealer.save();
+
+  return dealer;
+};
+
+/** Danger remove all user from the database */
+const resetUsers = async () => {
+  return await User.deleteMany({});
+};
+
 //** exports */
 const userService = {
   getUserWithOrders,
-  getUsers,
+  removeCarFromDealer,
+  addCarToDealer,
+  getDealers,
+  searchUsers,
   changePassword,
   getUserByEmail,
   likeCar,
+  getUsers,
   getFavouriteCarIds,
   getUser,
   changeProfilePicture,
   getUserWithFavouriteCars,
   undelete,
+  resetUsers,
+  getUserCount,
 };
 
 export default userService;

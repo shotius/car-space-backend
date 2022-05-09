@@ -1,20 +1,21 @@
 import compression from 'compression';
+import ServerGlobal from 'config/ServerGlobal';
 import connectRedis from 'connect-redis';
 import cors from 'cors';
 import express from 'express';
 import session from 'express-session';
 import path from 'path';
+import bannerRouter from 'routes/big-banner.route';
 import customerReviewRouter from 'routes/customer-review.route';
 import orderedCarRoute from 'routes/ordered-car.routes';
 import verificationRouter from 'routes/user-verification.route';
-import ServerGlobal from 'config/ServerGlobal';
 import { SessionUser } from '../shared_with_front/types/types-shared';
 import authRouter from './routes/auth.route';
-import carsRouter from './routes/cars-copart.route';
 import dealerCarsRouter from './routes/cars-dealer.route';
 import usersRouter from './routes/users.route';
 import { COOKIE_NAME, __prod__ } from './utils/constants';
-import { defaultErrorHander, errorConverter } from './utils/midlewares';
+import { defaultErrorHander, errorConverter, redirectToHttps } from './utils/midlewares';
+
 
 // -- declare session
 declare module 'express-session' {
@@ -26,16 +27,22 @@ declare module 'express-session' {
 const app = express();
 const globalConfig = ServerGlobal.getInstance;
 
-// -- Get Redis Store
+// -- Create Redis Store
 const redisStore = connectRedis(session);
 
-globalConfig.connectDB()
+globalConfig.connectDB();
 
 // -- cors
 const whiteList = [
   'http://localhost:3000',
   'https://whispering-atoll-93096.herokuapp.com/',
 ];
+
+if (__prod__) {
+  app.use(redirectToHttps);
+}
+
+app.use(require('prerender-node').set('prerenderToken', 'I2tK6WNDQhwk8clI0k4A'));
 
 app.use(
   cors({
@@ -77,12 +84,12 @@ app.use(express.static('build'));
 app.use('/api/status', (_req, res) => res.send('ok'));
 
 app.use('/api/users', usersRouter);
-app.use('/api/cars', carsRouter);
 app.use('/api/dealers/cars', dealerCarsRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/customer-reviews', customerReviewRouter);
 app.use('/api/ordered-cars/', orderedCarRoute);
 app.use('/api/user-verification/', verificationRouter);
+app.use('/api/banners', bannerRouter);
 
 app.use(errorConverter);
 app.use(defaultErrorHander);

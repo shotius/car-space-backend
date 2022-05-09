@@ -89,7 +89,9 @@ const uploadStream = async (buffer: Buffer, folder: string) => {
  * @param public_id : image uri
  * @returns {CloudinaryResponse}
  */
-const deleteSingle = async (public_id: string): Promise<CloudinaryResponse> => {
+const deleteSingle = async (url: string): Promise<CloudinaryResponse> => {
+  const public_id = getPublicPath(url);
+
   try {
     const result = await cloudinary.uploader.destroy(public_id);
     if (result.result === 'not found') {
@@ -117,7 +119,7 @@ const deleteSingle = async (public_id: string): Promise<CloudinaryResponse> => {
 const deleteMultiple = async (urls: string[]): Promise<CloudinaryResponse> => {
   try {
     urls.map(async (url) => {
-       await deleteSingle(url);
+      await deleteSingle(url);
     });
     return {
       message: 'Success',
@@ -168,7 +170,7 @@ const getPublicPath = (url: string) => {
 };
 
 const cloudinaryServices = {
-  getPublicPath, 
+  getPublicPath,
   deleteSingle,
   uploadStream,
   uploadPhoto,

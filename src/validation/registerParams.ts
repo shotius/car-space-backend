@@ -20,10 +20,10 @@ export const registerParams = [
     .notEmpty()
     .withMessage('Role is not proviede')
     .isIn([Roles.DEALER, Roles.USER]),
-  body('privacy').custom((value) => {
-    if (value !== true) {
-      throw new Error('Privacy is not chosen');
-    }
-    return true;
-  }),
+  // body('privacy').custom((value) => {
+  //   if (value !== true) {
+  //     throw new Error('Privacy is not chosen');
+  //   }
+  //   return true;
+  // }),
 ];
