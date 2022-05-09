@@ -234,10 +234,6 @@ export interface INewOrderCar extends IOrderCarBase {
 export interface IMessageBody {
   name: string;
   phone: string;
-<<<<<<< HEAD
-  email: string;
-  message: string;
-=======
   message: string;
   link: string;
 }
@@ -247,5 +243,4 @@ interface IBanner {
   id: string;
   img: string;
   place: number;
->>>>>>> masterCopy
 }
