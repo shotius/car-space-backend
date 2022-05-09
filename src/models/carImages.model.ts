@@ -18,7 +18,7 @@ const carImagesSchema = new Schema<ICarCopartImages>(
       },
     ],
   },
-  { collection: 'carImages' }
+  { collection: 'copart_car_images' }
 );
 
-export default model<ICarCopartImages>('CarImages', carImagesSchema);
+export default model<ICarCopartImages>('CopartCarImages', carImagesSchema);

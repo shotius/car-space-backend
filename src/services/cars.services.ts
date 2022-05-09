@@ -1,5 +1,6 @@
 import { HasKeys } from './../../shared_with_front/contants';
 import CarDealer from 'models/car-dealer.model';
+import CopartCars from 'models/car-copart.model';
 import { ICarDealer } from '../../shared_with_front/types/types-shared';
 import { BaseFilterProps } from 'types';
 
@@ -19,7 +20,7 @@ interface GetPageCountProps extends BaseGetCarInterface {
 }
 
 /** Get All cars */
-export const getAllCars = ({ filters }: BaseGetCarInterface) => {
+export const getAllCars = async ({ filters }: BaseGetCarInterface) => {
   const {
     brands,
     models,
@@ -49,8 +50,8 @@ export const getAllCars = ({ filters }: BaseGetCarInterface) => {
   const isConditionsEmpty = !conditions.length;
 
   const numCylinders = cylinders.map((c) => parseInt(c));
-
-  return CarDealer.find({
+  
+  const cars = await CopartCars.find({
     $and: [
       {
         $or: [
@@ -75,11 +76,14 @@ export const getAllCars = ({ filters }: BaseGetCarInterface) => {
       { keys: keys === HasKeys.YES ? { $eq: keys } : { $exists: true } },
     ],
   });
+
+  console.log('cars: ', cars);
+  return cars;
 };
 
 /**Get last 8 cars */
 const getRecentCars = async () => {
-  return (await CarDealer.find().sort({ _id: -1 }).limit(4));
+  return await CarDealer.find().sort({ _id: -1 }).limit(4);
 };
 
 /**
@@ -94,11 +98,12 @@ const getCarsPaginated = async ({
 
   const cars = await getAllCars({
     filters,
-  })
-    .skip(startFrom)
-    .limit(limit);
+  });
+  // .skip(startFrom)
+  // .limit(limit);
 
-  return cars;
+  // return cars ;
+  return CarDealer.find();
 };
 
 // const getCarsFromLotNumbers = async (
@@ -113,13 +118,15 @@ const getCarsPaginated = async ({
 const getPageCount = async ({ filters, limit }: GetPageCountProps) => {
   const carsTotal = await getAllCars({
     filters,
-  }).countDocuments();
+  });
+  // .countDocuments();
   // const carsTotal = 10
   // total cars in the db
   // total pages for pagination
-  const pagesTotal = Math.ceil(carsTotal / limit);
+  // const pagesTotal = Math.ceil(carsTotal / limit);
 
-  return pagesTotal;
+  // return pagesTotal;
+  return 0;
 };
 
 // get all distinct brands

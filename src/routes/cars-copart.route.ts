@@ -1,3 +1,4 @@
+import  CopartCars  from 'models/car-copart.model';
 import express from 'express';
 import { validate } from 'middlewares/validate';
 import carImagesService from 'services/carImages.service';
@@ -10,6 +11,11 @@ import { parseQueryAsArray } from '../utils/queryParsers/parseQueryAsArray';
 import { parseQueryAsNumber } from '../utils/queryParsers/parseQueryAsNumber';
 
 const carsRouter = express.Router();
+
+carsRouter.get('/test', async(req, res) => {
+  const cars = await CopartCars.find()
+  res.json(cars)
+})
 
 // get paginating cars
 carsRouter.get('/', async (req, res) => {

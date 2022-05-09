@@ -57,7 +57,7 @@ export interface IUserInfo {
   fullName: string;
   phone: string;
   avatar: string;
-  email: string
+  email: string;
 }
 
 export interface RegisterParams {
@@ -84,62 +84,50 @@ export interface UserResponse {
   user?: IUser & Document<any, any, IUser>;
 }
 
-// Car Copart
-export interface ICarCopart {
-  id: string;
-  lN: string; // Lot number
-  m: string; // Make
-  vin: string; // VIN
-  bSt: string; // Body Style
-  dmg: string; // Damage Description
-  sDmg: string; // Secondary Damage
-  lSt: string; // Location state
-  lC: string; // Location country
-  od: string; // Odometer
-  cyl: string; // Cylinders
-  dr: string; // Drive
-  curB: string; // High Bid =non-vix,Sealed=Vix
-  mG: string; // Model Group
-  eng: string; //
-  mD: string; // Model Detail
-  trans: string; // Transmission
-  imgT: string; // Image Thumbnail
-  imgU: string; // Image URL
-  y: string; // Year
-  fuel: string; // Fuel Type
-  keys: string; // Has Keys-Yes or No
-  sS: string; // Sales Status
-  eRV: string; // Est. Retail Value
-  rC: string; // Repair Cost
-  c: string; // Color
-  rd: string; // Runs and drive
-  bin: string; // Buy it now
-  imgsM?: string[]; // medium images
-}
-
 export type Keys = HasKeys.YES | HasKeys.NO;
 
-// Car for dealers
-export interface ICarDealer {
+// base car
+interface BaseCar {
   id: string;
   m?: string; // Manufacturer
   bSt?: string; // Body Style
   dmg?: string; // Damage Description
-  lC?: string; // Location country
-  desc?: string;
   dr?: string; // Drive
-  mG?: string; // Model Group
-  mD?: string; // Model Detail
-  trans?: Transmission; // Transmission
-  imgT: string; // Image Thumbnail
-  imgUrls: string[]; // Image URL
-  fuel?: string; // Fuel Type
-  keys?: Keys; // Has Keys-Yes or No
-  c?: string; // Color
-  eng: number; // Engine
-  y: number; // Year
   od: number; // Odometer
   cyl: number; // Cylinders
+  lC: string; // Location country
+  mG: string; // Model Group
+  trans: string; // Transmission
+  imgT: string; // Image Thumbnail
+  fuel: string; // Fuel Type
+  y: number; // Year
+  c?: string; // Color
+  eng: number; // Engine
+}
+
+// Car Copart
+export interface ICarCopart extends BaseCar {
+  lN: number; // Lot number
+  vin: string; // VIN
+  sDmg: string; // Secondary Damage
+  lSt: string; // Location state
+  curB: number; // High Bid =non-vix,Sealed=Vix
+  imgU: string; // Image URL
+  keys: string; // Has Keys-Yes or No
+  sS: string; // Sales Status
+  eRV: number; // Est. Retail Value
+  rC: number; // Repair Cost
+  rd: string; // Runs and drive
+  bin: number; // Buy it now
+  imgsM?: string[]; // medium images
+}
+
+// Car for dealers
+export interface ICarDealer extends BaseCar {
+  desc?: string;
+  mD?: string; // Model Detail
+  imgUrls: string[]; // Image URL
+  keys?: Keys; // Has Keys-Yes or No
   price: number; // Price
 }
 
@@ -235,12 +223,10 @@ export interface INewOrderCar extends IOrderCarBase {
   userId: string;
 }
 
-
-
 //** Message */
 export interface IMessageBody {
-  name: string; 
-  phone: string; 
-  email: string; 
-  message: string; 
+  name: string;
+  phone: string;
+  email: string;
+  message: string;
 }

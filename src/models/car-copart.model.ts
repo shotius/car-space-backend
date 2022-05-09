@@ -3,36 +3,36 @@ import { ICarCopart } from '../../shared_with_front/types/types-shared';
 
 const carSchema = new Schema<ICarCopart>(
   {
-    lN: String, // Lot number
+    lN: Number, // Lot number
     m: String, // Make
     vin: String, // VIN
     bSt: String, // Body Style
     sDmg: String, // Secondary Damage
     lSt: String, // Location state
     lC: String, // Location country
-    od: String, // Odometer
-    cyl: String, // Cylinders
+    od: Number, // Odometer
+    cyl: Number, // Cylinders
     dr: String, // Drive
-    curB: String, // High Bid =non-vix,Sealed=Vix
+    curB: Number, // High Bid =non-vix,Sealed=Vix
     mG: String, // Model Group
     mD: String, // Model Detail
-    eng: String, // Engine
+    eng: Number, // Engine
     dmg: String, // Damage Description
     trans: String, // Transmission
     imgT: String, // Image Thumbnail
     imgU: String, // Image URL
-    y: String, // Year
+    y: Number, // Year
     fuel: String, // Fuel Type
     keys: String, // Has Keys-Yes or No
     sS: String, // Sales Status
-    eRV: String, // Est. Retail Value
-    rC: String, // Repair Cost
+    eRV: Number, // Est. Retail Value
+    rC: Number, // Repair Cost
     c: String,  // Color
     rd: String,  // Runs and drive
-    bin: String,  // buy it now
+    bin: Number,  // buy it now
     imgsM: [String]
   },
-  { collection: 'cars' }
+  { collection: 'copart_cars' }
 );
 
 carSchema.set('toJSON', {
@@ -43,5 +43,4 @@ carSchema.set('toJSON', {
   },
 });
 
-const CarCopart = model<ICarCopart>('Car', carSchema);
-export default CarCopart
+export default model<ICarCopart>('CopartCar', carSchema);
