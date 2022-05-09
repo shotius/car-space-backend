@@ -1,3 +1,4 @@
+import { extractFilters } from './../utils/functions/extractFilters';
 import  CopartCars  from 'models/car-copart.model';
 import express from 'express';
 import { validate } from 'middlewares/validate';
@@ -22,34 +23,7 @@ carsRouter.get('/', async (req, res) => {
   const page = req.query.page || 1;
   const limit = req.query.limit || 40;
 
-  // parse brands and models from query
-  const allBrands = parseQueryAsArray(req.query, 'brand');
-  const modelsWithBrand = parseQueryModels((req.query as any).model);
-
-  const brandsWithModels = modelsWithBrand.map((m) => m.brand);
-
-  const models = modelsWithBrand.reduce<string[]>(
-    (acc, cur) => acc.concat(cur.models),
-    []
-  );
-
-  // parse other filters from query
-  const filters: BaseFilterProps = {
-    models,
-    brands: allBrands.filter((brand) => !brandsWithModels.includes(brand)),
-    year_from: parseQueryAsNumber(req.query, 'year_from'),
-    year_to: parseQueryAsNumber(req.query, 'year_to'),
-    engine_from: parseQueryAsNumber(req.query, 'engine_from'),
-    engine_to: parseQueryAsNumber(req.query, 'engine_to'),
-    types: parseQueryAsArray(req.query, 'type'),
-    locations: parseQueryAsArray(req.query, 'location'),
-    transmissions: parseQueryAsArray(req.query, 'transmission'),
-    keys: (req.query as any).keys,
-    drives: parseQueryAsArray(req.query, 'drive'),
-    fuels: parseQueryAsArray(req.query, 'fuel'),
-    cylinders: parseQueryAsArray(req.query, 'cylinder'),
-    conditions: parseQueryAsArray(req.query, 'condition'),
-  };
+  const filters = extractFilters(req.query)
 
   const getCars = carServices.getCarsPaginated({
     page: Number(page),
