@@ -1,15 +1,12 @@
-import { extractFilters } from './../utils/functions/extractFilters';
-import  CopartCars  from 'models/car-copart.model';
 import express from 'express';
 import { validate } from 'middlewares/validate';
+import CopartCars from 'models/car-copart.model';
 import carImagesService from 'services/carImages.service';
 import carServices from 'services/cars.services';
 import { error } from 'utils/functions/responseApi';
-import { parseQueryModels } from 'utils/queryParsers/parseQueryModels';
 import { validateLotNum } from 'validation/LotNumberValidation';
-import { BaseFilterProps } from '../types';
 import { parseQueryAsArray } from '../utils/queryParsers/parseQueryAsArray';
-import { parseQueryAsNumber } from '../utils/queryParsers/parseQueryAsNumber';
+import { extractFilters } from './../utils/functions/extractFilters';
 
 const carsRouter = express.Router();
 
