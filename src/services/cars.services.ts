@@ -1,3 +1,4 @@
+import { ICarCopart } from './../../shared_with_front/types/types-shared.d';
 import { HasKeys } from './../../shared_with_front/contants';
 import CarDealer from 'models/car-dealer.model';
 import CopartCars from 'models/car-copart.model';
@@ -20,7 +21,7 @@ interface GetPageCountProps extends BaseGetCarInterface {
 }
 
 /** Get All cars */
-export const getAllCars = async ({ filters }: BaseGetCarInterface) => {
+const getAllCars = ({ filters }: BaseGetCarInterface) => {
   const {
     brands,
     models,
@@ -36,8 +37,6 @@ export const getAllCars = async ({ filters }: BaseGetCarInterface) => {
     engine_from,
     engine_to,
     keys,
-    price_from,
-    price_to,
   } = filters;
   const shouldGetAllcars = !!!(models.length || brands.length);
 
@@ -50,8 +49,8 @@ export const getAllCars = async ({ filters }: BaseGetCarInterface) => {
   const isConditionsEmpty = !conditions.length;
 
   const numCylinders = cylinders.map((c) => parseInt(c));
-  
-  const cars = await CopartCars.find({
+
+  return CopartCars.find({
     $and: [
       {
         $or: [
@@ -61,7 +60,6 @@ export const getAllCars = async ({ filters }: BaseGetCarInterface) => {
       },
       { y: { $gte: year_from || 0, $lte: year_to || 9999 } }, // year range filter
       { eng: { $gte: engine_from || 0, $lte: engine_to || 9999 } }, // engine range filter
-      { price: { $gte: price_from || 0, $lte: price_to || 9999999 } }, // price range filter
       { bSt: !isTypesEmpty ? { $in: types } : { $exists: true } },
       { lC: !isLocationsEmpty ? { $in: locations } : { $exists: true } },
       {
@@ -76,9 +74,6 @@ export const getAllCars = async ({ filters }: BaseGetCarInterface) => {
       { keys: keys === HasKeys.YES ? { $eq: keys } : { $exists: true } },
     ],
   });
-
-  console.log('cars: ', cars);
-  return cars;
 };
 
 /**Get last 8 cars */
@@ -92,18 +87,17 @@ const getCarsPaginated = async ({
   limit,
   page,
   filters,
-}: getCarsProps): Promise<ICarDealer[]> => {
+}: getCarsProps): Promise<ICarDealer[] | ICarCopart[]> => {
   // how many cars to skip
   const startFrom = (page - 1) * limit;
 
   const cars = await getAllCars({
     filters,
-  });
-  // .skip(startFrom)
-  // .limit(limit);
+  })
+    .skip(startFrom)
+    .limit(limit);
 
-  // return cars ;
-  return CarDealer.find();
+  return cars;
 };
 
 // const getCarsFromLotNumbers = async (
@@ -118,15 +112,13 @@ const getCarsPaginated = async ({
 const getPageCount = async ({ filters, limit }: GetPageCountProps) => {
   const carsTotal = await getAllCars({
     filters,
-  });
-  // .countDocuments();
-  // const carsTotal = 10
+  }).countDocuments();
+
   // total cars in the db
   // total pages for pagination
-  // const pagesTotal = Math.ceil(carsTotal / limit);
+  const pagesTotal = Math.ceil(carsTotal / limit);
 
-  // return pagesTotal;
-  return 0;
+  return pagesTotal;
 };
 
 // get all distinct brands
