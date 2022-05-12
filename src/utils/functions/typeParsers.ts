@@ -5,7 +5,7 @@ import {
   Transmission,
 } from '../../../shared_with_front/types/types-shared';
 import typeChecker from './typeCheckers';
-import { Roles } from '../../../shared_with_front/contants';
+import { HasKeys, Roles } from '../../../shared_with_front/contants';
 import httpStatus from 'http-status';
 
 const parseString = (text: unknown): string => {
@@ -32,7 +32,7 @@ const parseTransmission = (trans: unknown): Transmission => {
   return trans;
 };
 
-const parseKeys = (keys: unknown): Keys => {
+const parseKeys = (keys: unknown): Keys | string => {
   if (!keys || !typeChecker.isKeys(keys)) {
     return '';
   }

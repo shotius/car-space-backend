@@ -6,6 +6,7 @@ import express from 'express';
 import session from 'express-session';
 import path from 'path';
 import bannerRouter from 'routes/big-banner.route';
+import carsRouter from 'routes/cars-copart.route';
 import customerReviewRouter from 'routes/customer-review.route';
 import orderedCarRoute from 'routes/ordered-car.routes';
 import verificationRouter from 'routes/user-verification.route';
@@ -84,6 +85,7 @@ app.use(express.static('build'));
 app.use('/api/status', (_req, res) => res.send('ok'));
 
 app.use('/api/users', usersRouter);
+app.use('/api/copart/cars', carsRouter)
 app.use('/api/dealers/cars', dealerCarsRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/customer-reviews', customerReviewRouter);

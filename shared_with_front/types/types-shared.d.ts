@@ -1,3 +1,4 @@
+import { HasKeys } from './../contants';
 import { RoleTypes, RegisterParams } from './types-shared.d';
 import { Document, Types } from 'mongoose';
 
@@ -61,7 +62,6 @@ export interface IUserInfo {
   email: string;
 }
 
-
 export interface RegisterParams {
   fullName: string;
   email: string;
@@ -85,7 +85,7 @@ export interface UserResponse {
   user?: IUser & Document<any, any, IUser>;
 }
 
-export type Keys = HasKeys.YES | HasKeys.NO;
+export type Keys = HasKeys.YES | HasKeys.NO | HasKeys.EXM;
 
 // base car
 interface BaseCar {
@@ -103,7 +103,8 @@ interface BaseCar {
   fuel: string; // Fuel Type
   y: number; // Year
   c?: string; // Color
-  eng: number; // Engine
+  eng?: number; // Engine
+  keys?: string; // Has Keys-Yes or No
 }
 
 // Car Copart
@@ -114,7 +115,6 @@ export interface ICarCopart extends BaseCar {
   lSt: string; // Location state
   curB: number; // High Bid =non-vix,Sealed=Vix
   imgU: string; // Image URL
-  keys: string; // Has Keys-Yes or No
   sS: string; // Sales Status
   eRV: number; // Est. Retail Value
   rC: number; // Repair Cost
@@ -128,7 +128,6 @@ export interface ICarDealer extends BaseCar {
   desc?: string;
   mD?: string; // Model Detail
   imgUrls: string[]; // Image URL
-  keys?: Keys; // Has Keys-Yes or No
   price: number; // Price
   mostDemand: boolean;
   dealername: string;
