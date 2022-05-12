@@ -243,3 +243,11 @@ interface IBanner {
   img: string;
   place: number;
 }
+
+/** Blog */
+interface IBlog {
+  id: string;
+  img: string;
+  header: string;
+  body: string;
+}
