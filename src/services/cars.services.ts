@@ -1,3 +1,9 @@
+import CopartCars from 'models/car-copart.model';
+import CarDealer from 'models/car-dealer.model';
+import { BaseFilterProps } from 'types';
+import { ICarDealer } from '../../shared_with_front/types/types-shared';
+import { HasKeys } from './../../shared_with_front/contants';
+import { ICarCopart } from './../../shared_with_front/types/types-shared.d';
 
 export class CarServices {
   protected Model: any;
@@ -34,11 +40,19 @@ export class CarServices {
     return await this.Model.distinct('lC');
   };
 
+  getAllBrands = async () => {
+    return await this.Model.distinct('m');
+  };
+
+  getTypes = async () => {
+    return await this.Model.distinct('bSt');
+  };
+
   // Get all distinct damage and secondary damage conditions
   getConditions = async () => {
     const conditions = await Promise.all([
-      this.Model.find({}).distinct('dmg'),
-      this.Model.find({}).distinct('sDmg'),
+      this.Model.distinct('dmg'),
+      this.Model.distinct('sDmg'),
     ]);
 
     // merge all array results
@@ -52,10 +66,6 @@ export class CarServices {
     return [...new Set(merged)];
   };
 
-  getAllBrands = async () => {
-    return await this.Model.distinct('m');
-  };
-
   getModels = async (brands: string[]) => {
     const models = await this.Model.aggregate([
       { $match: { m: { $in: brands } } },
@@ -65,13 +75,8 @@ export class CarServices {
     return models;
   };
 
-  /**Get last 8 cars */
+  /**Get last 4 cars */
   getRecentCars = async () => {
     return await this.Model.find().sort({ _id: -1 }).limit(4);
-  };
-
-  // get all distinct car body styles
-  getTypes = async () => {
-    return await this.Model.find({}).distinct('bSt');
   };
 }
