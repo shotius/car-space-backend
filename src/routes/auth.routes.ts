@@ -2,10 +2,10 @@ import authController from 'controllers/auth.controller';
 import express from 'express';
 import { validate } from 'middlewares/validate';
 import { loginValidations } from 'validation/LoginValidation';
-import { isAuth } from './../utils/midlewares';
-import { newPassword } from './../validation/changePassword';
-import { forgotPassword } from './../validation/forgotPassword';
-import { registerParams } from './../validation/registerParams';
+import { isAuth } from '../utils/midlewares';
+import { newPassword } from '../validation/changePassword';
+import { forgotPassword } from '../validation/forgotPassword';
+import { registerParams } from '../validation/registerParams';
 
 const authRouter = express.Router();
 

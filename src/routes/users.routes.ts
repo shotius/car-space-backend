@@ -1,9 +1,9 @@
 import userController from 'controllers/user.controller';
 import express from 'express';
 import { validate } from 'middlewares/validate';
-import { isAuth } from './../utils/midlewares';
-import { multerMemoryUpload } from './../utils/multer';
-import { userMessage } from './../validation/userMessage';
+import { isAuth } from '../utils/midlewares';
+import { multerMemoryUpload } from '../utils/multer';
+import { userMessage } from '../validation/userMessage';
 
 const usersRouter = express.Router();
 

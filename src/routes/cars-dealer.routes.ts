@@ -1,6 +1,6 @@
-import { isAdmin } from './../utils/midlewares';
+import { isAdmin } from '../utils/midlewares';
 import { isAuth } from 'utils/midlewares';
-import { newDealerCar } from './../validation/addNewDealerCar';
+import { newDealerCar } from '../validation/addNewDealerCar';
 import dealerController from 'controllers/dealer-cars.controller';
 import express from 'express';
 import { validate } from 'middlewares/validate';

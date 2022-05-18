@@ -1,14 +1,14 @@
 import {
   IUserInfo,
   RoleTypes,
-} from './../../shared_with_front/types/types-shared.d';
+} from '../../shared_with_front/types/types-shared';
 import authServices from 'services/auth.services';
 import express, { NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status';
 import verificationService from 'services/user-verification.service';
 import { asyncHandler } from 'utils/functions/asyncHandler';
 import { success } from 'utils/functions/responseApi';
-import { ApiError } from './../utils/functions/ApiError';
+import { ApiError } from '../utils/functions/ApiError';
 
 const verificationRouter = express.Router();
 
