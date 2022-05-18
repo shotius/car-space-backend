@@ -5,18 +5,14 @@ import cors from 'cors';
 import express from 'express';
 import session from 'express-session';
 import path from 'path';
-import bannerRouter from 'routes/big-banner.routes';
-import carsRouter from 'routes/cars-copart.routes';
-import customerReviewRouter from 'routes/customer-review.routes';
-import orderedCarRoute from 'routes/ordered-car.routes';
-import verificationRouter from 'routes/user-verification.routes';
+import baseRoutes from 'routes/base.routes';
 import { SessionUser } from '../shared_with_front/types/types-shared';
-import authRouter from './routes/auth.routes';
-import dealerCarsRouter from './routes/cars-dealer.routes';
-import usersRouter from './routes/users.routes';
 import { COOKIE_NAME, __prod__ } from './utils/constants';
-import { defaultErrorHander, errorConverter, redirectToHttps } from './utils/midlewares';
-
+import {
+  defaultErrorHander,
+  errorConverter,
+  redirectToHttps
+} from './utils/midlewares';
 
 // -- declare session
 declare module 'express-session' {
@@ -43,7 +39,9 @@ if (__prod__) {
   app.use(redirectToHttps);
 }
 
-app.use(require('prerender-node').set('prerenderToken', 'I2tK6WNDQhwk8clI0k4A'));
+app.use(
+  require('prerender-node').set('prerenderToken', 'I2tK6WNDQhwk8clI0k4A')
+);
 
 app.use(
   cors({
@@ -82,17 +80,9 @@ app.use(compression());
 app.use(express.static('build'));
 
 // -- routes
-app.use('/api/status', (_req, res) => res.send('ok'));
+app.use('/api', baseRoutes);
 
-app.use('/api/users', usersRouter);
-app.use('/api/copart/cars', carsRouter)
-app.use('/api/dealers/cars', dealerCarsRouter);
-app.use('/api/auth', authRouter);
-app.use('/api/customer-reviews', customerReviewRouter);
-app.use('/api/ordered-cars/', orderedCarRoute);
-app.use('/api/user-verification/', verificationRouter);
-app.use('/api/banners', bannerRouter);
-
+// final middlewares
 app.use(errorConverter);
 app.use(defaultErrorHander);
 
