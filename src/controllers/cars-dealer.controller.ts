@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status';
 import CarDealer from 'models/car-dealer.model';
-import dealerCarService from 'services/cars-dealer.service';
+import dealerCarService from 'services/dealer-cars.service';
 import carServices from 'services/cars.services';
 import cloudinaryServices from 'services/cloudinary.service';
 import userService from 'services/user.service';
@@ -215,7 +215,7 @@ const getTypes = asyncHandler(async (_req: Request, res: Response) => {
 
 const getLocations = asyncHandler(async (_req: Request, res: Response) => {
   try {
-    const locations = await carServices.getLocation();
+    const locations = await carServices.getLocations()
     return res.send(locations);
   } catch (err) {
     return res.status(500).send(

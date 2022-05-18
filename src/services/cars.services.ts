@@ -5,8 +5,59 @@ import { ICarDealer } from '../../shared_with_front/types/types-shared';
 import { HasKeys } from './../../shared_with_front/contants';
 import { ICarCopart } from './../../shared_with_front/types/types-shared.d';
 
-/** Interfaces */
+export class CarServices {
+  protected Model: any;
 
+  constructor(model: any) {
+    this.Model = model;
+  }
+
+  getLocations = async () => {
+    return await this.Model.find({}).distinct('lC');
+  };
+
+  getAllCars = async () => {
+    return await this.Model.find({});
+  };
+
+  // Get all distinct damage and secondary damage conditions
+  getConditions = async () => {
+    const conditions = await Promise.all([
+      this.Model.find({}).distinct('dmg'),
+      this.Model.find({}).distinct('sDmg'),
+    ]);
+
+    // merge all array results
+    const merged = conditions.reduce<string[]>(
+      (curr: string[], acc: string[]) => {
+        return acc.concat(curr);
+      },
+      []
+    );
+
+    return [...new Set(merged)];
+  };
+
+  getAllBrands = async () => {
+    return await this.Model.distinct('m');
+  };
+
+  getModels = async (brands: string[]) => {
+    const models = await this.Model.aggregate([
+      { $match: { m: { $in: brands } } },
+      { $group: { _id: '$m', models: { $addToSet: '$mG' } } },
+      { $project: { _id: 0, brand: '$_id', models: '$models' } },
+    ]);
+    return models;
+  };
+
+  /**Get last 8 cars */
+  getRecentCars = async () => {
+    return await this.Model.find().sort({ _id: -1 }).limit(4);
+  };
+}
+
+/** Interfaces */
 interface BaseGetCarInterface {
   filters: BaseFilterProps;
 }
@@ -308,8 +359,13 @@ const addCar = async ({ car, blur, imgUrls }: AddCarProps) => {
   return true;
 };
 
+const getLocations = async () => {
+  return await CarDealer.find({}).distinct('lC');
+};
+
 const carServices = {
   addCar,
+  getLocations, 
   getCarsPaginated,
   getAllBrands,
   getModels,
