@@ -2,7 +2,7 @@ import express from 'express';
 import { validate } from 'middlewares/validate';
 import CopartCars from 'models/car-copart.model';
 import carImagesService from 'services/carImages.service';
-import carServices from 'services/cars.services';
+import service from 'services/copart-cars.services';
 import { error } from 'utils/functions/responseApi';
 import { validateLotNum } from 'validation/LotNumberValidation';
 import { parseQueryAsArray } from '../utils/queryParsers/parseQueryAsArray';
@@ -10,25 +10,21 @@ import { extractFilters } from './../utils/functions/extractFilters';
 
 const carsRouter = express.Router();
 
-carsRouter.get('/test', async(req, res) => {
-  const cars = await CopartCars.find()
-  res.json(cars)
-})
 
 // get paginating cars
 carsRouter.get('/', async (req, res) => {
   const page = req.query.page || 1;
   const limit = req.query.limit || 40;
 
-  const filters = extractFilters(req.query)
+  const filters = extractFilters(req.query);
 
-  const getCars = carServices.getCarsPaginated({
+  const getCars = service.getCarsPaginated({
     page: Number(page),
     limit: Number(limit),
     filters,
   });
 
-  const getPagesTotal = carServices.getPageCount({
+  const getPagesTotal = service.getPageCount({
     limit: Number(limit),
     filters,
   });
@@ -50,7 +46,7 @@ carsRouter.get('/', async (req, res) => {
 
 // all distipnc brands
 carsRouter.get('/brands', async (_req, res) => {
-  const brands = await carServices.getAllBrands();
+  const brands = await service.getAllBrands();
   res.send(brands);
 });
 
@@ -65,7 +61,7 @@ carsRouter.get('/models', async (req, res) => {
   }
 
   try {
-    const models = await carServices.getModels(brands);
+    const models = await service.getModels(brands);
     return res.send(models);
   } catch (err) {
     return res
@@ -77,7 +73,7 @@ carsRouter.get('/models', async (req, res) => {
 // all different conditions
 carsRouter.get('/conditions', async (_req, res) => {
   try {
-    const conditions = await carServices.getConditions();
+    const conditions = await service.getConditions();
     return res.send(conditions);
   } catch (err) {
     return res.status(500).send(
@@ -91,7 +87,7 @@ carsRouter.get('/conditions', async (_req, res) => {
 // Get all types
 carsRouter.get('/types', async (_req, res) => {
   try {
-    const types = await carServices.getTypes();
+    const types = await service.getTypes();
     return res.send(types);
   } catch (erro) {
     return res.status(500).send(
@@ -104,7 +100,7 @@ carsRouter.get('/types', async (_req, res) => {
 
 carsRouter.get('/locations', async (_req, res) => {
   try {
-    const locations = await carServices.getLocation();
+    const locations = await service.getLocations();
     return res.send(locations);
   } catch (err) {
     return res.status(500).send(
@@ -117,7 +113,7 @@ carsRouter.get('/locations', async (_req, res) => {
 
 carsRouter.get('/drives', async (_, res) => {
   try {
-    const drives = await carServices.getDrives();
+    const drives = await service.getDrives();
     return res.send(drives);
   } catch (err) {
     return res.status(500).send(
@@ -130,7 +126,7 @@ carsRouter.get('/drives', async (_, res) => {
 
 carsRouter.get('/fuels', async (_, res) => {
   try {
-    const fuels = await carServices.getFuels();
+    const fuels = await service.getFuels();
     return res.send(fuels);
   } catch (err) {
     return res.status(500).send(
@@ -143,7 +139,7 @@ carsRouter.get('/fuels', async (_, res) => {
 
 carsRouter.get('/cylinders', async (_, res) => {
   try {
-    const cylinders = await carServices.getCylinders();
+    const cylinders = await service.getCylinders();
     return res.send(cylinders);
   } catch (err) {
     return res.status(500).send(
@@ -157,7 +153,7 @@ carsRouter.get('/cylinders', async (_, res) => {
 // sales status
 carsRouter.get('/sales_status', async (_, res) => {
   try {
-    const salesStatus = await carServices.getSalesStatus();
+    const salesStatus = await service.getSalesStatus();
     return res.send(salesStatus);
   } catch (err) {
     return res.status(500).send(
@@ -171,7 +167,7 @@ carsRouter.get('/sales_status', async (_, res) => {
 // returs all distinct transmission types
 carsRouter.get('/transmissions', async (_, res) => {
   try {
-    const transmissions = await carServices.getTransmissions();
+    const transmissions = await service.getTransmissions();
     return res.send(transmissions);
   } catch (erro) {
     return res.status(500).send(
@@ -229,7 +225,7 @@ carsRouter.get('/images/medium', validate(validateLotNum), async (req, res) => {
 // route returns single vehicle based on 8 digit lot number
 carsRouter.get('/:lotNumber(\\d{8})', async (req, res) => {
   const lotNumber = req.params.lotNumber;
-  const car = await carServices.getSingleCar(lotNumber);
+  const car = await service.getCarByLotNumber(lotNumber);
   if (car.length) {
     return res.send(car[0]);
   } else {

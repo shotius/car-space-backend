@@ -1,17 +1,15 @@
 import { NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status';
-import CarDealer from 'models/car-dealer.model';
-import dealerCarService from 'services/dealer-cars.service';
-import carServices from 'services/cars.services';
 import cloudinaryServices from 'services/cloudinary.service';
+import service from 'services/dealer-cars.service';
 import userService from 'services/user.service';
 import { asyncHandler } from 'utils/functions/asyncHandler';
 import imageMethods from 'utils/functions/imageTranformsFuncts';
 import { error, success } from 'utils/functions/responseApi';
 import { parseQueryAsArray } from 'utils/queryParsers/parseQueryAsArray';
+import { ApiError } from '../utils/functions/ApiError';
+import { extractFilters } from '../utils/functions/extractFilters';
 import { parseNewCar } from '../utils/functions/parseNewCar';
-import { ApiError } from './../utils/functions/ApiError';
-import { extractFilters } from './../utils/functions/extractFilters';
 
 // -- Get all cars
 const getDealerCars = asyncHandler(
@@ -21,13 +19,13 @@ const getDealerCars = asyncHandler(
 
     const filters = extractFilters(req.query);
 
-    const getCars = carServices.getCarsPaginated({
+    const getCars = service.getCarsPaginated({
       page: Number(page),
       limit: Number(limit),
       filters,
     });
 
-    const getPagesTotal = carServices.getPageCount({
+    const getPagesTotal = service.getPageCount({
       limit: Number(limit),
       filters,
     });
@@ -58,7 +56,7 @@ const getDealerCars = asyncHandler(
 
 const getSingleDealerCar = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const car = await dealerCarService.getSingleCar(req.params.carId);
+    const car = await service.getCarById(req.params.carId);
 
     if (!car) {
       return next(
@@ -78,7 +76,8 @@ const getSingleDealerCar = asyncHandler(
 
 const getRecentDealerCars = asyncHandler(
   async (_req: Request, res: Response, next: NextFunction) => {
-    const cars = await carServices.getRecentCars();
+    const cars = await service.getRecentCars();
+
     if (!cars) {
       return next(new ApiError(httpStatus.NOT_FOUND, 'Recent cars not found'));
     }
@@ -94,7 +93,7 @@ const getRecentDealerCars = asyncHandler(
 /** Get car Count for specific filters */
 const getCarCount = asyncHandler(async (req: Request, res: Response) => {
   const filters = extractFilters(req.query);
-  const carsCount = await carServices.getAllCars({ filters }).countDocuments();
+  const carsCount = await service.getAllCars({ filters }).countDocuments();
   res.send(success({ message: 'success', results: carsCount }));
 });
 
@@ -113,7 +112,7 @@ const addDealerCar = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const blur = imageMethods.toBlur(imgUrls[0] || '');
-  const addedCar = await dealerCarService.addCar({ car, blur, imgUrls });
+  const addedCar = await service.addCar({ car, blur, imgUrls });
 
   // if daeler id is provided add car id in dealer document
   if (addedCar.dealerId) {
@@ -128,24 +127,24 @@ const addDealerCar = asyncHandler(async (req: Request, res: Response) => {
 
 // -- Remove all cars
 const removeAllCars = asyncHandler(async (_req: Request, res: Response) => {
-  await CarDealer.deleteMany({});
+  await service.removeAllCars();
   res.send('cars removed');
 });
 
 // -- Remove one car
 const removeSingleCar = asyncHandler(async (req: Request, res: Response) => {
   try {
-    const deletedCar = await dealerCarService.removeSingleCar(req.body.id);
+    const deletedCar = await service.removeSingleCar(req.body.id);
 
     // if car had a dealer remove it from dealer list
     if (deletedCar?.dealerId) {
-
       await userService.removeCarFromDealer({
         carId: deletedCar._id,
         dealerId: deletedCar.dealerId,
       });
     }
 
+    //@to-do refactor responseces
     return res.send(
       success({
         results: 'Ok',
@@ -163,7 +162,7 @@ const removeSingleCar = asyncHandler(async (req: Request, res: Response) => {
 //** Filters */
 
 const getBrands = asyncHandler(async (_req: Request, res: Response) => {
-  const brands = await carServices.getAllBrands();
+  const brands = await service.getAllBrands();
   res.send(brands);
 });
 
@@ -177,7 +176,7 @@ const getModels = asyncHandler(async (req: Request, res: Response) => {
   }
 
   try {
-    const models = await carServices.getModels(brands);
+    const models = await service.getModels(brands);
     return res.send(models);
   } catch (err) {
     return res
@@ -188,8 +187,7 @@ const getModels = asyncHandler(async (req: Request, res: Response) => {
 
 const getConditions = asyncHandler(async (_req: Request, res: Response) => {
   try {
-    const conditions = await carServices.getConditions();
-
+    const conditions = await service.getConditions();
     return res.send(conditions);
   } catch (err) {
     return res.status(500).send(
@@ -202,7 +200,7 @@ const getConditions = asyncHandler(async (_req: Request, res: Response) => {
 
 const getTypes = asyncHandler(async (_req: Request, res: Response) => {
   try {
-    const types = await carServices.getTypes();
+    const types = await service.getTypes();
     return res.send(types);
   } catch (erro) {
     return res.status(500).send(
@@ -215,7 +213,7 @@ const getTypes = asyncHandler(async (_req: Request, res: Response) => {
 
 const getLocations = asyncHandler(async (_req: Request, res: Response) => {
   try {
-    const locations = await carServices.getLocations()
+    const locations = await service.getLocations();
     return res.send(locations);
   } catch (err) {
     return res.status(500).send(
@@ -228,7 +226,7 @@ const getLocations = asyncHandler(async (_req: Request, res: Response) => {
 
 const getDrives = asyncHandler(async (_req: Request, res: Response) => {
   try {
-    const drives = await carServices.getDrives();
+    const drives = await service.getDrives();
     return res.send(drives);
   } catch (err) {
     return res.status(500).send(
@@ -241,7 +239,7 @@ const getDrives = asyncHandler(async (_req: Request, res: Response) => {
 
 const getFuels = asyncHandler(async (_req: Request, res: Response) => {
   try {
-    const fuels = await carServices.getFuels();
+    const fuels = await service.getFuels();
     return res.send(fuels);
   } catch (err) {
     return res.status(500).send(
@@ -254,7 +252,7 @@ const getFuels = asyncHandler(async (_req: Request, res: Response) => {
 
 const getCylinders = asyncHandler(async (_req: Request, res: Response) => {
   try {
-    const cylinders = await carServices.getCylinders();
+    const cylinders = await service.getCylinders();
     return res.send(cylinders);
   } catch (err) {
     return res.status(500).send(
@@ -267,7 +265,7 @@ const getCylinders = asyncHandler(async (_req: Request, res: Response) => {
 
 const getTransmissions = asyncHandler(async (_req: Request, res: Response) => {
   try {
-    const transmissions = await carServices.getTransmissions();
+    const transmissions = await service.getTransmissions();
     return res.send(transmissions);
   } catch (erro) {
     return res.status(500).send(
