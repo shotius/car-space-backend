@@ -1,0 +1,1 @@
+import{bq as s}from"./index.1849e885.js";const a="/api/blogs",o=async()=>{const{data:t}=await s.get(a);return t},n=async t=>(await s.get(`${a}/${t}`)).data,r=async t=>(await s.post(a,t)).data,l={getAllBlogs:o,getBlogById:n,createBlog:r};export{l as b};
