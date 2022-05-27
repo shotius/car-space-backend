@@ -49,3 +49,13 @@ export const validation = ({ errors }: ValidationProps): ApiValidationError => {
     errors,
   };
 };
+
+export function sendSuccess({
+  results,
+  message,
+}: {
+  results: any;
+  message: string;
+}) {
+  return success({ results, message });
+}

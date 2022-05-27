@@ -1,3 +1,4 @@
+import blogRouter from 'routes/blog.routes';
 import { Router } from 'express';
 import authRouter from './auth.routes';
 import bannerRouter from './big-banner.routes';
@@ -12,6 +13,7 @@ const baseRouter = Router();
 
 baseRouter.use('/status', (_req, res) => res.send('ok'));
 baseRouter.use('/users', usersRouter);
+baseRouter.use('/blogs', blogRouter);
 baseRouter.use('/copart/cars', carsRouter);
 baseRouter.use('/dealers/cars', dealerCarsRouter);
 baseRouter.use('/auth', authRouter);
