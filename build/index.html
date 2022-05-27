@@ -12,8 +12,8 @@
   <link rel="apple-touch-icon" href="/logo192.png" />
   <link rel="manifest" href="/manifest.json" />
   <title>Car Space</title>
-  <script type="module" crossorigin src="/assets/index.95644e87.js"></script>
-  <link rel="stylesheet" href="/assets/index.3520501f.css">
+  <script type="module" crossorigin src="/assets/index.845c161f.js"></script>
+  <link rel="stylesheet" href="/assets/index.af1993d3.css">
 </head>
 
 <body>
@@ -22,10 +22,37 @@
   
 
 
+  <!-- Messenger Chat Plugin Code -->
   <div id="fb-root"></div>
   <script async defer crossorigin="anonymous"
     src="https://connect.facebook.net/ka_GE/sdk.js#xfbml=1&version=v12.0&appId=296932218990594&autoLogAppEvents=1"
     nonce="kkACgnys"></script>
+  <!-- Your Chat Plugin code -->
+  <div id="fb-customer-chat" class="fb-customerchat">
+  </div>
+
+  <script>
+    var chatbox = document.getElementById('fb-customer-chat');
+    chatbox.setAttribute("page_id", "100749844998414");
+    chatbox.setAttribute("attribution", "biz_inbox");
+  </script>
+  <!-- Your SDK code -->
+  <script>
+    window.fbAsyncInit = function () {
+      FB.init({
+        xfbml: true,
+        version: 'v13.0'
+      });
+    };
+    (function (d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = 'https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js';
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+  </script>
+
 
 </body>
 

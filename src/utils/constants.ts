@@ -14,6 +14,7 @@ export enum TransmissionEnum {
 export enum KeysEnum {
   YES = 'YES',
   NO = 'NO',
+  EXM = 'EXM',
 }
 
 export const DOMAIN = __prod__

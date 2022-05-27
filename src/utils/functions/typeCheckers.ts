@@ -23,7 +23,7 @@ const isTransmission = (trans: unknown): trans is Transmission => {
 };
 
 const isKeys = (keys: unknown): keys is Keys => {
-  return keys === KeysEnum.NO || keys === KeysEnum.YES;
+  return keys === KeysEnum.NO || keys === KeysEnum.YES || keys === KeysEnum.EXM;
 };
 
 const isRole = (role: unknown): role is RoleTypes => {
@@ -47,7 +47,7 @@ const typeChecker = {
   isString,
   isNumber,
   isTransmission,
-  isStringifiedBoolean, 
+  isStringifiedBoolean,
   isKeys,
   isRole,
   isDate,

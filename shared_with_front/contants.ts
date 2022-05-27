@@ -7,4 +7,5 @@ export enum Roles {
 export enum HasKeys {
   YES = 'YES',
   NO = 'NO',
+  EXM = 'EXM',
 }
