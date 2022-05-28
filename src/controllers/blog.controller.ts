@@ -9,6 +9,7 @@ import { ApiError } from 'utils/functions/ApiError';
 import imageMethods from 'utils/functions/imageTranformsFuncts';
 import blogsServices from 'services/blogs.services';
 import { success } from 'utils/functions/responseApi';
+import { next } from 'cheerio/lib/api/traversing';
 
 const getBlogs = asyncHandler(
   async (_req: Request, res: Response, next: NextFunction) => {
@@ -39,18 +40,21 @@ const postBlog = asyncHandler(
   }
 );
 
-const udpateBlogById = asyncHandler(async (req: Request, res: Response) => {
+const udpateBlogById = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   const id = req.params.id;
   const newDetails = parseBlogBody(req.body);
-  let imgUrl: string | undefined;
+
   if (req.file) {
-    const response = await cloudinaryServices.fileToUrl(req.file);
-    imgUrl = response.url || newDetails.img;
+    const { url, error } = await cloudinaryServices.fileToUrl(req.file);
+    if (error) {
+      return next(error);
+    }
+    if (url) {
+      newDetails.img = url;
+    }
   }
-  const newBlog = await blogsServices.udpateBlogById(id, {
-    ...newDetails,
-    img: imgUrl,
-  });
+
+  const newBlog = await blogsServices.udpateBlogById(id, newDetails);
 
   return res.send(success({ results: newBlog, message: 'blog has updated' }));
 });
