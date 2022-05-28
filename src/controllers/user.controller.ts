@@ -11,7 +11,7 @@ import queryParser from 'utils/queryParsers/queryParser';
 import { getCallMePleaseView } from 'views/callMePleaseView';
 import {
   ApiSuccessResponse,
-  CloudinaryResponse
+  CloudinaryResponse,
 } from '../../shared_with_front/types/types-shared';
 import { ApiError } from '../utils/functions/ApiError';
 
@@ -91,7 +91,7 @@ const getFavouriteCars = asyncHandler(async (req: Request, res: Response) => {
 const setUserAvatar = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     if (!req.file) {
-      return res.send('files not provied');
+      return next(new ApiError(httpStatus.BAD_REQUEST, 'Files not provided'));
     }
 
     const { buffer } = req.file;
@@ -172,7 +172,7 @@ const sendContactEmail = asyncHandler(async (req: Request, res: Response) => {
 
 /** Get dealers */
 const getDealers = asyncHandler(async (req: Request, res: Response) => {
-  const withCars = queryParser.Bool(req.query, 'withCars') || false
+  const withCars = queryParser.Bool(req.query, 'withCars') || false;
   const dealers = await userService.getDealers(withCars);
   return res.send(success({ results: dealers }));
 });

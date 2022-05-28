@@ -11,9 +11,8 @@ import { parseNewCustomerReview } from './../utils/functions/parseNewCustomerRev
 // -- Returns all the customer reviews
 const getAllReviews = asyncHandler(
   async (_req: Request, res: Response, next: NextFunction) => {
-    
     const reviews = await customerReviewService.getAllReviews();
-    
+
     if (!reviews) {
       return next(new ApiError(httpStatus.NOT_FOUND, 'Reviews not found'));
     }
@@ -84,39 +83,36 @@ const clearSingleReview = asyncHandler(
 // -- Removes all Reviews
 const clearReviews = asyncHandler(async (_req: Request, res: Response) => {
   await customerReviewService.clearReviews();
-  res.send(success({
-    message: 'cleared', 
-    results: []
-  }));
+  res.send(
+    success({
+      message: 'cleared',
+      results: [],
+    })
+  );
 });
 
+const test = asyncHandler(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const review = await customerReviewService.undelete(id);
 
-
-const test = asyncHandler(
-  async (req: Request, res: Response) => {
-    const id = req.params.id
-    const review = await customerReviewService.undelete(id)
-
-    if (!review) {
-      return res.send('not found')
-    }
-
-    return res.send(
-      success({
-        results: review,
-      })
-    );
+  if (!review) {
+    return res.send('not found');
   }
-);
 
+  return res.send(
+    success({
+      results: review,
+    })
+  );
+});
 
 const singleReview = asyncHandler(
-  async (req: Request, res: Response) => {
-    const id = req.params.id
-    const review = await customerReviewService.singleReview(id)
+  async (req: Request, res: Response, next: NextFunction) => {
+    const id = req.params.id;
+    const review = await customerReviewService.singleReview(id);
 
     if (!review) {
-      return res.send('not found')
+      return next(new ApiError(httpStatus.NOT_FOUND, 'Not found'));
     }
 
     return res.send(
@@ -128,11 +124,11 @@ const singleReview = asyncHandler(
 );
 const customerReviewController = {
   getAllReviews,
-  test, 
+  test,
   addReview,
   clearReviews,
-  clearSingleReview, 
-  singleReview
+  clearSingleReview,
+  singleReview,
 };
 
 export default customerReviewController;

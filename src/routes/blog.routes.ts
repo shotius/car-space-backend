@@ -4,7 +4,7 @@ import { multerMemoryUpload } from './../utils/multer';
 const blogRouter = express.Router();
 
 blogRouter.get('/', blogController.getBlogs);
-blogRouter.get('/:id', blogController.getBlogById)
+blogRouter.get('/:id', blogController.getBlogById);
 
 blogRouter.post(
   '/',
@@ -12,7 +12,11 @@ blogRouter.post(
   blogController.postBlog
 );
 
-blogRouter.put('/:id', blogController.udpateBlogById);
+blogRouter.put(
+  '/:id',
+  multerMemoryUpload.single('cover'),
+  blogController.udpateBlogById
+);
 
 blogRouter.delete('/:id', blogController.deleteBlogById);
 

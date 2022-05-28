@@ -22,37 +22,16 @@ const postBlog = asyncHandler(
     const rawBlog = req.body;
 
     if (!req.file) {
-      return res.send('no file detected');
+      return next(new ApiError(httpStatus.BAD_REQUEST, 'no file detected'));
     }
 
-    const { buffer } = req.file!;
+    const imgUrl = await cloudinaryServices.fileToUrl(req.file);
 
-    const blogWebpbuffer = await imageMethods.toWebp({ buffer });
-
-    const cloudinaryResponse = await cloudinaryServices.uploadStream(
-      blogWebpbuffer,
-      'blogs'
-    );
-
-    if (cloudinaryResponse.message === 'Fail') {
-      return next(
-        new ApiError(
-          httpStatus.INTERNAL_SERVER_ERROR,
-          'Failed to upload image on cloudinary'
-        )
-      );
+    if (imgUrl.error) {
+      return next(imgUrl.error);
     }
 
-    if (!cloudinaryResponse.url) {
-      return next(
-        new ApiError(
-          httpStatus.INTERNAL_SERVER_ERROR,
-          'Could not get saved images url from cloudinary'
-        )
-      );
-    }
-
-    const newBlog = new blogModel({ ...rawBlog, img: cloudinaryResponse.url });
+    const newBlog = new blogModel({ ...rawBlog, img: imgUrl.url });
 
     await newBlog.save();
 
@@ -61,8 +40,8 @@ const postBlog = asyncHandler(
 );
 
 const udpateBlogById = asyncHandler(async (req: Request, res: Response) => {
-  const newDetails = parseBlogBody(req.body);
   const id = req.params.id;
+  const newDetails = parseBlogBody(req.body);
   const newBlog = await blogsServices.udpateBlogById(id, newDetails);
 
   return res.send(success({ results: newBlog, message: 'blog has updated' }));

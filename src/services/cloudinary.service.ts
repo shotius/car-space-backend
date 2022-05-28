@@ -6,6 +6,8 @@ import { bufferStream } from 'utils/functions/bufferStream';
 import imageMethods from 'utils/functions/imageTranformsFuncts';
 import { removeExtension } from 'utils/functions/removeExtension';
 import { CloudinaryResponse } from '../../shared_with_front/types/types-shared';
+import { ApiError } from 'utils/functions/ApiError';
+import httpStatus from 'http-status';
 dotenv.config();
 
 // this is base url on the cloud
@@ -169,6 +171,38 @@ const getPublicPath = (url: string) => {
   return removeExtension(url).slice(url.indexOf('car-space/'));
 };
 
+const fileToUrl = async (
+  file: Express.Multer.File
+): Promise<{ error?: ApiError; url?: string }> => {
+  const { buffer } = file;
+
+  const blogWebpbuffer = await imageMethods.toWebp({ buffer });
+
+  const cloudinaryResponse = await cloudinaryServices.uploadStream(
+    blogWebpbuffer,
+    'blogs'
+  );
+
+  if (cloudinaryResponse.message === 'Fail') {
+    return {
+      error: new ApiError(
+        httpStatus.INTERNAL_SERVER_ERROR,
+        'Failed to upload image on cloudinary'
+      ),
+    };
+  }
+
+  if (!cloudinaryResponse.url) {
+    return {
+      error: new ApiError(
+        httpStatus.INTERNAL_SERVER_ERROR,
+        'Could not get saved images url from cloudinary'
+      ),
+    };
+  }
+  return { url: cloudinaryResponse.url };
+};
+
 const cloudinaryServices = {
   getPublicPath,
   deleteSingle,
@@ -176,6 +210,7 @@ const cloudinaryServices = {
   uploadPhoto,
   uploadMultyStream,
   deleteMultiple,
+  fileToUrl,
 };
 
 export default cloudinaryServices;
