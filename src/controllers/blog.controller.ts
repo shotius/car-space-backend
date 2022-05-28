@@ -42,7 +42,15 @@ const postBlog = asyncHandler(
 const udpateBlogById = asyncHandler(async (req: Request, res: Response) => {
   const id = req.params.id;
   const newDetails = parseBlogBody(req.body);
-  const newBlog = await blogsServices.udpateBlogById(id, newDetails);
+  let imgUrl: string | undefined;
+  if (req.file) {
+    const response = await cloudinaryServices.fileToUrl(req.file);
+    imgUrl = response.url || newDetails.img;
+  }
+  const newBlog = await blogsServices.udpateBlogById(id, {
+    ...newDetails,
+    img: imgUrl,
+  });
 
   return res.send(success({ results: newBlog, message: 'blog has updated' }));
 });
