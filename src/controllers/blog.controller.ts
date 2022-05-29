@@ -40,24 +40,26 @@ const postBlog = asyncHandler(
   }
 );
 
-const udpateBlogById = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  const id = req.params.id;
-  const newDetails = parseBlogBody(req.body);
+const udpateBlogById = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const id = req.params.id;
+    const newDetails = parseBlogBody(req.body);
 
-  if (req.file) {
-    const { url, error } = await cloudinaryServices.fileToUrl(req.file);
-    if (error) {
-      return next(error);
+    if (req.file) {
+      const { url, error } = await cloudinaryServices.fileToUrl(req.file);
+      if (error) {
+        return next(error);
+      }
+      if (url) {
+        newDetails.img = url;
+      }
     }
-    if (url) {
-      newDetails.img = url;
-    }
+
+    const newBlog = await blogsServices.udpateBlogById(id, newDetails);
+
+    return res.send(success({ results: newBlog, message: 'blog has updated' }));
   }
-
-  const newBlog = await blogsServices.udpateBlogById(id, newDetails);
-
-  return res.send(success({ results: newBlog, message: 'blog has updated' }));
-});
+);
 
 const deleteBlogById = asyncHandler(async (req: Request, res: Response) => {
   const id = req.params.id;
@@ -71,12 +73,19 @@ const getBlogById = asyncHandler(async (req: Request, res: Response) => {
   return res.send(success({ results: blog, message: 'single blog' }));
 });
 
+const getRandomBlogs = asyncHandler(async (req: Request, res: Response) => {
+  const limit = req.params.limit || 3
+  const blogs = await blogsServices.getRandomBlogs(+limit);
+  return res.send(success({ results: blogs }));
+});
+
 const blogController = {
   getBlogs,
   postBlog,
   deleteBlogById,
   udpateBlogById,
   getBlogById,
+  getRandomBlogs,
 };
 
 export default blogController;

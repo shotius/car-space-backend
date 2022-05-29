@@ -28,10 +28,15 @@ const getBlogById = (id: string) => {
   return Blogs.findById(id)
 }
 
+const getRandomBlogs = (limit: number) => {
+  return Blogs.aggregate([{ $sample: { size: limit } }]);
+}
+
 const blogsServices = {
   deleteBlogById,
   getBlogById, 
   udpateBlogById,
+  getRandomBlogs
 };
 
 export default blogsServices;
