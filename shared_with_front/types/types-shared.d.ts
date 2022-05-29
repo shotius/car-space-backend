@@ -250,4 +250,6 @@ interface IBlog {
   img: string;
   header: string;
   body: string;
+  createdAt: string;
+  _id?: string;
 }

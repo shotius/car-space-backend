@@ -74,7 +74,7 @@ const getBlogById = asyncHandler(async (req: Request, res: Response) => {
 });
 
 const getRandomBlogs = asyncHandler(async (req: Request, res: Response) => {
-  const limit = req.params.limit || 3
+  const limit = req.params.limit || 3;
   const blogs = await blogsServices.getRandomBlogs(+limit);
   return res.send(success({ results: blogs }));
 });
