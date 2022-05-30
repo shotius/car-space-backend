@@ -253,3 +253,15 @@ interface IBlog {
   createdAt: string;
   _id?: string;
 }
+
+/** Transport Data */
+interface IBaseTransportationObject {
+  auction: string;
+  price: number;
+  state: string;
+  zip: string;
+  city: string;
+}
+interface ITransportDataObject extends IBaseTransportationObject {
+  id: string;
+}
