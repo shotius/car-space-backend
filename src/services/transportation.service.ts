@@ -1,7 +1,7 @@
 import Transportation from 'models/transportation.model';
 import {
   IBaseTransportationObject,
-  ITransportDataObject,
+  ITransportDataObject
 } from '../../shared_with_front/types/types-shared';
 
 const getAll = async () => {
@@ -30,17 +30,15 @@ const addBatch = async (transportations: IBaseTransportationObject[]) => {
   transportations.forEach(async (transportation) => {
     await addNew(transportation);
   });
-  return 
+  return;
 };
 
-
 const transportationService = {
-  getAll, 
-  updateById, 
-  deleteById, 
-  addNew, 
-  addBatch
-}
+  getAll,
+  updateById,
+  deleteById,
+  addNew,
+  addBatch,
+};
 
-export default transportationService
-
+export default transportationService;

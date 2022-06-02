@@ -31,6 +31,7 @@ const userSchema: Schema = new Schema({
   ],
   expiresAt: { type: Date, default: Date.now(), expires: 7200 }, // document will be deleted after 2 hours if not activated
   verified: { type: Boolean, default: false },
+  idNumber: Number
 });
 
 userSchema.set('toJSON', {

@@ -118,7 +118,7 @@ export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
   if (role.toLocaleLowerCase() !== Roles.ADMIN.toLocaleLowerCase()) {
     return res.status(401).send(
       error({
-        status: httpStatus.NETWORK_AUTHENTICATION_REQUIRED,
+        status: httpStatus.UNAUTHORIZED,
         message: 'not authenticated',
       })
     );

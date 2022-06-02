@@ -1,10 +1,11 @@
-import { logger } from './../utils/logger';
 import httpStatus from 'http-status';
-import { ApiError } from './../utils/functions/ApiError';
 import { Types } from 'mongoose';
 import { Roles } from '../../shared_with_front/contants';
 import { IUser } from '../../shared_with_front/types/types-shared';
 import User from '../models/user.model';
+import { IUserBase } from './../../shared_with_front/types/types-shared.d';
+import { ApiError } from './../utils/functions/ApiError';
+import { logger } from './../utils/logger';
 import cloudinaryServices from './cloudinary.service';
 import { ChangePasswordProps } from './types';
 
@@ -233,6 +234,22 @@ const resetUsers = async () => {
   return await User.deleteMany({});
 };
 
+const getAllUsers = async () => {
+  return await User.find().select(['-favourites', '-expiresAt']);
+};
+
+const getUserById = async (id: string) => {
+  return await User.findById(id);
+};
+
+const updateUserById = async (id: string, user: Partial<IUserBase>) => {
+  return await User.findByIdAndUpdate(id, user, { new: true });
+};
+
+const deleteUserById = async (id: string) => {
+  return await User.findByIdAndRemove(id);
+};
+
 //** exports */
 const userService = {
   getUserWithOrders,
@@ -251,6 +268,10 @@ const userService = {
   undelete,
   resetUsers,
   getUserCount,
+  getAllUsers,
+  getUserById,
+  updateUserById,
+  deleteUserById,
 };
 
 export default userService;

@@ -1,3 +1,4 @@
+import { parseUserBody } from './../utils/functions/parseUserBody';
 import { NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status';
 import cloudinaryServices from 'services/cloudinary.service';
@@ -12,6 +13,7 @@ import { getCallMePleaseView } from 'views/callMePleaseView';
 import {
   ApiSuccessResponse,
   CloudinaryResponse,
+  IUser,
 } from '../../shared_with_front/types/types-shared';
 import { ApiError } from '../utils/functions/ApiError';
 
@@ -30,6 +32,11 @@ const searchUsers = asyncHandler(
     );
   }
 );
+
+const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
+  const results = await userService.getAllUsers();
+  return res.send(success({ results }));
+});
 
 const getUserPaginated = asyncHandler(async (req: Request, res: Response) => {
   const page = queryParser.asNumber(req.query, 'page') || 1;
@@ -185,6 +192,38 @@ const resetUsers = asyncHandler(async (_req: Request, res: Response) => {
   });
 });
 
+const getUserById = asyncHandler(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const results = await userService.getUserById(id);
+  return res.send(success({ results }));
+});
+
+const updateUserById = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const id = req.params.id;
+    const parsedUser = parseUserBody(req.body);
+    const foundUser = await userService.getUserById(id);
+
+    if (!foundUser) {
+      return next(
+        new ApiError(
+          httpStatus.NOT_FOUND,
+          'user with specified id is not found'
+        )
+      );
+    }
+
+    const results = await userService.updateUserById(id, parsedUser);
+    return res.send(success({ results }));
+  }
+);
+
+const deleteUserById = asyncHandler(async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const results = await userService.deleteUserById(id);
+  return res.send(success({ results }));
+});
+
 /**Exports */
 const userController = {
   searchUsers,
@@ -197,6 +236,10 @@ const userController = {
   sendContactEmail,
   resetUsers,
   getUserPaginated,
+  getAllUsers,
+  getUserById,
+  updateUserById,
+  deleteUserById,
 };
 
 export default userController;

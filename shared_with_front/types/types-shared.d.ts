@@ -27,18 +27,22 @@ export interface ApiDefaultError extends ApiBaseResponse {
 /** IUser */
 export type RoleTypes = Roles.ADMIN | Roles.DEALER | Roles.USER;
 
-export interface IUser {
+export interface IUserBase {
   id: string;
   fullName: string;
   email: string;
-  passwordHash: string;
   phone: string;
+  idNumber?: number;
+}
+
+export interface IUser extends IUserBase {
   role: RoleTypes;
+  passwordHash: string;
   avatar: string;
   favourites: Types.ObjectId[];
   orderedCars: Types.ObjectId[];
-  verified: boolean;
   addedCars: Types.ObjectId[];
+  verified: boolean;
 }
 
 export interface SessionUser {

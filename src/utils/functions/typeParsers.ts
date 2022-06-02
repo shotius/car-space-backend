@@ -1,12 +1,12 @@
+import httpStatus from 'http-status';
 import { ApiError } from 'utils/functions/ApiError';
-import { RoleTypes } from './../../../shared_with_front/types/types-shared.d';
+import { Roles } from '../../../shared_with_front/contants';
 import {
   Keys,
-  Transmission,
+  Transmission
 } from '../../../shared_with_front/types/types-shared';
+import { RoleTypes } from './../../../shared_with_front/types/types-shared.d';
 import typeChecker from './typeCheckers';
-import { HasKeys, Roles } from '../../../shared_with_front/contants';
-import httpStatus from 'http-status';
 
 const parseString = (text: unknown): string => {
   if (!text || !typeChecker.isString(text)) {
