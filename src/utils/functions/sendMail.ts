@@ -4,8 +4,9 @@ import {
   CLIENT_ID,
   CLIENT_SECRET,
   REDIRECT_URI,
-  REFRESH_TOKEN,
+  REFRESH_TOKEN
 } from 'utils/config';
+import { ApiError } from 'utils/functions/ApiError';
 import logger from 'utils/logger';
 
 // const oAuth2Client = ServerGlobal.getInstance.oAuthClient;
@@ -29,9 +30,11 @@ export async function sendEmail({
   from?: string;
 }) {
   try {
-    const accessToken = (await oAuth2Client.getAccessToken()).token;
+    const accessTokenResponse = await oAuth2Client.getAccessToken();
+    const accessToken = accessTokenResponse.token;
+
     if (!accessToken) {
-      return 'could not get access token';
+      throw new ApiError(500, 'could not get access token');
     }
 
     const transporter = nodemailer.createTransport({

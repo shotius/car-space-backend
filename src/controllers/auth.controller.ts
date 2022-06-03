@@ -15,7 +15,7 @@ import logger from 'utils/logger';
 import {
   IUserInfo,
   RegisterResponse,
-  RoleTypes
+  RoleTypes,
 } from './../../shared_with_front/types/types-shared.d';
 import { DOMAIN } from './../utils/constants';
 import { ApiError } from './../utils/functions/ApiError';
@@ -92,6 +92,7 @@ const register = asyncHandler(
       password: passwordHash,
       ...registerParams,
     });
+
 
     // if there are any valudation errors during registration
     if (errors) {

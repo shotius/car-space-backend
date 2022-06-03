@@ -32,7 +32,7 @@ usersRouter.get('/favourites/carIds', isAuth, userController.getFavouriteIds);
 /** Favourite cars */
 usersRouter.get('/favourites/cars', isAuth, userController.getFavouriteCars);
 
-usersRouter.get('/:id', isAdmin, userController.getUserById);
+usersRouter.get('/:id',  userController.getUserById);
 
 /**
  * Set user avatar
@@ -54,10 +54,9 @@ usersRouter.post(
   userController.sendContactEmail
 );
 
-isAdmin;
 
-usersRouter.put('/:id', isAdmin, userController.updateUserById);
-usersRouter.delete('/:id', isAdmin, userController.deleteUserById);
+usersRouter.put('/:id', userController.updateUserById);
+usersRouter.delete('/:id', userController.deleteUserById);
 
 /** Reset users */
 // usersRouter.get(

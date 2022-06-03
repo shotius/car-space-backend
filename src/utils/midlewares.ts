@@ -114,7 +114,18 @@ export const isAuth = (req: Request, res: Response, next: NextFunction) => {
 // -- checks if admin is sending request
 export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
   const { user } = req.session;
-  const role = user!.r;
+
+  if (!user) {
+    return res.status(401).send(
+      error({
+        status: httpStatus.UNAUTHORIZED,
+        message: 'not authenticated',
+      })
+    );
+  }
+
+  const role = user.r;
+
   if (role.toLocaleLowerCase() !== Roles.ADMIN.toLocaleLowerCase()) {
     return res.status(401).send(
       error({
