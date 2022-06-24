@@ -114,7 +114,7 @@ const register = asyncHandler(
     }
 
     // send verification email
-    await authServices.sendVerificationEmail(user);
+   await authServices.sendVerificationEmail(user);
 
     // response
     const registeredUser: RegisterResponse = {
